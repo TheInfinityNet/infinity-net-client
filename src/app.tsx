@@ -6,6 +6,7 @@ import { HomePage } from "./routes/pages/home.page";
 import { ThemeProvider } from "./components/theme-provider";
 import { SignInPage } from "./routes/pages/sign-in.page";
 import { SignUpPage } from "./routes/pages/sign-up.page";
+import { MessagesPage } from "./routes/pages/messages.page";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: "sign-up",
     element: <SignUpPage />,
+  },
+  {
+    path: "messages",
+    element: <MessagesPage />,
   },
 ]);
 
