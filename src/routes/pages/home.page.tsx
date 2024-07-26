@@ -12,7 +12,6 @@ import {
   FilterIcon,
   HeartIcon,
   MessageCircleIcon,
-  MoveHorizontalIcon,
   PlusIcon,
   SettingsIcon,
   ShareIcon,
