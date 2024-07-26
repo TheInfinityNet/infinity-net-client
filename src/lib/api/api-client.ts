@@ -4,6 +4,7 @@ import axios, {
   AxiosResponse,
   HttpStatusCode,
 } from "axios";
+import { useAuthStore } from "@/stores/auth.store";
 
 export interface Result<T = any> {
   status: HttpStatusCode;
@@ -18,6 +19,13 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
+    if (config.headers["No-Auth"] === undefined) {
+      const { accessToken } = useAuthStore.getState();
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+    }
+
     return config;
   },
   (error) => {
