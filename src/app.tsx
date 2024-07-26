@@ -7,6 +7,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { SignInPage } from "./routes/pages/sign-in.page";
 import { SignUpPage } from "./routes/pages/sign-up.page";
 import { MessagesPage } from "./routes/pages/messages.page";
+import { LandingPage } from "./routes/pages/landing.page";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
     ],
+  },
+  {
+    path: "/landing",
+    element: <LandingPage />,
   },
   {
     path: "sign-in",

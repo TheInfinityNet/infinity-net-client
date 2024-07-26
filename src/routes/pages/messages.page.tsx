@@ -118,7 +118,7 @@ export function MessagesPage() {
           </div>
         </header>
         <main className="flex-1">
-          <div>
+          <div className="grid gap-y-4">
             {messages.map((message, index) => (
               <div
                 key={index}

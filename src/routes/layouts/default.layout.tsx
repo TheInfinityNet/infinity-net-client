@@ -10,7 +10,7 @@ export function DefaultLayout() {
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="container flex h-14 items-center justify-between px-4 sm:px-6 md:h-16">
           <Link href="/" className="flex items-center gap-2">
-            <InfinityIcon className="h-6 w-6" />
+            <InfinityIcon className="size-11" />
             <span className="sr-only">Infinity Net</span>
           </Link>
           <nav className="hidden space-x-4 md:flex">
