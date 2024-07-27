@@ -9,6 +9,13 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { z } from "zod";
+import { Form } from "@/components/ui/form";
+
+const signInSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
 
 export function SignInPage() {
   return (
@@ -21,6 +28,7 @@ export function SignInPage() {
             below.
           </CardDescription>
         </CardHeader>
+
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -34,6 +42,7 @@ export function SignInPage() {
             <Button className="w-full">Sign In</Button>
           </div>
         </CardContent>
+
         <CardFooter className="flex-col px-4 gap-2">
           <Button variant="outline" className="w-full">
             Sign In with Google

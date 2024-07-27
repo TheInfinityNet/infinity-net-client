@@ -1,8 +1,9 @@
 import { Link } from "@/components/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { InfinityIcon, MenuIcon, PlusIcon } from "lucide-react";
+import { MenuIcon, PlusIcon } from "lucide-react";
 import { Outlet } from "react-router-dom";
+import Logo from "@/assets/logo.svg";
 
 export function DefaultLayout() {
   return (
@@ -10,7 +11,7 @@ export function DefaultLayout() {
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="container flex h-14 items-center justify-between px-4 sm:px-6 md:h-16">
           <Link href="/" className="flex items-center gap-2">
-            <InfinityIcon className="size-11" />
+            <img src={Logo} alt="Infinity Net" className="h-8 w-auto" />
             <span className="sr-only">Infinity Net</span>
           </Link>
           <nav className="hidden space-x-4 md:flex">
