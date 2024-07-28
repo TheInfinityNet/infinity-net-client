@@ -9,6 +9,7 @@ import { SignUpPage } from "./routes/pages/sign-up.page";
 import { MessagesPage } from "./routes/pages/messages.page";
 import { LandingPage } from "./routes/pages/landing.page";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Toaster } from "./components/ui/toaster";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,7 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <RouterProvider router={router} />
+        <Toaster />
       </ThemeProvider>
     </QueryClientProvider>
   );
