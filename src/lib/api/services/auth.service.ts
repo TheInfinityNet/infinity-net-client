@@ -54,9 +54,19 @@ export type SignInErrorResponse =
     };
 
 export type SignUpRequest = {
+  firstName: string;
+  lastName: string;
+  middleName: string;
+
   email: string;
   password: string;
-  name: string;
+  passwordConfirmation: string;
+  mobileNumber: string;
+
+  birthdate: string;
+  gender: string;
+
+  termsAccepted: boolean;
 };
 
 export type SignUpResponse = {
@@ -66,6 +76,33 @@ export type SignUpResponse = {
   };
   user: User;
 };
+
+export enum SignUpErrorCodes {
+  ValidationError = "auth/validation-error",
+  EmailAlreadyInUse = "auth/email-already-in-use",
+  WeakPassword = "auth/weak-password",
+  InvalidEmail = "auth/invalid-email",
+  PasswordMismatch = "auth/password-mismatch",
+  TermsNotAccepted = "auth/terms-not-accepted",
+  RateLimitExceeded = "auth/rate-limit-exceeded",
+}
+
+export type SignUpErrorResponse =
+  | {
+      errorCode:
+        | SignUpErrorCodes.ValidationError
+        | SignUpErrorCodes.EmailAlreadyInUse
+        | SignUpErrorCodes.WeakPassword
+        | SignUpErrorCodes.InvalidEmail
+        | SignUpErrorCodes.PasswordMismatch
+        | SignUpErrorCodes.TermsNotAccepted;
+      message: string;
+      errors: ValidationErrors<SignUpRequest>;
+    }
+  | {
+      errorCode: SignUpErrorCodes.RateLimitExceeded;
+      message: string;
+    };
 
 export type RefreshTokenRequest = {
   refreshToken: string;

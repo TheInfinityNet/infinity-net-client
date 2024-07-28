@@ -6,7 +6,12 @@ import {
   SignInErrorResponse,
   SignInRequest,
   SignInResponse,
+  SignUpErrorCodes,
+  SignUpErrorResponse,
+  SignUpRequest,
+  SignUpResponse,
 } from "../../lib/api/services/auth.service";
+import { generateUser } from "../generators";
 
 export const authHandlers = [
   http.post<
@@ -95,11 +100,7 @@ export const authHandlers = [
             accessToken: "access-token",
             refreshToken: "refresh-token",
           },
-          user: {
-            id: "user-id",
-            email,
-            name: "User",
-          },
+          user: generateUser(),
         },
         {
           status: HttpStatusCode.Ok,
@@ -141,6 +142,167 @@ export const authHandlers = [
       },
       {
         status: HttpStatusCode.Unauthorized,
+      },
+    );
+  }),
+
+  http.post<
+    PathParams,
+    SignUpRequest,
+    SignUpResponse | SignUpErrorResponse,
+    AuthEndpoints.SignUp
+  >(AuthEndpoints.SignUp, async ({ request }) => {
+    const {
+      firstName,
+      lastName,
+      middleName,
+      email,
+      password,
+      passwordConfirmation,
+      mobileNumber,
+      birthdate,
+      gender,
+      termsAccepted,
+    } = await request.json();
+
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !password ||
+      !passwordConfirmation ||
+      !mobileNumber ||
+      !birthdate ||
+      !gender ||
+      termsAccepted === undefined
+    ) {
+      return HttpResponse.json(
+        {
+          errorCode: SignUpErrorCodes.ValidationError,
+          message: "Validation error",
+          errors: {
+            ...(firstName ? {} : { firstName: ["First name is required"] }),
+            ...(lastName ? {} : { lastName: ["Last name is required"] }),
+            ...(email ? {} : { email: ["Email is required"] }),
+            ...(password ? {} : { password: ["Password is required"] }),
+            ...(passwordConfirmation
+              ? {}
+              : {
+                  passwordConfirmation: ["Password confirmation is required"],
+                }),
+            ...(mobileNumber
+              ? {}
+              : { mobileNumber: ["Mobile number is required"] }),
+            ...(birthdate ? {} : { birthdate: ["Birthdate is required"] }),
+            ...(gender ? {} : { gender: ["Gender is required"] }),
+            ...(termsAccepted === undefined
+              ? { termsAccepted: ["Terms acceptance is required"] }
+              : {}),
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (password !== passwordConfirmation) {
+      return HttpResponse.json(
+        {
+          errorCode: SignUpErrorCodes.PasswordMismatch,
+          errors: {
+            passwordConfirmation: ["Passwords do not match"],
+          },
+          message: "Passwords do not match",
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (email === "existing@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: SignUpErrorCodes.EmailAlreadyInUse,
+          message: "Email is already in use",
+          errors: {
+            email: ["Email is already in use"],
+          },
+        },
+        {
+          status: HttpStatusCode.Conflict,
+        },
+      );
+    }
+
+    if (password.length < 6) {
+      return HttpResponse.json(
+        {
+          errorCode: SignUpErrorCodes.WeakPassword,
+          message: "Password is too weak",
+          errors: {
+            password: ["Password is too weak"],
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (!/^[\w-]+@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
+      return HttpResponse.json(
+        {
+          errorCode: SignUpErrorCodes.InvalidEmail,
+          message: "Invalid email address",
+          errors: {
+            email: ["Invalid email address"],
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (!termsAccepted) {
+      return HttpResponse.json(
+        {
+          errorCode: SignUpErrorCodes.TermsNotAccepted,
+          message: "You must accept the terms and conditions",
+          errors: {
+            termsAccepted: ["You must accept the terms and conditions"],
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    return HttpResponse.json(
+      {
+        tokens: {
+          accessToken: "access-token",
+          refreshToken: "refresh-token",
+        },
+        user: {
+          id: "user-id",
+          firstName,
+          lastName,
+          email,
+          name: `${firstName} ${lastName + (middleName ? ` ${middleName}` : "")}`,
+          mobileNumber,
+          birthdate,
+          middleName,
+          gender,
+          password,
+          termsAccepted,
+        },
+      },
+      {
+        status: HttpStatusCode.Created,
       },
     );
   }),
