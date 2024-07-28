@@ -57,15 +57,12 @@ export type SignUpRequest = {
   firstName: string;
   lastName: string;
   middleName: string;
-
   email: string;
   password: string;
   passwordConfirmation: string;
   mobileNumber: string;
-
   birthdate: string;
   gender: string;
-
   termsAccepted: boolean;
 };
 
@@ -110,6 +107,28 @@ export type RefreshTokenRequest = {
 
 export type RefreshTokenResponse = {
   accessToken: string;
+};
+
+export enum RefreshTokenErrorCodes {
+  TokenExpired = "auth/token-expired",
+  InvalidToken = "auth/invalid-token",
+  TokenRevoked = "auth/token-revoked",
+  UserNotFound = "auth/user-not-found",
+  TokenBlacklisted = "auth/token-blacklisted",
+  InvalidSignature = "auth/invalid-signature",
+  RateLimitExceeded = "auth/rate-limit-exceeded",
+}
+
+export type RefreshTokenErrorResponse = {
+  errorCode:
+    | RefreshTokenErrorCodes.TokenExpired
+    | RefreshTokenErrorCodes.InvalidToken
+    | RefreshTokenErrorCodes.TokenRevoked
+    | RefreshTokenErrorCodes.UserNotFound
+    | RefreshTokenErrorCodes.TokenBlacklisted
+    | RefreshTokenErrorCodes.InvalidSignature
+    | RefreshTokenErrorCodes.RateLimitExceeded;
+  message: string;
 };
 
 const signIn = (data: SignInRequest) =>

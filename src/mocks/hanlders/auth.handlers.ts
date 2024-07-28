@@ -2,6 +2,10 @@ import { HttpStatusCode } from "axios";
 import { http, HttpResponse, PathParams } from "msw";
 import {
   AuthEndpoints,
+  RefreshTokenErrorCodes,
+  RefreshTokenErrorResponse,
+  RefreshTokenRequest,
+  RefreshTokenResponse,
   SignInErrorCodes,
   SignInErrorResponse,
   SignInRequest,
@@ -303,6 +307,109 @@ export const authHandlers = [
       },
       {
         status: HttpStatusCode.Created,
+      },
+    );
+  }),
+
+  http.post<
+    PathParams,
+    RefreshTokenRequest,
+    RefreshTokenResponse | RefreshTokenErrorResponse,
+    AuthEndpoints.RefreshToken
+  >(AuthEndpoints.RefreshToken, async ({ request }) => {
+    const { refreshToken } = await request.json();
+
+    if (!refreshToken) {
+      return HttpResponse.json(
+        {
+          errorCode: RefreshTokenErrorCodes.InvalidToken,
+          message: "Invalid refresh token",
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (refreshToken === "expired-token") {
+      return HttpResponse.json(
+        {
+          errorCode: RefreshTokenErrorCodes.TokenExpired,
+          message: "Refresh token has expired",
+        },
+        {
+          status: HttpStatusCode.Unauthorized,
+        },
+      );
+    }
+
+    if (refreshToken === "revoked-token") {
+      return HttpResponse.json(
+        {
+          errorCode: RefreshTokenErrorCodes.TokenRevoked,
+          message: "Refresh token has been revoked",
+        },
+        {
+          status: HttpStatusCode.Unauthorized,
+        },
+      );
+    }
+
+    if (refreshToken === "blacklisted-token") {
+      return HttpResponse.json(
+        {
+          errorCode: RefreshTokenErrorCodes.TokenBlacklisted,
+          message: "Refresh token is blacklisted",
+        },
+        {
+          status: HttpStatusCode.Unauthorized,
+        },
+      );
+    }
+
+    if (refreshToken === "invalid-signature") {
+      return HttpResponse.json(
+        {
+          errorCode: RefreshTokenErrorCodes.InvalidSignature,
+          message: "Invalid token signature",
+        },
+        {
+          status: HttpStatusCode.Unauthorized,
+        },
+      );
+    }
+
+    if (refreshToken === "not-found") {
+      return HttpResponse.json(
+        {
+          errorCode: RefreshTokenErrorCodes.UserNotFound,
+          message: "User not found",
+        },
+        {
+          status: HttpStatusCode.NotFound,
+        },
+      );
+    }
+
+    if (refreshToken === "rate-limit") {
+      return HttpResponse.json(
+        {
+          errorCode: RefreshTokenErrorCodes.RateLimitExceeded,
+          message: "Rate limit exceeded",
+        },
+        {
+          status: HttpStatusCode.TooManyRequests,
+        },
+      );
+    }
+
+    return HttpResponse.json(
+      {
+        message: "Token refreshed",
+        accessToken: "new-access-token",
+      },
+      {
+        status: HttpStatusCode.Ok,
       },
     );
   }),
