@@ -6,12 +6,63 @@ import axios, {
 } from "axios";
 import { useAuthStore } from "@/stores/auth.store";
 
-export interface Result<T = any> {
-  status: HttpStatusCode;
-  data?: T;
-}
+export type Response<TStatusCode extends HttpStatusCode, TData = unknown> = {
+  statusCode: TStatusCode;
+  data: TData;
+};
 
-const axiosInstance = axios.create({
+export type UnprocessableEntityResponse<T = unknown> = Response<
+  HttpStatusCode.UnprocessableEntity,
+  {
+    errors: {
+      [key in keyof T]?: string[];
+    };
+  }
+>;
+
+export type BadRequestResponse = Response<
+  HttpStatusCode.BadRequest,
+  {
+    message: string;
+  }
+>;
+
+export type UnauthorizedResponse = Response<
+  HttpStatusCode.Unauthorized,
+  {
+    message: string;
+  }
+>;
+
+export type ForbiddenResponse = Response<
+  HttpStatusCode.Forbidden,
+  {
+    message: string;
+  }
+>;
+
+export type LockedResponse = Response<
+  HttpStatusCode.Locked,
+  {
+    message: string;
+  }
+>;
+
+export type PreconditionFailedResponse = Response<
+  HttpStatusCode.PreconditionFailed,
+  {
+    message: string;
+  }
+>;
+
+export type PreconditionRequiredResponse = Response<
+  HttpStatusCode.PreconditionRequired,
+  {
+    message: string;
+  }
+>;
+
+export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
   timeout: 50000,
   headers: { "Content-Type": "application/json;charset=utf-8" },

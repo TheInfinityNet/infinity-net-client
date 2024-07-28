@@ -10,4 +10,4 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   </React.StrictMode>,
 );
 
-worker.start({ onUnhandledRequest: "bypass" });
+worker.start({ onUnhandledRequest: "bypass", waitUntilReady: true });

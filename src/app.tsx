@@ -8,6 +8,7 @@ import { SignInPage } from "./routes/pages/sign-in.page";
 import { SignUpPage } from "./routes/pages/sign-up.page";
 import { MessagesPage } from "./routes/pages/messages.page";
 import { LandingPage } from "./routes/pages/landing.page";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const router = createBrowserRouter([
   {
@@ -38,10 +39,14 @@ const router = createBrowserRouter([
   },
 ]);
 
+const queryClient = new QueryClient();
+
 export function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }

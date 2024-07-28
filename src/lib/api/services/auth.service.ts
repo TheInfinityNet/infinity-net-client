@@ -1,4 +1,14 @@
-import apiClient from "../api-client";
+import { HttpStatusCode } from "axios";
+import apiClient, {
+  BadRequestResponse,
+  ForbiddenResponse,
+  LockedResponse,
+  PreconditionFailedResponse,
+  PreconditionRequiredResponse,
+  Response,
+  UnauthorizedResponse,
+  UnprocessableEntityResponse,
+} from "../api-client";
 import { User } from "../types/user.type";
 
 export enum AuthEndpoints {
@@ -13,13 +23,24 @@ export type SignInRequest = {
   password: string;
 };
 
-export type SignInResponse = {
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
-  user: User;
-};
+export type SignInResponse = Response<
+  HttpStatusCode.Ok,
+  {
+    tokens: {
+      accessToken: string;
+      refreshToken: string;
+    };
+    user: User;
+  }
+>;
+
+export type SignInErrorResponse =
+  | UnprocessableEntityResponse<SignInRequest>
+  | BadRequestResponse
+  | UnauthorizedResponse
+  | ForbiddenResponse
+  | LockedResponse
+  | PreconditionRequiredResponse;
 
 export type SignUpRequest = {
   email: string;
@@ -27,13 +48,16 @@ export type SignUpRequest = {
   name: string;
 };
 
-export type SignUpResponse = {
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
-  user: User;
-};
+export type SignUpResponse = Response<
+  HttpStatusCode.Created,
+  {
+    tokens: {
+      accessToken: string;
+      refreshToken: string;
+    };
+    user: User;
+  }
+>;
 
 export type RefreshTokenRequest = {
   refreshToken: string;
