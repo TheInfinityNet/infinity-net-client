@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "axios";
+import { AxiosResponse, HttpStatusCode } from "axios";
 import apiClient, {
   BadRequestResponse,
   ForbiddenResponse,
@@ -68,14 +68,14 @@ export type RefreshTokenResponse = {
 };
 
 const signIn = (data: SignInRequest) =>
-  apiClient.post<SignInResponse>({
+  apiClient.post<AxiosResponse<SignInResponse>>({
     url: AuthEndpoints.SignIn,
     data,
     headers: { "No-Auth": true },
   });
 
 const signUp = (data: SignUpRequest) =>
-  apiClient.post<SignUpResponse>({
+  apiClient.post<AxiosResponse<SignUpResponse>>({
     url: AuthEndpoints.SignUp,
     data,
     headers: { "No-Auth": true },
@@ -87,7 +87,7 @@ const signOut = () =>
   });
 
 const refreshToken = (data: RefreshTokenRequest) =>
-  apiClient.post<RefreshTokenResponse>({
+  apiClient.post<AxiosResponse<RefreshTokenResponse>>({
     url: AuthEndpoints.RefreshToken,
     data,
     headers: { "No-Auth": true },

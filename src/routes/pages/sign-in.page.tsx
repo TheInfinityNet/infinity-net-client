@@ -23,9 +23,11 @@ import {
 import { useMutation } from "react-query";
 import authService, {
   SignInErrorResponse,
-  SignInResponse,
 } from "@/lib/api/services/auth.service";
 import axios, { HttpStatusCode } from "axios";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/stores/auth.store";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -41,11 +43,23 @@ export function SignInPage() {
     },
   });
 
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const { setAccessToken, setRefreshToken } = useAuthStore.getState();
+
   const signIn = useMutation(async (values: z.infer<typeof signInSchema>) => {
     try {
       const response = await authService.signIn(values);
+      console.log(response.data.data.tokens.accessToken);
 
-      console.log(response);
+      setAccessToken(response.data.data.tokens.accessToken);
+      setRefreshToken(response.data.data.tokens.refreshToken);
+
+      toast({
+        title: "Sign In Successful",
+        description: "You have successfully signed in.",
+      });
+      navigate("/");
     } catch (error) {
       if (axios.isAxiosError<SignInErrorResponse>(error)) {
         switch (error.response?.data.statusCode) {
@@ -58,11 +72,12 @@ export function SignInPage() {
                 });
               },
             );
-
             break;
           default:
-            console.log("Unknown error");
-            break;
+            toast({
+              title: "Sign In Failed",
+              description: error.response?.data.data.message,
+            });
         }
       }
     }
