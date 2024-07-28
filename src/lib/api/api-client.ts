@@ -1,6 +1,10 @@
 import axios, { AxiosError } from "axios";
 import { useAuthStore } from "@/stores/auth.store";
 
+export type ValidationErrors<T> = {
+  [K in keyof T]?: string[];
+};
+
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
   timeout: 50000,

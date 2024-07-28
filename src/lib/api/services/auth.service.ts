@@ -1,5 +1,5 @@
 import { User } from "../types/user.type";
-import apiClient from "../api-client";
+import apiClient, { ValidationErrors } from "../api-client";
 
 export enum AuthEndpoints {
   SignIn = "/auth/signin",
@@ -20,6 +20,38 @@ export type SignInResponse = {
   };
   user: User;
 };
+
+export enum SignInErrorCodes {
+  ValidationError = "auth/validation-error",
+  InvalidEmail = "auth/invalid-email",
+  WrongPassword = "auth/wrong-password",
+  UserDisabled = "auth/user-disabled",
+  UserNotFound = "auth/user-not-found",
+  TooManyRequests = "auth/too-many-requests",
+  ExpiredPassword = "auth/expired-password",
+  TwoFactorRequired = "auth/two-factor-required",
+  TokenInvalid = "auth/token-invalid",
+}
+
+export type SignInErrorResponse =
+  | {
+      errorCode:
+        | SignInErrorCodes.ValidationError
+        | SignInErrorCodes.InvalidEmail
+        | SignInErrorCodes.WrongPassword
+        | SignInErrorCodes.ExpiredPassword;
+      message: string;
+      errors: ValidationErrors<SignInRequest>;
+    }
+  | {
+      errorCode:
+        | SignInErrorCodes.UserDisabled
+        | SignInErrorCodes.UserNotFound
+        | SignInErrorCodes.TooManyRequests
+        | SignInErrorCodes.TwoFactorRequired
+        | SignInErrorCodes.TokenInvalid;
+      message: string;
+    };
 
 export type SignUpRequest = {
   email: string;

@@ -21,10 +21,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useMutation } from "react-query";
-import authService from "@/lib/api/services/auth.service";
+import authService, {
+  SignInErrorCodes,
+  SignInErrorResponse,
+} from "@/lib/api/services/auth.service";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store";
+import axios from "axios";
+import { f } from "node_modules/msw/lib/core/HttpResponse-B58aIqZM";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -58,10 +63,46 @@ export function SignInPage() {
 
       navigate("/");
     } catch (error) {
-      toast({
-        title: "Sign In Failed",
-        description: "Please check your email and password.",
-      });
+      if (axios.isAxiosError<SignInErrorResponse>(error)) {
+        switch (error.response?.data.errorCode) {
+          case SignInErrorCodes.ValidationError:
+          case SignInErrorCodes.WrongPassword:
+          case SignInErrorCodes.InvalidEmail:
+          case SignInErrorCodes.ExpiredPassword:
+            Object.entries(error.response.data.errors).forEach(
+              ([field, message]) => {
+                form.setError(field as any, {
+                  type: "validate",
+                  message: message[0],
+                });
+              },
+            );
+
+            toast({
+              title: "Sign In Failed",
+              description: "Please check the errors and try again.",
+            });
+
+            break;
+          default:
+            return toast({
+              title: "Sign In Failed",
+              description:
+                error.response?.data.message ||
+                "Something went wrong. Please try again.",
+            });
+        }
+      } else if (error instanceof Error) {
+        toast({
+          title: "Sign In Failed",
+          description: error.message,
+        });
+      } else {
+        toast({
+          title: "Sign In Failed",
+          description: "An unknown error occurred.",
+        });
+      }
     }
   });
 
