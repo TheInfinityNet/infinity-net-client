@@ -1,15 +1,5 @@
-import { AxiosResponse, HttpStatusCode } from "axios";
-import apiClient, {
-  BadRequestResponse,
-  ForbiddenResponse,
-  LockedResponse,
-  PreconditionFailedResponse,
-  PreconditionRequiredResponse,
-  Response,
-  UnauthorizedResponse,
-  UnprocessableEntityResponse,
-} from "../api-client";
 import { User } from "../types/user.type";
+import apiClient from "../api-client";
 
 export enum AuthEndpoints {
   SignIn = "/auth/signin",
@@ -23,24 +13,13 @@ export type SignInRequest = {
   password: string;
 };
 
-export type SignInResponse = Response<
-  HttpStatusCode.Ok,
-  {
-    tokens: {
-      accessToken: string;
-      refreshToken: string;
-    };
-    user: User;
-  }
->;
-
-export type SignInErrorResponse =
-  | UnprocessableEntityResponse<SignInRequest>
-  | BadRequestResponse
-  | UnauthorizedResponse
-  | ForbiddenResponse
-  | LockedResponse
-  | PreconditionRequiredResponse;
+export type SignInResponse = {
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  };
+  user: User;
+};
 
 export type SignUpRequest = {
   email: string;
@@ -48,16 +27,13 @@ export type SignUpRequest = {
   name: string;
 };
 
-export type SignUpResponse = Response<
-  HttpStatusCode.Created,
-  {
-    tokens: {
-      accessToken: string;
-      refreshToken: string;
-    };
-    user: User;
-  }
->;
+export type SignUpResponse = {
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  };
+  user: User;
+};
 
 export type RefreshTokenRequest = {
   refreshToken: string;
@@ -68,28 +44,19 @@ export type RefreshTokenResponse = {
 };
 
 const signIn = (data: SignInRequest) =>
-  apiClient.post<AxiosResponse<SignInResponse>>({
-    url: AuthEndpoints.SignIn,
-    data,
+  apiClient.post<SignInResponse>(AuthEndpoints.SignIn, data, {
     headers: { "No-Auth": true },
   });
 
 const signUp = (data: SignUpRequest) =>
-  apiClient.post<AxiosResponse<SignUpResponse>>({
-    url: AuthEndpoints.SignUp,
-    data,
+  apiClient.post<SignUpResponse>(AuthEndpoints.SignUp, data, {
     headers: { "No-Auth": true },
   });
 
-const signOut = () =>
-  apiClient.delete<void>({
-    url: AuthEndpoints.SignOut,
-  });
+const signOut = () => apiClient.delete<void>(AuthEndpoints.SignOut);
 
 const refreshToken = (data: RefreshTokenRequest) =>
-  apiClient.post<AxiosResponse<RefreshTokenResponse>>({
-    url: AuthEndpoints.RefreshToken,
-    data,
+  apiClient.post<RefreshTokenResponse>(AuthEndpoints.RefreshToken, data, {
     headers: { "No-Auth": true },
   });
 

@@ -2,58 +2,47 @@ import { HttpStatusCode } from "axios";
 import { http, HttpResponse, PathParams } from "msw";
 import {
   AuthEndpoints,
-  SignInErrorResponse,
   SignInRequest,
   SignInResponse,
 } from "../../lib/api/services/auth.service";
 
 export const authHandlers = [
-  http.post<
-    PathParams,
-    SignInRequest,
-    SignInResponse | SignInErrorResponse,
-    AuthEndpoints.SignIn
-  >(AuthEndpoints.SignIn, async ({ request }) => {
-    const { email, password } = await request.json();
+  http.post<PathParams, SignInRequest, SignInResponse, AuthEndpoints.SignIn>(
+    AuthEndpoints.SignIn,
+    async ({ request }) => {
+      const { email, password } = await request.json();
 
-    if (!email || !password) {
-      return HttpResponse.json(
-        {
-          statusCode: HttpStatusCode.UnprocessableEntity,
-          data: {
+      if (!email || !password) {
+        return HttpResponse.json(
+          {
             errors: {
               ...(email ? {} : { email: ["Email is required"] }),
               ...(password ? {} : { password: ["Password is required"] }),
             },
           },
-        },
-        {
-          status: HttpStatusCode.BadRequest,
-        },
-      );
-    }
+          {
+            status: HttpStatusCode.BadRequest,
+          },
+        );
+      }
 
-    if (email === "invalidation@infinity.net" && password === "password") {
-      return HttpResponse.json(
-        {
-          statusCode: HttpStatusCode.UnprocessableEntity,
-          data: {
+      if (email === "invalidation@infinity.net" && password === "password") {
+        return HttpResponse.json(
+          {
             errors: {
               email: ["Email is invalid"],
               password: ["Password is invalid"],
             },
           },
-        },
-        {
-          status: HttpStatusCode.UnprocessableEntity,
-        },
-      );
-    }
+          {
+            status: HttpStatusCode.UnprocessableEntity,
+          },
+        );
+      }
 
-    if (email === "ok@infinity.net" && password === "password") {
-      return HttpResponse.json(
-        {
-          data: {
+      if (email === "ok@infinity.net" && password === "password") {
+        return HttpResponse.json(
+          {
             tokens: {
               accessToken: "access-token",
               refreshToken: "refresh-token",
@@ -64,94 +53,75 @@ export const authHandlers = [
               name: "User",
             },
           },
-          statusCode: HttpStatusCode.Ok,
-        },
-        {
-          status: HttpStatusCode.Ok,
-        },
-      );
-    }
+          {
+            status: HttpStatusCode.Ok,
+          },
+        );
+      }
 
-    if (email === "forbidden@infinity.net" && password === "password") {
-      return HttpResponse.json(
-        {
-          statusCode: HttpStatusCode.Forbidden,
-          data: {
+      if (email === "forbidden@infinity.net" && password === "password") {
+        return HttpResponse.json(
+          {
             message: "Your account is disabled by the administrator",
           },
-        },
-        {
-          status: HttpStatusCode.Forbidden,
-        },
-      );
-    }
+          {
+            status: HttpStatusCode.Forbidden,
+          },
+        );
+      }
 
-    if (email === "locked@infinity.net" && password === "password") {
-      return HttpResponse.json(
-        {
-          statusCode: HttpStatusCode.Locked,
-          data: {
+      if (email === "locked@infinity.net" && password === "password") {
+        return HttpResponse.json(
+          {
             message: "Your account is locked due to too many failed attempts",
           },
-        },
-        {
-          status: HttpStatusCode.Locked,
-        },
-      );
-    }
+          {
+            status: HttpStatusCode.Locked,
+          },
+        );
+      }
 
-    if (email === "inactive@infinity.net" && password === "password") {
-      return HttpResponse.json(
-        {
-          statusCode: HttpStatusCode.Unauthorized,
-          data: {
+      if (email === "inactive@infinity.net" && password === "password") {
+        return HttpResponse.json(
+          {
             message: "Your account is not activated",
           },
-        },
-        {
-          status: HttpStatusCode.Unauthorized,
-        },
-      );
-    }
+          {
+            status: HttpStatusCode.Unauthorized,
+          },
+        );
+      }
 
-    if (email === "expired@infinity.net" && password === "password") {
-      return HttpResponse.json(
-        {
-          statusCode: HttpStatusCode.Unauthorized,
-          data: {
+      if (email === "expired@infinity.net" && password === "password") {
+        return HttpResponse.json(
+          {
             message: "Your password has expired",
           },
+          {
+            status: HttpStatusCode.Unauthorized,
+          },
+        );
+      }
+
+      if (email === "2fa@infinity.net" && password === "password") {
+        return HttpResponse.json(
+          {
+            message: "Two-factor authentication required",
+          },
+          {
+            status: HttpStatusCode.PreconditionRequired,
+          },
+        );
+      }
+
+      return HttpResponse.json(
+        {
+          message: "Invalid email or password",
         },
         {
           status: HttpStatusCode.Unauthorized,
         },
       );
-    }
-
-    if (email === "2fa@infinity.net" && password === "password") {
-      return HttpResponse.json(
-        {
-          statusCode: HttpStatusCode.PreconditionRequired,
-          data: {
-            message: "Two-factor authentication required",
-          },
-        },
-        {
-          status: HttpStatusCode.PreconditionRequired,
-        },
-      );
-    }
-
-    return HttpResponse.json(
-      {
-        statusCode: HttpStatusCode.Unauthorized,
-        data: {
-          message: "Invalid email or password",
-        },
-      },
-      {
-        status: HttpStatusCode.Unauthorized,
-      },
-    );
-  }),
+    },
+  ),
 ];

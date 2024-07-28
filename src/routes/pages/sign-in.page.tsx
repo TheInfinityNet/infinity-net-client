@@ -21,10 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useMutation } from "react-query";
-import authService, {
-  SignInErrorResponse,
-} from "@/lib/api/services/auth.service";
-import axios, { HttpStatusCode } from "axios";
+import authService from "@/lib/api/services/auth.service";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store";
@@ -50,36 +47,21 @@ export function SignInPage() {
   const signIn = useMutation(async (values: z.infer<typeof signInSchema>) => {
     try {
       const response = await authService.signIn(values);
-      console.log(response.data.data.tokens.accessToken);
 
-      setAccessToken(response.data.data.tokens.accessToken);
-      setRefreshToken(response.data.data.tokens.refreshToken);
+      setAccessToken(response.data.tokens.accessToken);
+      setRefreshToken(response.data.tokens.refreshToken);
 
       toast({
         title: "Sign In Successful",
         description: "You have successfully signed in.",
       });
+
       navigate("/");
     } catch (error) {
-      if (axios.isAxiosError<SignInErrorResponse>(error)) {
-        switch (error.response?.data.statusCode) {
-          case HttpStatusCode.UnprocessableEntity:
-            Object.entries(error.response.data.data.errors).forEach(
-              ([key, value]) => {
-                form.setError(key as keyof typeof values, {
-                  type: "server",
-                  message: value[0],
-                });
-              },
-            );
-            break;
-          default:
-            toast({
-              title: "Sign In Failed",
-              description: error.response?.data.data.message,
-            });
-        }
-      }
+      toast({
+        title: "Sign In Failed",
+        description: "Please check your email and password.",
+      });
     }
   });
 
