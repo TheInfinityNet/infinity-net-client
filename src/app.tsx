@@ -10,6 +10,7 @@ import { MessagesPage } from "./routes/pages/messages.page";
 import { LandingPage } from "./routes/pages/landing.page";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "./components/ui/toaster";
+import { ProfilePage } from "./routes/pages/profile.page";
 
 const router = createBrowserRouter([
   {
@@ -20,10 +21,15 @@ const router = createBrowserRouter([
         index: true,
         element: <HomePage />,
       },
+
+      {
+        path: "profile",
+        element: <ProfilePage />,
+      },
     ],
   },
   {
-    path: "/landing",
+    path: "landing",
     element: <LandingPage />,
   },
   {

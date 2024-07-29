@@ -42,7 +42,7 @@ interface TrendingItemProps {
 
 export function HomePage() {
   return (
-    <>
+    <main className="container grid flex-1 gap-8 px-4 py-8 sm:px-6 md:grid-cols-[240px_1fr_240px]">
       <div className="hidden md:block">
         <div className="sticky top-16 space-y-4">
           <div className="grid gap-2">
@@ -75,7 +75,7 @@ export function HomePage() {
           </div>
         </div>
       </div>
-    </>
+    </main>
   );
 }
 

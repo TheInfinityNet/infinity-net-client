@@ -49,9 +49,7 @@ export function DefaultLayout() {
           </div>
         </div>
       </header>
-      <main className="container grid flex-1 gap-8 px-4 py-8 sm:px-6 md:grid-cols-[240px_1fr_240px]">
-        <Outlet />
-      </main>
+      <Outlet />
       <footer className="border-t bg-background">
         <div className="container flex flex-col items-center justify-between gap-4 px-4 py-6 sm:flex-row sm:py-8">
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
