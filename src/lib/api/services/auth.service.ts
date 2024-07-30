@@ -8,6 +8,37 @@ export enum AuthEndpoints {
   RefreshToken = "/auth/refresh",
 }
 
+export enum AuthErrorCodes {
+  // Validation Errors
+  ValidationError = "auth/validation-error",
+  InvalidEmail = "auth/invalid-email",
+  WeakPassword = "auth/weak-password",
+  PasswordMismatch = "auth/password-mismatch",
+  TermsNotAccepted = "auth/terms-not-accepted",
+
+  // Authentication Errors
+  WrongPassword = "auth/wrong-password",
+  ExpiredPassword = "auth/expired-password",
+  TwoFactorRequired = "auth/two-factor-required",
+
+  // Token Errors
+  TokenInvalid = "auth/token-invalid",
+  TokenExpired = "auth/token-expired",
+  InvalidToken = "auth/invalid-token",
+  TokenRevoked = "auth/token-revoked",
+  TokenBlacklisted = "auth/token-blacklisted",
+  InvalidSignature = "auth/invalid-signature",
+
+  // User Errors
+  UserDisabled = "auth/user-disabled",
+  UserNotFound = "auth/user-not-found",
+  EmailAlreadyInUse = "auth/email-already-in-use",
+
+  // Rate Limiting Errors
+  TooManyRequests = "auth/too-many-requests",
+  RateLimitExceeded = "auth/rate-limit-exceeded",
+}
+
 export type SignInRequest = {
   email: string;
   password: string;
@@ -21,35 +52,23 @@ export type SignInResponse = {
   user: User;
 };
 
-export enum SignInErrorCodes {
-  ValidationError = "auth/validation-error",
-  InvalidEmail = "auth/invalid-email",
-  WrongPassword = "auth/wrong-password",
-  UserDisabled = "auth/user-disabled",
-  UserNotFound = "auth/user-not-found",
-  TooManyRequests = "auth/too-many-requests",
-  ExpiredPassword = "auth/expired-password",
-  TwoFactorRequired = "auth/two-factor-required",
-  TokenInvalid = "auth/token-invalid",
-}
-
 export type SignInErrorResponse =
   | {
       errorCode:
-        | SignInErrorCodes.ValidationError
-        | SignInErrorCodes.InvalidEmail
-        | SignInErrorCodes.WrongPassword
-        | SignInErrorCodes.ExpiredPassword;
+        | AuthErrorCodes.ValidationError
+        | AuthErrorCodes.InvalidEmail
+        | AuthErrorCodes.WrongPassword
+        | AuthErrorCodes.ExpiredPassword;
       message: string;
       errors: ValidationErrors<SignInRequest>;
     }
   | {
       errorCode:
-        | SignInErrorCodes.UserDisabled
-        | SignInErrorCodes.UserNotFound
-        | SignInErrorCodes.TooManyRequests
-        | SignInErrorCodes.TwoFactorRequired
-        | SignInErrorCodes.TokenInvalid;
+        | AuthErrorCodes.UserDisabled
+        | AuthErrorCodes.UserNotFound
+        | AuthErrorCodes.TooManyRequests
+        | AuthErrorCodes.TwoFactorRequired
+        | AuthErrorCodes.TokenInvalid;
       message: string;
     };
 
@@ -74,30 +93,20 @@ export type SignUpResponse = {
   user: User;
 };
 
-export enum SignUpErrorCodes {
-  ValidationError = "auth/validation-error",
-  EmailAlreadyInUse = "auth/email-already-in-use",
-  WeakPassword = "auth/weak-password",
-  InvalidEmail = "auth/invalid-email",
-  PasswordMismatch = "auth/password-mismatch",
-  TermsNotAccepted = "auth/terms-not-accepted",
-  RateLimitExceeded = "auth/rate-limit-exceeded",
-}
-
 export type SignUpErrorResponse =
   | {
       errorCode:
-        | SignUpErrorCodes.ValidationError
-        | SignUpErrorCodes.EmailAlreadyInUse
-        | SignUpErrorCodes.WeakPassword
-        | SignUpErrorCodes.InvalidEmail
-        | SignUpErrorCodes.PasswordMismatch
-        | SignUpErrorCodes.TermsNotAccepted;
+        | AuthErrorCodes.ValidationError
+        | AuthErrorCodes.EmailAlreadyInUse
+        | AuthErrorCodes.WeakPassword
+        | AuthErrorCodes.InvalidEmail
+        | AuthErrorCodes.PasswordMismatch
+        | AuthErrorCodes.TermsNotAccepted;
       message: string;
       errors: ValidationErrors<SignUpRequest>;
     }
   | {
-      errorCode: SignUpErrorCodes.RateLimitExceeded;
+      errorCode: AuthErrorCodes.RateLimitExceeded;
       message: string;
     };
 
@@ -108,26 +117,15 @@ export type RefreshTokenRequest = {
 export type RefreshTokenResponse = {
   accessToken: string;
 };
-
-export enum RefreshTokenErrorCodes {
-  TokenExpired = "auth/token-expired",
-  InvalidToken = "auth/invalid-token",
-  TokenRevoked = "auth/token-revoked",
-  UserNotFound = "auth/user-not-found",
-  TokenBlacklisted = "auth/token-blacklisted",
-  InvalidSignature = "auth/invalid-signature",
-  RateLimitExceeded = "auth/rate-limit-exceeded",
-}
-
 export type RefreshTokenErrorResponse = {
   errorCode:
-    | RefreshTokenErrorCodes.TokenExpired
-    | RefreshTokenErrorCodes.InvalidToken
-    | RefreshTokenErrorCodes.TokenRevoked
-    | RefreshTokenErrorCodes.UserNotFound
-    | RefreshTokenErrorCodes.TokenBlacklisted
-    | RefreshTokenErrorCodes.InvalidSignature
-    | RefreshTokenErrorCodes.RateLimitExceeded;
+    | AuthErrorCodes.TokenExpired
+    | AuthErrorCodes.InvalidToken
+    | AuthErrorCodes.TokenRevoked
+    | AuthErrorCodes.UserNotFound
+    | AuthErrorCodes.TokenBlacklisted
+    | AuthErrorCodes.InvalidSignature
+    | AuthErrorCodes.RateLimitExceeded;
   message: string;
 };
 

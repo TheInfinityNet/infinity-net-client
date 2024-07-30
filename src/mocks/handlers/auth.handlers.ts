@@ -2,15 +2,13 @@ import { HttpStatusCode } from "axios";
 import { http, HttpResponse, PathParams } from "msw";
 import {
   AuthEndpoints,
-  RefreshTokenErrorCodes,
   RefreshTokenErrorResponse,
   RefreshTokenRequest,
   RefreshTokenResponse,
-  SignInErrorCodes,
   SignInErrorResponse,
   SignInRequest,
   SignInResponse,
-  SignUpErrorCodes,
+  AuthErrorCodes,
   SignUpErrorResponse,
   SignUpRequest,
   SignUpResponse,
@@ -29,7 +27,7 @@ export const authHandlers = [
     if (!email || !password) {
       return HttpResponse.json(
         {
-          errorCode: SignInErrorCodes.ValidationError,
+          errorCode: AuthErrorCodes.ValidationError,
           message: "Validation error",
           errors: {
             ...(email ? {} : { email: ["Email is required"] }),
@@ -45,7 +43,7 @@ export const authHandlers = [
     if (email === "invalidation@infinity.net" && password === "password") {
       return HttpResponse.json(
         {
-          errorCode: SignInErrorCodes.ValidationError,
+          errorCode: AuthErrorCodes.ValidationError,
           message: "Validation error",
           errors: {
             email: ["Email is invalid"],
@@ -61,7 +59,7 @@ export const authHandlers = [
     if (email === "expired@infinity.net") {
       return HttpResponse.json(
         {
-          errorCode: SignInErrorCodes.ExpiredPassword,
+          errorCode: AuthErrorCodes.ExpiredPassword,
           message: "Password is expired",
           errors: {
             password: ["Password is expired"],
@@ -76,7 +74,7 @@ export const authHandlers = [
     if (email === "twofactor@infinity.net") {
       return HttpResponse.json(
         {
-          errorCode: SignInErrorCodes.TwoFactorRequired,
+          errorCode: AuthErrorCodes.TwoFactorRequired,
           message: "Two-factor authentication required",
         },
         {
@@ -88,7 +86,7 @@ export const authHandlers = [
     if (email === "token@infinity.net") {
       return HttpResponse.json(
         {
-          errorCode: SignInErrorCodes.TokenInvalid,
+          errorCode: AuthErrorCodes.TokenInvalid,
           message: "Token is invalid",
         },
         {
@@ -115,7 +113,7 @@ export const authHandlers = [
     if (email === "notfound@infinity.net") {
       return HttpResponse.json(
         {
-          errorCode: SignInErrorCodes.UserNotFound,
+          errorCode: AuthErrorCodes.UserNotFound,
           message: "User not found",
         },
         {
@@ -127,7 +125,7 @@ export const authHandlers = [
     if (email === "disabled@infinity.net") {
       return HttpResponse.json(
         {
-          errorCode: SignInErrorCodes.UserDisabled,
+          errorCode: AuthErrorCodes.UserDisabled,
           message: "User account is disabled",
         },
         {
@@ -138,7 +136,7 @@ export const authHandlers = [
 
     return HttpResponse.json(
       {
-        errorCode: SignInErrorCodes.WrongPassword,
+        errorCode: AuthErrorCodes.WrongPassword,
         message: "Incorrect password",
         errors: {
           password: ["Password is incorrect"],
@@ -182,7 +180,7 @@ export const authHandlers = [
     ) {
       return HttpResponse.json(
         {
-          errorCode: SignUpErrorCodes.ValidationError,
+          errorCode: AuthErrorCodes.ValidationError,
           message: "Validation error",
           errors: {
             ...(firstName ? {} : { firstName: ["First name is required"] }),
@@ -213,7 +211,7 @@ export const authHandlers = [
     if (password !== passwordConfirmation) {
       return HttpResponse.json(
         {
-          errorCode: SignUpErrorCodes.PasswordMismatch,
+          errorCode: AuthErrorCodes.PasswordMismatch,
           errors: {
             passwordConfirmation: ["Passwords do not match"],
           },
@@ -228,7 +226,7 @@ export const authHandlers = [
     if (email === "existing@infinity.net") {
       return HttpResponse.json(
         {
-          errorCode: SignUpErrorCodes.EmailAlreadyInUse,
+          errorCode: AuthErrorCodes.EmailAlreadyInUse,
           message: "Email is already in use",
           errors: {
             email: ["Email is already in use"],
@@ -243,7 +241,7 @@ export const authHandlers = [
     if (password.length < 6) {
       return HttpResponse.json(
         {
-          errorCode: SignUpErrorCodes.WeakPassword,
+          errorCode: AuthErrorCodes.WeakPassword,
           message: "Password is too weak",
           errors: {
             password: ["Password is too weak"],
@@ -258,7 +256,7 @@ export const authHandlers = [
     if (!/^[\w-]+@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
       return HttpResponse.json(
         {
-          errorCode: SignUpErrorCodes.InvalidEmail,
+          errorCode: AuthErrorCodes.InvalidEmail,
           message: "Invalid email address",
           errors: {
             email: ["Invalid email address"],
@@ -273,7 +271,7 @@ export const authHandlers = [
     if (!termsAccepted) {
       return HttpResponse.json(
         {
-          errorCode: SignUpErrorCodes.TermsNotAccepted,
+          errorCode: AuthErrorCodes.TermsNotAccepted,
           message: "You must accept the terms and conditions",
           errors: {
             termsAccepted: ["You must accept the terms and conditions"],
@@ -322,7 +320,7 @@ export const authHandlers = [
     if (!refreshToken) {
       return HttpResponse.json(
         {
-          errorCode: RefreshTokenErrorCodes.InvalidToken,
+          errorCode: AuthErrorCodes.InvalidToken,
           message: "Invalid refresh token",
         },
         {
@@ -334,7 +332,7 @@ export const authHandlers = [
     if (refreshToken === "expired-token") {
       return HttpResponse.json(
         {
-          errorCode: RefreshTokenErrorCodes.TokenExpired,
+          errorCode: AuthErrorCodes.TokenExpired,
           message: "Refresh token has expired",
         },
         {
@@ -346,7 +344,7 @@ export const authHandlers = [
     if (refreshToken === "revoked-token") {
       return HttpResponse.json(
         {
-          errorCode: RefreshTokenErrorCodes.TokenRevoked,
+          errorCode: AuthErrorCodes.TokenRevoked,
           message: "Refresh token has been revoked",
         },
         {
@@ -358,7 +356,7 @@ export const authHandlers = [
     if (refreshToken === "blacklisted-token") {
       return HttpResponse.json(
         {
-          errorCode: RefreshTokenErrorCodes.TokenBlacklisted,
+          errorCode: AuthErrorCodes.TokenBlacklisted,
           message: "Refresh token is blacklisted",
         },
         {
@@ -370,7 +368,7 @@ export const authHandlers = [
     if (refreshToken === "invalid-signature") {
       return HttpResponse.json(
         {
-          errorCode: RefreshTokenErrorCodes.InvalidSignature,
+          errorCode: AuthErrorCodes.InvalidSignature,
           message: "Invalid token signature",
         },
         {
@@ -382,7 +380,7 @@ export const authHandlers = [
     if (refreshToken === "not-found") {
       return HttpResponse.json(
         {
-          errorCode: RefreshTokenErrorCodes.UserNotFound,
+          errorCode: AuthErrorCodes.UserNotFound,
           message: "User not found",
         },
         {
@@ -394,7 +392,7 @@ export const authHandlers = [
     if (refreshToken === "rate-limit") {
       return HttpResponse.json(
         {
-          errorCode: RefreshTokenErrorCodes.RateLimitExceeded,
+          errorCode: AuthErrorCodes.RateLimitExceeded,
           message: "Rate limit exceeded",
         },
         {

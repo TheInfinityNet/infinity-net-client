@@ -22,14 +22,13 @@ import {
 } from "@/components/ui/form";
 import { useMutation } from "react-query";
 import authService, {
-  SignInErrorCodes,
+  AuthErrorCodes,
   SignInErrorResponse,
 } from "@/lib/api/services/auth.service";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store";
 import axios from "axios";
-import { f } from "node_modules/msw/lib/core/HttpResponse-B58aIqZM";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -65,10 +64,10 @@ export function SignInPage() {
     } catch (error) {
       if (axios.isAxiosError<SignInErrorResponse>(error)) {
         switch (error.response?.data.errorCode) {
-          case SignInErrorCodes.ValidationError:
-          case SignInErrorCodes.WrongPassword:
-          case SignInErrorCodes.InvalidEmail:
-          case SignInErrorCodes.ExpiredPassword:
+          case AuthErrorCodes.ValidationError:
+          case AuthErrorCodes.WrongPassword:
+          case AuthErrorCodes.InvalidEmail:
+          case AuthErrorCodes.ExpiredPassword:
             Object.entries(error.response.data.errors).forEach(
               ([field, message]) => {
                 form.setError(field as any, {
