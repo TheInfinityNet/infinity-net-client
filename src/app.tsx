@@ -14,6 +14,8 @@ import { ProfilePage } from "./routes/pages/profile.page";
 import { WelcomePage } from "./routes/pages/welcome.page";
 import { AuthLayout } from "./routes/layouts/auth.layout";
 import { EmailVerificationPage } from "./routes/pages/email-verification.page";
+import { ForgotPasswordPage } from "./routes/pages/forgot-password.page";
+import { ResetPasswordPage } from "./routes/pages/reset-password.page";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +45,14 @@ const router = createBrowserRouter([
         element: <SignUpPage />,
       },
       {
+        path: "reset-password",
+        element: <ResetPasswordPage />,
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPasswordPage />,
+      },
+      {
         path: "email-verification",
         element: <EmailVerificationPage />,
       },
@@ -67,7 +77,7 @@ const queryClient = new QueryClient();
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="ui-theme">
         <RouterProvider router={router} />
         <Toaster />
       </ThemeProvider>
