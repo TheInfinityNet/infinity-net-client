@@ -21,7 +21,7 @@ export function DefaultLayout() {
             <Link href="/explore" className="nav-link">
               Explore
             </Link>
-            <Link href="/notification" className="nav-link">
+            <Link href="/notifications" className="nav-link">
               Notifications
             </Link>
             <Link href="/messages" className="nav-link">

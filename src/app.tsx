@@ -16,6 +16,7 @@ import { AuthLayout } from "./routes/layouts/auth.layout";
 import { EmailVerificationPage } from "./routes/pages/email-verification.page";
 import { ForgotPasswordPage } from "./routes/pages/forgot-password.page";
 import { ResetPasswordPage } from "./routes/pages/reset-password.page";
+import { NotificationPage } from "./routes/pages/notifications.page";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "notifications",
+        element: <NotificationPage />,
       },
     ],
   },
