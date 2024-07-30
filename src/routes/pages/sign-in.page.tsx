@@ -29,6 +29,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store";
 import axios from "axios";
+import { Link } from "@/components/link";
+import { Separator } from "@/components/ui/separator";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -112,7 +114,7 @@ export function SignInPage() {
   return (
     <div className="flex h-screen items-center justify-center bg-background">
       <Card className="mx-auto w-full max-w-md space-y-6">
-        <CardHeader>
+        <CardHeader className="pb-0">
           <CardTitle>Sign In</CardTitle>
           <CardDescription>
             Enter your email and password to sign in or use one of the options
@@ -120,7 +122,7 @@ export function SignInPage() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 py-0">
           <Form {...form}>
             <form onSubmit={onSubmit}>
               <FormField
@@ -133,7 +135,7 @@ export function SignInPage() {
                       <Input placeholder="example@infinity.net" {...field} />
                     </FormControl>
                     <FormDescription>
-                      This is the email you used to sign up.
+                      Enter the email address associated with your account.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -166,9 +168,11 @@ export function SignInPage() {
               </div>
             </form>
           </Form>
-        </CardContent>
 
-        <CardFooter className="flex-col px-4 gap-2">
+          <span className="inline-block text-sm text-center w-full text-muted-foreground">
+            Or sign in with social media
+          </span>
+
           <Button variant="outline" className="w-full">
             Sign In with Google
           </Button>
@@ -178,6 +182,23 @@ export function SignInPage() {
           <Button variant="outline" className="w-full">
             Sign In with Twitter
           </Button>
+        </CardContent>
+
+        <CardFooter className="flex-col mt-0 gap-2">
+          <div className="flex items-center justify-between w-full mt-4">
+            <Link
+              href="/forgot-password"
+              className="text-sm hover:text-primary"
+            >
+              Forgot Password?
+            </Link>
+            <span className="text-sm">
+              Don't have an account?{" "}
+              <Link href="/sign-up" className="hover:text-primary">
+                Sign Up
+              </Link>
+            </span>
+          </div>
         </CardFooter>
       </Card>
     </div>

@@ -12,6 +12,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "./components/ui/toaster";
 import { ProfilePage } from "./routes/pages/profile.page";
 import { WelcomePage } from "./routes/pages/welcome.page";
+import { AuthLayout } from "./routes/layouts/auth.layout";
+import { EmailVerificationPage } from "./routes/pages/email-verification.page";
 
 const router = createBrowserRouter([
   {
@@ -22,10 +24,31 @@ const router = createBrowserRouter([
         index: true,
         element: <HomePage />,
       },
-
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+    ],
+  },
+  {
+    path: "",
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "sign-in",
+        element: <SignInPage />,
+      },
+      {
+        path: "sign-up",
+        element: <SignUpPage />,
+      },
+      {
+        path: "email-verification",
+        element: <EmailVerificationPage />,
+      },
+      {
+        path: "welcome",
+        element: <WelcomePage />,
       },
     ],
   },
@@ -34,20 +57,8 @@ const router = createBrowserRouter([
     element: <LandingPage />,
   },
   {
-    path: "sign-in",
-    element: <SignInPage />,
-  },
-  {
-    path: "sign-up",
-    element: <SignUpPage />,
-  },
-  {
     path: "messages",
     element: <MessagesPage />,
-  },
-  {
-    path: "welcome",
-    element: <WelcomePage />,
   },
 ]);
 
