@@ -11,6 +11,7 @@ import { LandingPage } from "./routes/pages/landing.page";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "./components/ui/toaster";
 import { ProfilePage } from "./routes/pages/profile.page";
+import { WelcomePage } from "./routes/pages/welcome.page";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
   {
     path: "messages",
     element: <MessagesPage />,
+  },
+  {
+    path: "welcome",
+    element: <WelcomePage />,
   },
 ]);
 
