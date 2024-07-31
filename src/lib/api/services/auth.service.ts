@@ -241,6 +241,27 @@ export type ForgotPasswordErrorResponse =
       message: string;
     };
 
+export type ResetPasswordRequest = {
+  token: string;
+  password: string;
+  passwordConfirmation: string;
+};
+export type ResetPasswordResponse = {
+  message: string;
+};
+export type ResetPasswordErrorResponse =
+  | {
+      errorCode: AuthErrorCodes.ValidationError;
+      errors: ValidationErrors<ResetPasswordRequest>;
+    }
+  | {
+      errorCode:
+        | AuthErrorCodes.TokenInvalid
+        | AuthErrorCodes.TokenExpired
+        | AuthErrorCodes.TokenRevoked;
+      message: string;
+    };
+
 const signIn = (data: SignInRequest) =>
   apiClient.post<SignInResponse>(AuthEndpoints.SignIn, data, {
     headers: { "No-Auth": true },
@@ -299,6 +320,11 @@ const forgotPassword = (data: ForgotPasswordRequest) =>
     headers: { "No-Auth": true },
   });
 
+const resetPassword = (data: ResetPasswordRequest) =>
+  apiClient.post<ResetPasswordResponse>(AuthEndpoints.ResetPassword, data, {
+    headers: { "No-Auth": true },
+  });
+
 export default {
   signIn,
   signUp,
@@ -309,4 +335,5 @@ export default {
   verifyEmailByToken,
   sendEmailForgotPassword,
   forgotPassword,
+  resetPassword,
 };

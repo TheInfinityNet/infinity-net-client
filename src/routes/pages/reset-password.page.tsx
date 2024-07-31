@@ -21,57 +21,71 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { z } from "zod";
-import { useNavigate, useParams } from "react-router-dom";
-// import authService from "@/lib/api/services/auth.service";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import authService, {
+  AuthErrorCodes,
+  ResetPasswordErrorResponse,
+} from "@/lib/api/services/auth.service";
+import axios from "axios";
+import { setFormError } from "@/lib/utils";
 
 const resetPasswordSchema = z.object({
+  token: z.string().uuid(),
   password: z.string().min(8),
-  confirmPassword: z.string().min(8),
+  passwordConfirmation: z.string().min(8),
 });
 
 export function ResetPasswordPage() {
-  const { token } = useParams<{ token: string }>();
+  const [urlSearchParams] = useSearchParams();
+  const token = urlSearchParams.get("token") || "";
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
+      token,
       password: "",
-      confirmPassword: "",
+      passwordConfirmation: "",
     },
   });
 
-  const resetPasswordMutation = useMutation(
-    async (values: z.infer<typeof resetPasswordSchema>) => {
-      // await authService.resetPassword(token!, values.password);
-      console.log(token, values.password);
+  const resetPasswordMutation = useMutation({
+    mutationFn: authService.resetPassword,
+    onSuccess(data) {
+      const { message } = data.data;
+      toast({
+        title: "Password Reset Successful",
+        description: message,
+      });
+      navigate("/sign-in");
     },
-    {
-      onSuccess() {
+    onError(error) {
+      if (axios.isAxiosError<ResetPasswordErrorResponse>(error)) {
+        switch (error.response?.data.errorCode) {
+          case AuthErrorCodes.ValidationError:
+            setFormError(form, error.response.data.errors);
+            toast({
+              title: "Reset Password Error",
+              description: "Please check the form for errors.",
+            });
+            break;
+          default:
+            toast({
+              title: "Reset Password Error",
+              description: error.response?.data.message || "An error occurred.",
+            });
+            break;
+        }
+      } else {
         toast({
-          title: "Password Reset Successful",
-          description: "You can now log in with your new password.",
+          title: "Reset Password Error",
+          description: "An error occurred.",
         });
-        navigate("/sign-in");
-      },
-      onError() {
-        toast({
-          title: "Password Reset Failed",
-          description:
-            "There was an issue resetting your password. Please try again.",
-        });
-      },
+      }
     },
-  );
+  });
 
   const onSubmit = form.handleSubmit((values) => {
-    if (values.password !== values.confirmPassword) {
-      toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match. Please try again.",
-      });
-      return;
-    }
     resetPasswordMutation.mutate(values);
   });
 
@@ -84,6 +98,26 @@ export function ResetPasswordPage() {
       <CardContent className="space-y-4">
         <Form {...form}>
           <form onSubmit={onSubmit}>
+            <FormField
+              control={form.control}
+              name="token"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Token</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="00000000-0000-0000-0000-000000000000"
+                      disabled
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    This is the token you received in your email.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="password"
@@ -107,7 +141,7 @@ export function ResetPasswordPage() {
 
             <FormField
               control={form.control}
-              name="confirmPassword"
+              name="passwordConfirmation"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>

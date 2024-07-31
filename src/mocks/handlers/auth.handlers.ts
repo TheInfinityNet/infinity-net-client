@@ -24,6 +24,12 @@ import {
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   ForgotPasswordErrorResponse,
+  VerifyEmailByTokenRequest,
+  VerifyEmailByTokenResponse,
+  VerifyEmailByTokenErrorResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
+  ResetPasswordErrorResponse,
 } from "../../lib/api/services/auth.service";
 import { generateUser } from "../generators";
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
@@ -562,6 +568,69 @@ export const authHandlers = [
 
   http.post<
     PathParams,
+    VerifyEmailByTokenRequest,
+    VerifyEmailByTokenResponse | VerifyEmailByTokenErrorResponse,
+    AuthEndpoints.VerifyEmailByToken
+  >(AuthEndpoints.VerifyEmailByToken, async ({ request }) => {
+    const { token } = await request.json();
+    if (!token) {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.ValidationError,
+          errors: {
+            ...(token ? {} : { token: ["Verification token is required"] }),
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+    if (token === "00000000-0000-0000-0000-000000000000") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.TokenInvalid,
+          message: "Token is invalid",
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+    if (token === "11111111-1111-1111-1111-111111111111") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.TokenExpired,
+          message: "Token has expired",
+        },
+        {
+          status: HttpStatusCode.UnprocessableEntity,
+        },
+      );
+    }
+    if (token === "22222222-2222-2222-2222-222222222222") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.TokenRevoked,
+          message: "Token has been revoked",
+        },
+        {
+          status: HttpStatusCode.Ok,
+        },
+      );
+    }
+    return HttpResponse.json(
+      {
+        message: "Email verified, please sign in",
+      },
+      {
+        status: HttpStatusCode.Ok,
+      },
+    );
+  }),
+
+  http.post<
+    PathParams,
     SendEmailForgotPasswordRequest,
     SendEmailForgotPasswordResponse | SendEmailForgotPasswordErrorResponse,
     AuthEndpoints.SendEmailForgotPassword
@@ -704,6 +773,88 @@ export const authHandlers = [
       },
       {
         status: HttpStatusCode.BadRequest,
+      },
+    );
+  }),
+
+  http.post<
+    PathParams,
+    ResetPasswordRequest,
+    ResetPasswordResponse | ResetPasswordErrorResponse,
+    AuthEndpoints.ResetPassword
+  >(AuthEndpoints.ResetPassword, async ({ request }) => {
+    const { token, password, passwordConfirmation } = await request.json();
+    if (!token || !password || !passwordConfirmation) {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.ValidationError,
+          errors: {
+            ...(token ? {} : { token: ["Reset Password token is required"] }),
+            ...(password ? {} : { password: ["Password is required"] }),
+            ...(passwordConfirmation
+              ? {}
+              : {
+                  passwordConfirmation: ["Password confirmation is required"],
+                }),
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+    if (token === "00000000-0000-0000-0000-000000000000") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.TokenInvalid,
+          message: "Token is invalid",
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+    if (token === "11111111-1111-1111-1111-111111111111") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.TokenExpired,
+          message: "Token has expired",
+        },
+        {
+          status: HttpStatusCode.UnprocessableEntity,
+        },
+      );
+    }
+    if (token === "22222222-2222-2222-2222-222222222222") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.TokenRevoked,
+          message: "Token has been revoked",
+        },
+        {
+          status: HttpStatusCode.Ok,
+        },
+      );
+    }
+    if (token === "33333333-3333-3333-3333-333333333333") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.ValidationError,
+          errors: {
+            password: ["Password is too weak"],
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+    return HttpResponse.json(
+      {
+        message: "Password reset successfully",
+      },
+      {
+        status: HttpStatusCode.Ok,
       },
     );
   }),
