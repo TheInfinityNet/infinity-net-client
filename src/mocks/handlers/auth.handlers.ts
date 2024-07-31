@@ -20,6 +20,8 @@ import {
   VerifyEmailByCodeErrorResponse,
 } from "../../lib/api/services/auth.service";
 import { generateUser } from "../generators";
+import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
+import { faker } from "@faker-js/faker";
 
 export const authHandlers = [
   http.post<
@@ -102,13 +104,17 @@ export const authHandlers = [
     }
 
     if (email === "ok@infinity.net" && password === "password") {
+      const user = generateUser();
+      const sessionId = faker.string.uuid();
+      const accessToken = generateAccessToken(user, sessionId);
+      const refreshToken = generateRefreshToken(user, sessionId);
       return HttpResponse.json(
         {
           tokens: {
-            accessToken: "access-token",
-            refreshToken: "refresh-token",
+            accessToken,
+            refreshToken,
           },
-          user: generateUser(),
+          user: user,
         },
         {
           status: HttpStatusCode.Ok,
@@ -393,7 +399,7 @@ export const authHandlers = [
     return HttpResponse.json(
       {
         message: "Token refreshed",
-        accessToken: "new-access-token",
+        accessToken: generateAccessToken(generateUser(), faker.string.uuid()),
       },
       {
         status: HttpStatusCode.Ok,

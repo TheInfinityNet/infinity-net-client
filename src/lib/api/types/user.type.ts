@@ -1,13 +1,14 @@
 export type User = {
   id: string;
-  email: string;
-  name: string;
+  avatar?: string;
   firstName: string;
   lastName: string;
-  middleName: string;
-  password?: string;
+  middleName?: string;
+  username: string;
+  email: string;
+  password: string;
   mobileNumber: string;
   birthdate: string;
   gender: string;
-  termsAccepted: boolean;
+  acceptTerms: boolean;
 };
