@@ -17,10 +17,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import authService, {
+  AuthErrorCodes,
+  SendEmailVerificationErrorResponse,
+  VerifyEmailByCodeErrorResponse,
+} from "@/lib/api/services/auth.service";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const verificationCodeSchema = z.object({
@@ -30,6 +37,16 @@ const verificationCodeSchema = z.object({
 
 export function EmailVerificationPage() {
   const [resendCooldown, setResendCooldown] = useState<number>(0);
+  const navigation = useNavigate();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (resendCooldown > 0) {
+        setResendCooldown((prev) => prev - 1);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [resendCooldown]);
 
   const form = useForm<z.infer<typeof verificationCodeSchema>>({
     resolver: zodResolver(verificationCodeSchema),
@@ -39,68 +56,119 @@ export function EmailVerificationPage() {
     },
   });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (resendCooldown > 0) {
-        setResendCooldown((prev) => prev - 1);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [resendCooldown]);
-
-  const emailVerificationMutation = useMutation(
-    async (values: z.infer<typeof verificationCodeSchema>) => {
-      console.log(values);
+  const sendEmailVerificationMutation = useMutation({
+    mutationFn: authService.sendEmailVerification,
+    onSuccess(data) {
+      const { retryAfter, message } = data.data;
+      const cooldown = new Date(retryAfter).getTime() - Date.now();
+      setResendCooldown(Math.ceil(cooldown / 1000));
+      toast({
+        title: "Verification Code Sent",
+        description: message,
+      });
     },
-  );
-
-  const onSubmit = form.handleSubmit(async (values) => {
-    emailVerificationMutation.mutate(values);
+    onError(error) {
+      if (axios.isAxiosError<SendEmailVerificationErrorResponse>(error)) {
+        switch (error.response?.data.errorCode) {
+          case AuthErrorCodes.ValidationError:
+          case AuthErrorCodes.InvalidEmail:
+            Object.entries(error.response.data.errors).forEach(
+              ([field, message]) => {
+                form.setError(field as any, {
+                  type: "validate",
+                  message: message[0],
+                });
+              },
+            );
+            toast({
+              title: "Send Verification Code Failed",
+              description: "Please check the errors and try again.",
+            });
+            break;
+          default:
+            toast({
+              title: "Send Verification Code Failed",
+              description:
+                error.response?.data.message || "An unknown error occurred.",
+            });
+        }
+      } else if (error instanceof Error) {
+        toast({
+          title: "Send Verification Code Failed",
+          description: error.message,
+        });
+      } else {
+        toast({
+          title: "Send Verification Code Failed",
+          description: "An unknown error occurred.",
+        });
+      }
+    },
   });
 
-  const resendCodeMutation = useMutation(
-    async (values: Pick<z.infer<typeof verificationCodeSchema>, "email">) => {
-      console.log(values);
-
-      // const rateLimitReset = headers.get("X-RateLimit-Reset");
-      const rateLimitReset = String(Date.now() / 1000 + 60);
-
-      if (rateLimitReset) {
-        const resetTime = parseInt(rateLimitReset, 10);
-        const currentTime = Math.floor(Date.now() / 1000);
-        setResendCooldown(resetTime - currentTime);
+  const verifyEmailByCodeMutation = useMutation({
+    mutationFn: authService.verifyEmailByCode,
+    onSuccess(data) {
+      const { message } = data.data;
+      toast({
+        title: "Email Verified",
+        description: message,
+      });
+      navigation("/sign-in");
+    },
+    onError(error) {
+      if (axios.isAxiosError<VerifyEmailByCodeErrorResponse>(error)) {
+        switch (error.response?.data.errorCode) {
+          case AuthErrorCodes.ValidationError:
+          case AuthErrorCodes.CodeInvalid:
+          case AuthErrorCodes.InvalidEmail:
+            Object.entries(error.response.data.errors).forEach(
+              ([field, message]) => {
+                form.setError(field as any, {
+                  type: "validate",
+                  message: message[0],
+                });
+              },
+            );
+            toast({
+              title: "Email Verification Failed",
+              description: "Please check the errors and try again.",
+            });
+            break;
+          default:
+            toast({
+              title: "Email Verification Failed",
+              description:
+                error.response?.data.message || "An unknown error occurred.",
+            });
+        }
+      } else if (error instanceof Error) {
+        toast({
+          title: "Email Verification Failed",
+          description: error.message,
+        });
+      } else {
+        toast({
+          title: "Email Verification Failed",
+          description: "An unknown error occurred.",
+        });
       }
     },
-  );
+  });
 
   const onResendCode = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
-
     const isEmailValid = await form.trigger("email");
     if (!isEmailValid) return;
     const email = form.getValues("email");
-
-    resendCodeMutation.mutate(
-      { email },
-      {
-        onSuccess() {
-          toast({
-            title: "Verification Code Sent",
-            description: "Please check your email for the verification code.",
-          });
-        },
-        onError() {
-          toast({
-            title: "Failed to Resend Code",
-            description: "Please try again later.",
-          });
-        },
-      },
-    );
+    sendEmailVerificationMutation.mutate({ email });
   };
+
+  const onSubmit = form.handleSubmit(async (values) => {
+    verifyEmailByCodeMutation.mutate(values);
+  });
 
   return (
     <Card className="mx-auto w-full max-w-md space-y-6">

@@ -30,7 +30,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store";
 import axios from "axios";
 import { Link } from "@/components/link";
-import { Separator } from "@/components/ui/separator";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -50,12 +49,15 @@ export function SignInPage() {
   const navigate = useNavigate();
   const { setAccessToken, setRefreshToken } = useAuthStore.getState();
 
-  const signIn = useMutation(async (values: z.infer<typeof signInSchema>) => {
-    try {
-      const response = await authService.signIn(values);
+  const signIn = useMutation({
+    mutationFn: authService.signIn,
+    mutationKey: "signIn",
+    onSuccess(data) {
+      const { tokens, user } = data.data;
+      setAccessToken(tokens.accessToken);
+      setRefreshToken(tokens.refreshToken);
 
-      setAccessToken(response.data.tokens.accessToken);
-      setRefreshToken(response.data.tokens.refreshToken);
+      console.log(user);
 
       toast({
         title: "Sign In Successful",
@@ -63,7 +65,8 @@ export function SignInPage() {
       });
 
       navigate("/");
-    } catch (error) {
+    },
+    onError(error) {
       if (axios.isAxiosError<SignInErrorResponse>(error)) {
         switch (error.response?.data.errorCode) {
           case AuthErrorCodes.ValidationError:
@@ -86,7 +89,7 @@ export function SignInPage() {
 
             break;
           default:
-            return toast({
+            toast({
               title: "Sign In Failed",
               description:
                 error.response?.data.message ||
@@ -104,7 +107,7 @@ export function SignInPage() {
           description: "An unknown error occurred.",
         });
       }
-    }
+    },
   });
 
   const onSubmit = form.handleSubmit((values) => {

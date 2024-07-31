@@ -7,7 +7,11 @@ export enum AuthEndpoints {
   SignOut = "/auth/signout",
   RefreshToken = "/auth/refresh",
   SendEmailVerification = "/auth/send-email-verification",
-  VerifyEmail = "/auth/verify-email",
+  VerifyEmailByCode = "/auth/verify-email-by-code",
+  VerifyEmailByToken = "/auth/verify-email-by-token",
+  SendForgotPassword = "/auth/send-forgot-password",
+  ForgotPassword = "/auth/forgot-password",
+  ResetPassword = "/auth/reset-password",
 }
 
 export enum AuthErrorCodes {
@@ -30,6 +34,9 @@ export enum AuthErrorCodes {
   TokenRevoked = "auth/token-revoked",
   TokenBlacklisted = "auth/token-blacklisted",
   InvalidSignature = "auth/invalid-signature",
+
+  // Verification Errors
+  CodeInvalid = "auth/code-invalid",
 
   // User Errors
   UserDisabled = "auth/user-disabled",
@@ -134,10 +141,11 @@ export type SendEmailVerificationRequest = {
 };
 export type SendEmailVerificationResponse = {
   message: string;
+  retryAfter: number;
 };
 export type SendEmailVerificationErrorResponse =
   | {
-      errorCode: AuthErrorCodes.UserNotFound | AuthErrorCodes.InvalidEmail;
+      errorCode: AuthErrorCodes.ValidationError | AuthErrorCodes.InvalidEmail;
       errors: ValidationErrors<SendEmailVerificationRequest>;
     }
   | {
@@ -149,16 +157,39 @@ export type SendEmailVerificationErrorResponse =
       message: string;
     };
 
-export type VerifyEmailRequest = {
-  token: string;
+export type VerifyEmailByCodeRequest = {
+  email: string;
+  code: string;
 };
-export type VerifyEmailResponse = {
+export type VerifyEmailByCodeResponse = {
   message: string;
 };
-export type VerifyEmailErrorResponse =
+export type VerifyEmailByCodeErrorResponse =
+  | {
+      errorCode:
+        | AuthErrorCodes.ValidationError
+        | AuthErrorCodes.InvalidEmail
+        | AuthErrorCodes.CodeInvalid;
+      errors: ValidationErrors<VerifyEmailByCodeRequest>;
+    }
+  | {
+      errorCode:
+        | AuthErrorCodes.UserNotFound
+        | AuthErrorCodes.TooManyRequests
+        | AuthErrorCodes.RateLimitExceeded;
+      message: string;
+    };
+
+export type VerifyEmailByTokenRequest = {
+  token: string;
+};
+export type VerifyEmailByTokenResponse = {
+  message: string;
+};
+export type VerifyEmailByTokenErrorResponse =
   | {
       errorCode: AuthErrorCodes.ValidationError;
-      errors: ValidationErrors<VerifyEmailRequest>;
+      errors: ValidationErrors<VerifyEmailByTokenRequest>;
     }
   | {
       errorCode:
@@ -194,10 +225,23 @@ const sendEmailVerification = (data: SendEmailVerificationRequest) =>
     },
   );
 
-const verifyEmail = (data: VerifyEmailRequest) =>
-  apiClient.post<VerifyEmailResponse>(AuthEndpoints.VerifyEmail, data, {
-    headers: { "No-Auth": true },
-  });
+const verifyEmailByCode = (data: VerifyEmailByCodeRequest) =>
+  apiClient.post<VerifyEmailByCodeResponse>(
+    AuthEndpoints.VerifyEmailByCode,
+    data,
+    {
+      headers: { "No-Auth": true },
+    },
+  );
+
+const verifyEmailByToken = (data: VerifyEmailByTokenRequest) =>
+  apiClient.post<VerifyEmailByTokenResponse>(
+    AuthEndpoints.VerifyEmailByToken,
+    data,
+    {
+      headers: { "No-Auth": true },
+    },
+  );
 
 export default {
   signIn,
@@ -205,5 +249,6 @@ export default {
   signOut,
   refreshToken,
   sendEmailVerification,
-  verifyEmail,
+  verifyEmailByCode,
+  verifyEmailByToken,
 };

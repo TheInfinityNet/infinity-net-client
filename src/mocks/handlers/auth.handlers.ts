@@ -12,8 +12,15 @@ import {
   SignUpErrorResponse,
   SignUpRequest,
   SignUpResponse,
+  SendEmailVerificationRequest,
+  SendEmailVerificationResponse,
+  SendEmailVerificationErrorResponse,
+  VerifyEmailByCodeRequest,
+  VerifyEmailByCodeResponse,
+  VerifyEmailByCodeErrorResponse,
 } from "../../lib/api/services/auth.service";
 import { generateUser } from "../generators";
+import { PathParam } from "react-router-dom";
 
 export const authHandlers = [
   http.post<
@@ -408,6 +415,153 @@ export const authHandlers = [
       },
       {
         status: HttpStatusCode.Ok,
+      },
+    );
+  }),
+
+  http.post<
+    PathParams,
+    SendEmailVerificationRequest,
+    SendEmailVerificationResponse | SendEmailVerificationErrorResponse,
+    AuthEndpoints.SendEmailVerification
+  >(AuthEndpoints.SendEmailVerification, async ({ request }) => {
+    const { email } = await request.json();
+
+    if (!email) {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.ValidationError,
+          errors: {
+            email: ["Email is required"],
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (email === "invalid@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.InvalidEmail,
+          errors: {
+            email: ["Invalid email address"],
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (email === "notfound@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.UserNotFound,
+          message: "User not found",
+        },
+        {
+          status: HttpStatusCode.NotFound,
+        },
+      );
+    }
+
+    return HttpResponse.json(
+      {
+        message: "Verification email sent, please check your inbox",
+        retryAfter: Date.now() + 60 * 1000,
+      },
+      {
+        status: HttpStatusCode.Ok,
+      },
+    );
+  }),
+
+  http.post<
+    PathParams,
+    VerifyEmailByCodeRequest,
+    VerifyEmailByCodeResponse | VerifyEmailByCodeErrorResponse,
+    AuthEndpoints.VerifyEmailByCode
+  >(AuthEndpoints.VerifyEmailByCode, async ({ request }) => {
+    const { email, code } = await request.json();
+
+    if (!email || !code) {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.ValidationError,
+          errors: {
+            ...(email ? {} : { email: ["Email is required"] }),
+            ...(code ? {} : { code: ["Verification code is required"] }),
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (email === "invalid@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.InvalidEmail,
+          errors: {
+            email: ["Invalid email address"],
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (email === "invalidation@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.ValidationError,
+          errors: {
+            email: ["Email is invalid"],
+            code: ["Code is invalid"],
+          },
+        },
+        {
+          status: HttpStatusCode.UnprocessableEntity,
+        },
+      );
+    }
+
+    if (email === "ok@infinity.net") {
+      return HttpResponse.json(
+        {
+          message: "Email verified, please sign in",
+        },
+        {
+          status: HttpStatusCode.Ok,
+        },
+      );
+    }
+
+    if (email === "notfound@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.UserNotFound,
+          message: "User not found",
+        },
+        {
+          status: HttpStatusCode.NotFound,
+        },
+      );
+    }
+
+    return HttpResponse.json(
+      {
+        errorCode: AuthErrorCodes.CodeInvalid,
+        errors: {
+          code: ["Verification code is invalid"],
+        },
+      },
+      {
+        status: HttpStatusCode.BadRequest,
       },
     );
   }),
