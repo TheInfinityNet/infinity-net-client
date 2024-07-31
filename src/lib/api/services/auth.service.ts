@@ -6,6 +6,8 @@ export enum AuthEndpoints {
   SignUp = "/auth/signup",
   SignOut = "/auth/signout",
   RefreshToken = "/auth/refresh",
+  SendEmailVerification = "/auth/send-email-verification",
+  VerifyEmail = "/auth/verify-email",
 }
 
 export enum AuthErrorCodes {
@@ -33,6 +35,7 @@ export enum AuthErrorCodes {
   UserDisabled = "auth/user-disabled",
   UserNotFound = "auth/user-not-found",
   EmailAlreadyInUse = "auth/email-already-in-use",
+  UserAlreadyVerified = "auth/user-already-verified",
 
   // Rate Limiting Errors
   TooManyRequests = "auth/too-many-requests",
@@ -43,7 +46,6 @@ export type SignInRequest = {
   email: string;
   password: string;
 };
-
 export type SignInResponse = {
   tokens: {
     accessToken: string;
@@ -51,7 +53,6 @@ export type SignInResponse = {
   };
   user: User;
 };
-
 export type SignInErrorResponse =
   | {
       errorCode:
@@ -84,7 +85,6 @@ export type SignUpRequest = {
   gender: string;
   termsAccepted: boolean;
 };
-
 export type SignUpResponse = {
   tokens: {
     accessToken: string;
@@ -92,7 +92,6 @@ export type SignUpResponse = {
   };
   user: User;
 };
-
 export type SignUpErrorResponse =
   | {
       errorCode:
@@ -113,7 +112,6 @@ export type SignUpErrorResponse =
 export type RefreshTokenRequest = {
   refreshToken: string;
 };
-
 export type RefreshTokenResponse = {
   accessToken: string;
 };
@@ -129,6 +127,28 @@ export type RefreshTokenErrorResponse = {
   message: string;
 };
 
+export type SignOutResponse = void;
+
+export type SendEmailVerificationRequest = {
+  email: string;
+};
+export type SendEmailVerificationResponse = {
+  message: string;
+};
+export type SendEmailVerificationErrorResponse =
+  | {
+      errorCode: AuthErrorCodes.UserNotFound | AuthErrorCodes.InvalidEmail;
+      errors: ValidationErrors<SendEmailVerificationRequest>;
+    }
+  | {
+      errorCode:
+        | AuthErrorCodes.UserNotFound
+        | AuthErrorCodes.UserAlreadyVerified
+        | AuthErrorCodes.TooManyRequests
+        | AuthErrorCodes.RateLimitExceeded;
+      message: string;
+    };
+
 const signIn = (data: SignInRequest) =>
   apiClient.post<SignInResponse>(AuthEndpoints.SignIn, data, {
     headers: { "No-Auth": true },
@@ -139,16 +159,26 @@ const signUp = (data: SignUpRequest) =>
     headers: { "No-Auth": true },
   });
 
-const signOut = () => apiClient.delete<void>(AuthEndpoints.SignOut);
+const signOut = () => apiClient.delete<SignOutResponse>(AuthEndpoints.SignOut);
 
 const refreshToken = (data: RefreshTokenRequest) =>
   apiClient.post<RefreshTokenResponse>(AuthEndpoints.RefreshToken, data, {
     headers: { "No-Auth": true },
   });
 
+const sendEmailVerification = (data: SendEmailVerificationRequest) =>
+  apiClient.post<SendEmailVerificationResponse>(
+    AuthEndpoints.SendEmailVerification,
+    data,
+    {
+      headers: { "No-Auth": true },
+    },
+  );
+
 export default {
   signIn,
   signUp,
   signOut,
   refreshToken,
+  sendEmailVerification,
 };
