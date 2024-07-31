@@ -20,7 +20,6 @@ import {
   VerifyEmailByCodeErrorResponse,
 } from "../../lib/api/services/auth.service";
 import { generateUser } from "../generators";
-import { PathParam } from "react-router-dom";
 
 export const authHandlers = [
   http.post<

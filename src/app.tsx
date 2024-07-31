@@ -17,6 +17,7 @@ import { EmailVerificationPage } from "./routes/pages/email-verification.page";
 import { ForgotPasswordPage } from "./routes/pages/forgot-password.page";
 import { ResetPasswordPage } from "./routes/pages/reset-password.page";
 import { NotificationPage } from "./routes/pages/notifications.page";
+import { EmailVerificationTokenPage } from "./routes/pages/email-verification-token.page";
 
 const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
       {
         path: "email-verification",
         element: <EmailVerificationPage />,
+      },
+      {
+        path: "email-verification-token",
+        element: <EmailVerificationTokenPage />,
       },
       {
         path: "welcome",

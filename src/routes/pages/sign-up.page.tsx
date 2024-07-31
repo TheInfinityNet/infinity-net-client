@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +8,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { CalendarIcon, CircleCheckIcon, MountainIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "@/components/link";
 import {

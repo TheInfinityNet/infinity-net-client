@@ -22,6 +22,7 @@ import authService, {
   SendEmailVerificationErrorResponse,
   VerifyEmailByCodeErrorResponse,
 } from "@/lib/api/services/auth.service";
+import { setFormError } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -72,14 +73,7 @@ export function EmailVerificationPage() {
         switch (error.response?.data.errorCode) {
           case AuthErrorCodes.ValidationError:
           case AuthErrorCodes.InvalidEmail:
-            Object.entries(error.response.data.errors).forEach(
-              ([field, message]) => {
-                form.setError(field as any, {
-                  type: "validate",
-                  message: message[0],
-                });
-              },
-            );
+            setFormError(form, error.response.data.errors);
             toast({
               title: "Send Verification Code Failed",
               description: "Please check the errors and try again.",
@@ -122,14 +116,7 @@ export function EmailVerificationPage() {
           case AuthErrorCodes.ValidationError:
           case AuthErrorCodes.CodeInvalid:
           case AuthErrorCodes.InvalidEmail:
-            Object.entries(error.response.data.errors).forEach(
-              ([field, message]) => {
-                form.setError(field as any, {
-                  type: "validate",
-                  message: message[0],
-                });
-              },
-            );
+            setFormError(form, error.response.data.errors);
             toast({
               title: "Email Verification Failed",
               description: "Please check the errors and try again.",

@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store";
 import axios from "axios";
 import { Link } from "@/components/link";
+import { setFormError } from "@/lib/utils";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -73,14 +74,7 @@ export function SignInPage() {
           case AuthErrorCodes.WrongPassword:
           case AuthErrorCodes.InvalidEmail:
           case AuthErrorCodes.ExpiredPassword:
-            Object.entries(error.response.data.errors).forEach(
-              ([field, message]) => {
-                form.setError(field as any, {
-                  type: "validate",
-                  message: message[0],
-                });
-              },
-            );
+            setFormError(form, error.response.data.errors);
 
             toast({
               title: "Sign In Failed",
