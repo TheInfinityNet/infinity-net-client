@@ -24,7 +24,9 @@ import { useMutation } from "react-query";
 import { z } from "zod";
 import authService from "@/lib/api/services/auth.service";
 import { Link } from "@/components/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { faker } from "@faker-js/faker";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email(),
@@ -32,7 +34,7 @@ const forgotPasswordSchema = z.object({
 });
 
 export function ForgotPasswordPage() {
-  const [resendCooldown, setResendCooldown] = useState<number>(0);
+  const [sendEmailCooldown, setSendEmailCooldown] = useState<number>(0);
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
@@ -40,6 +42,7 @@ export function ForgotPasswordPage() {
       code: "",
     },
   });
+  const navigate = useNavigate();
 
   const forgotPasswordMutation = useMutation(
     async (values: z.infer<typeof forgotPasswordSchema>) => {
@@ -51,6 +54,14 @@ export function ForgotPasswordPage() {
           title: "Password Reset Requested",
           description:
             "If an account with that email exists, a reset link has been sent.",
+        });
+
+        navigate({
+          pathname: "/reset-password",
+          search: new URLSearchParams({
+            // TODO: Replace with actual token
+            token: faker.string.uuid(),
+          }).toString(),
         });
       },
       onError() {
@@ -66,6 +77,29 @@ export function ForgotPasswordPage() {
   const onSubmit = form.handleSubmit((values) => {
     forgotPasswordMutation.mutate(values);
   });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (sendEmailCooldown > 0) {
+        setSendEmailCooldown((prev) => prev - 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  });
+
+  const onSendEmail = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    const isEmailValid = await form.trigger("email");
+    if (!isEmailValid) return;
+
+    // await authService.requestPasswordReset(form.getValues("email"));
+    setSendEmailCooldown(60);
+    toast({
+      title: "Reset Email Sent",
+      description: "Please check your email for the verification code.",
+    });
+  };
 
   return (
     <Card className="mx-auto w-full max-w-md space-y-6">
@@ -107,12 +141,12 @@ export function ForgotPasswordPage() {
                     </FormControl>
                     <Button
                       variant="outline"
-                      // onClick={onResendCode}
-                      disabled={resendCooldown > 0}
+                      onClick={onSendEmail}
+                      disabled={sendEmailCooldown > 0}
                     >
-                      {resendCooldown > 0
-                        ? `Resend Code in ${resendCooldown}s`
-                        : `Resend Code`}
+                      {sendEmailCooldown > 0
+                        ? `Resend in ${sendEmailCooldown}s`
+                        : `Send Reset Email`}
                     </Button>
                   </div>
                   <FormDescription>
@@ -125,7 +159,7 @@ export function ForgotPasswordPage() {
 
             <div className="flex flex-col space-y-4 mt-4">
               <Button className="w-full" type="submit">
-                Send Reset Link
+                Reset Password
               </Button>
             </div>
           </form>

@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { z } from "zod";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // import authService from "@/lib/api/services/auth.service";
 
 const resetPasswordSchema = z.object({
@@ -31,6 +31,7 @@ const resetPasswordSchema = z.object({
 
 export function ResetPasswordPage() {
   const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
@@ -51,6 +52,7 @@ export function ResetPasswordPage() {
           title: "Password Reset Successful",
           description: "You can now log in with your new password.",
         });
+        navigate("/sign-in");
       },
       onError() {
         toast({
