@@ -149,6 +149,25 @@ export type SendEmailVerificationErrorResponse =
       message: string;
     };
 
+export type VerifyEmailRequest = {
+  token: string;
+};
+export type VerifyEmailResponse = {
+  message: string;
+};
+export type VerifyEmailErrorResponse =
+  | {
+      errorCode: AuthErrorCodes.ValidationError;
+      errors: ValidationErrors<VerifyEmailRequest>;
+    }
+  | {
+      errorCode:
+        | AuthErrorCodes.TokenInvalid
+        | AuthErrorCodes.TokenExpired
+        | AuthErrorCodes.TokenRevoked;
+      message: string;
+    };
+
 const signIn = (data: SignInRequest) =>
   apiClient.post<SignInResponse>(AuthEndpoints.SignIn, data, {
     headers: { "No-Auth": true },
@@ -175,10 +194,16 @@ const sendEmailVerification = (data: SendEmailVerificationRequest) =>
     },
   );
 
+const verifyEmail = (data: VerifyEmailRequest) =>
+  apiClient.post<VerifyEmailResponse>(AuthEndpoints.VerifyEmail, data, {
+    headers: { "No-Auth": true },
+  });
+
 export default {
   signIn,
   signUp,
   signOut,
   refreshToken,
   sendEmailVerification,
+  verifyEmail,
 };
