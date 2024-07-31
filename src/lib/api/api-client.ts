@@ -1,12 +1,8 @@
 import axios, { AxiosError } from "axios";
 import { useAuthStore } from "@/stores/auth.store";
-import { jwtDecode } from "jwt-decode";
-import { AccessTokenPayload } from "./types/auth.type";
 import authService from "./services/auth.service";
-
-export type ValidationErrors<T> = {
-  [K in keyof T]?: string[];
-};
+import { getAccessTokenState, getRefreshTokenState } from "../utils";
+import { AccessTokenState, RefreshTokenState } from "./types/auth.type";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
@@ -14,60 +10,12 @@ const apiClient = axios.create({
   headers: { "Content-Type": "application/json;charset=utf-8" },
 });
 
-enum AccessTokenState {
-  Expired = "Expired",
-  NeedsRefreshParallel = "NeedsRefreshParallel",
-  NeedsRefreshSerial = "NeedsRefreshSerial",
-  Valid = "Valid",
-}
-
-enum RefreshTokenState {
-  Expired = "Expired",
-  Valid = "Valid",
-}
-
-const getTokenState = (token: string | null): AccessTokenState => {
-  if (!token) {
-    return AccessTokenState.Expired;
-  }
-  const tokenPayload = jwtDecode<AccessTokenPayload>(token);
-  if (!tokenPayload.exp) {
-    return AccessTokenState.Expired;
-  }
-  const currentTime = Date.now();
-  const tokenExpiry = tokenPayload.exp * 1000;
-  const timeLeft = tokenExpiry - currentTime;
-
-  if (timeLeft <= 0) {
-    return AccessTokenState.Expired;
-  } else if (timeLeft <= 1 * 60 * 1000) {
-    return AccessTokenState.NeedsRefreshSerial;
-  } else if (timeLeft <= 5 * 60 * 1000) {
-    return AccessTokenState.NeedsRefreshParallel;
-  } else {
-    return AccessTokenState.Valid;
-  }
-};
-
-const getRefreshTokenState = (token: string | null): RefreshTokenState => {
-  if (!token) {
-    return RefreshTokenState.Expired;
-  }
-  const tokenPayload = jwtDecode<AccessTokenPayload>(token);
-  if (!tokenPayload.exp) {
-    return RefreshTokenState.Expired;
-  }
-  return tokenPayload.exp * 1000 > Date.now()
-    ? RefreshTokenState.Valid
-    : RefreshTokenState.Expired;
-};
-
 apiClient.interceptors.request.use(
   async (config) => {
     if (config.headers["No-Auth"] === undefined) {
       const { accessToken, refreshToken } = useAuthStore.getState();
 
-      const accessTokenState = getTokenState(accessToken);
+      const accessTokenState = getAccessTokenState(accessToken);
       const refreshTokenState = getRefreshTokenState(refreshToken);
 
       const refreshAccessToken = async () => {

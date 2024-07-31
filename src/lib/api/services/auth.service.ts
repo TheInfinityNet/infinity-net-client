@@ -1,5 +1,6 @@
 import { User } from "../types/user.type";
-import apiClient, { ValidationErrors } from "../api-client";
+import apiClient from "../api-client";
+import { ValidationErrors } from "../types/api.type";
 
 export enum AuthEndpoints {
   SignIn = "/auth/signin",

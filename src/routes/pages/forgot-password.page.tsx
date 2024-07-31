@@ -46,7 +46,8 @@ export function ForgotPasswordPage() {
 
   const forgotPasswordMutation = useMutation(
     async (values: z.infer<typeof forgotPasswordSchema>) => {
-      // await authService.requestPasswordReset(values.email);
+      console.log(authService);
+      console.log("Requesting password reset for", values);
     },
     {
       onSuccess() {
