@@ -10,7 +10,7 @@ export enum AuthEndpoints {
   SendEmailVerification = "/auth/send-email-verification",
   VerifyEmailByCode = "/auth/verify-email-by-code",
   VerifyEmailByToken = "/auth/verify-email-by-token",
-  SendForgotPassword = "/auth/send-forgot-password",
+  SendEmailForgotPassword = "/auth/send-forgot-password",
   ForgotPassword = "/auth/forgot-password",
   ResetPassword = "/auth/reset-password",
 }
@@ -197,6 +197,50 @@ export type VerifyEmailByTokenErrorResponse =
       message: string;
     };
 
+export type SendEmailForgotPasswordRequest = {
+  email: string;
+};
+export type SendEmailForgotPasswordResponse = {
+  message: string;
+  retryAfter: number;
+};
+export type SendEmailForgotPasswordErrorResponse =
+  | {
+      errorCode: AuthErrorCodes.ValidationError | AuthErrorCodes.InvalidEmail;
+      errors: ValidationErrors<SendEmailForgotPasswordRequest>;
+    }
+  | {
+      errorCode:
+        | AuthErrorCodes.UserNotFound
+        | AuthErrorCodes.TooManyRequests
+        | AuthErrorCodes.RateLimitExceeded;
+      message: string;
+    };
+
+export type ForgotPasswordRequest = {
+  email: string;
+  code: string;
+};
+export type ForgotPasswordResponse = {
+  message: string;
+  token: string;
+};
+export type ForgotPasswordErrorResponse =
+  | {
+      errorCode:
+        | AuthErrorCodes.ValidationError
+        | AuthErrorCodes.InvalidEmail
+        | AuthErrorCodes.CodeInvalid;
+      errors: ValidationErrors<ForgotPasswordRequest>;
+    }
+  | {
+      errorCode:
+        | AuthErrorCodes.UserNotFound
+        | AuthErrorCodes.TooManyRequests
+        | AuthErrorCodes.RateLimitExceeded;
+      message: string;
+    };
+
 const signIn = (data: SignInRequest) =>
   apiClient.post<SignInResponse>(AuthEndpoints.SignIn, data, {
     headers: { "No-Auth": true },
@@ -241,6 +285,20 @@ const verifyEmailByToken = (data: VerifyEmailByTokenRequest) =>
     },
   );
 
+const sendEmailForgotPassword = (data: SendEmailForgotPasswordRequest) =>
+  apiClient.post<SendEmailForgotPasswordResponse>(
+    AuthEndpoints.SendEmailForgotPassword,
+    data,
+    {
+      headers: { "No-Auth": true },
+    },
+  );
+
+const forgotPassword = (data: ForgotPasswordRequest) =>
+  apiClient.post<ForgotPasswordResponse>(AuthEndpoints.ForgotPassword, data, {
+    headers: { "No-Auth": true },
+  });
+
 export default {
   signIn,
   signUp,
@@ -249,4 +307,6 @@ export default {
   sendEmailVerification,
   verifyEmailByCode,
   verifyEmailByToken,
+  sendEmailForgotPassword,
+  forgotPassword,
 };

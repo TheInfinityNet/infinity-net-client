@@ -18,6 +18,12 @@ import {
   VerifyEmailByCodeRequest,
   VerifyEmailByCodeResponse,
   VerifyEmailByCodeErrorResponse,
+  SendEmailForgotPasswordRequest,
+  SendEmailForgotPasswordResponse,
+  SendEmailForgotPasswordErrorResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  ForgotPasswordErrorResponse,
 } from "../../lib/api/services/auth.service";
 import { generateUser } from "../generators";
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
@@ -522,6 +528,154 @@ export const authHandlers = [
       return HttpResponse.json(
         {
           message: "Email verified, please sign in",
+        },
+        {
+          status: HttpStatusCode.Ok,
+        },
+      );
+    }
+
+    if (email === "notfound@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.UserNotFound,
+          message: "User not found",
+        },
+        {
+          status: HttpStatusCode.NotFound,
+        },
+      );
+    }
+
+    return HttpResponse.json(
+      {
+        errorCode: AuthErrorCodes.CodeInvalid,
+        errors: {
+          code: ["Verification code is invalid"],
+        },
+      },
+      {
+        status: HttpStatusCode.BadRequest,
+      },
+    );
+  }),
+
+  http.post<
+    PathParams,
+    SendEmailForgotPasswordRequest,
+    SendEmailForgotPasswordResponse | SendEmailForgotPasswordErrorResponse,
+    AuthEndpoints.SendEmailForgotPassword
+  >(AuthEndpoints.SendEmailForgotPassword, async ({ request }) => {
+    const { email } = await request.json();
+
+    if (!email) {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.ValidationError,
+          errors: {
+            email: ["Email is required"],
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (email === "invalid@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.InvalidEmail,
+          errors: {
+            email: ["Invalid email address"],
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (email === "notfound@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.UserNotFound,
+          message: "User not found",
+        },
+        {
+          status: HttpStatusCode.NotFound,
+        },
+      );
+    }
+
+    return HttpResponse.json(
+      {
+        message: "Forgot password email sent, please check your inbox",
+        retryAfter: Date.now() + 60 * 1000,
+      },
+      {
+        status: HttpStatusCode.Ok,
+      },
+    );
+  }),
+
+  http.post<
+    PathParams,
+    ForgotPasswordRequest,
+    ForgotPasswordResponse | ForgotPasswordErrorResponse,
+    AuthEndpoints.ForgotPassword
+  >(AuthEndpoints.ForgotPassword, async ({ request }) => {
+    const { email, code } = await request.json();
+
+    if (!email || !code) {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.ValidationError,
+          errors: {
+            ...(email ? {} : { email: ["Email is required"] }),
+            ...(code ? {} : { code: ["Verification code is required"] }),
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (email === "invalid@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.InvalidEmail,
+          errors: {
+            email: ["Invalid email address"],
+          },
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        },
+      );
+    }
+
+    if (email === "invalidation@infinity.net") {
+      return HttpResponse.json(
+        {
+          errorCode: AuthErrorCodes.ValidationError,
+          errors: {
+            email: ["Email is invalid"],
+            code: ["Code is invalid"],
+          },
+        },
+        {
+          status: HttpStatusCode.UnprocessableEntity,
+        },
+      );
+    }
+
+    if (email === "ok@infinity.net") {
+      return HttpResponse.json(
+        {
+          message: "Email verified, please sign in",
+          token: faker.string.uuid(),
         },
         {
           status: HttpStatusCode.Ok,

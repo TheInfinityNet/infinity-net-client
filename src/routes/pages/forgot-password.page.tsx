@@ -22,11 +22,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { z } from "zod";
-import authService from "@/lib/api/services/auth.service";
+import authService, {
+  AuthErrorCodes,
+  ForgotPasswordErrorResponse,
+  SendEmailForgotPasswordErrorResponse,
+} from "@/lib/api/services/auth.service";
 import { Link } from "@/components/link";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { faker } from "@faker-js/faker";
+import axios from "axios";
+import { setFormError } from "@/lib/utils";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email(),
@@ -44,36 +49,86 @@ export function ForgotPasswordPage() {
   });
   const navigate = useNavigate();
 
-  const forgotPasswordMutation = useMutation(
-    async (values: z.infer<typeof forgotPasswordSchema>) => {
-      console.log(authService);
-      console.log("Requesting password reset for", values);
+  const sendEmailForgotPasswordMutation = useMutation({
+    mutationFn: authService.sendEmailForgotPassword,
+    onSuccess(data) {
+      const { retryAfter, message } = data.data;
+      const cooldown = new Date(retryAfter).getTime() - Date.now();
+      setSendEmailCooldown(Math.ceil(cooldown / 1000));
+      toast({
+        title: "Forgot Password Email Sent",
+        description: message,
+      });
     },
-    {
-      onSuccess() {
+    onError(error) {
+      if (axios.isAxiosError<SendEmailForgotPasswordErrorResponse>(error)) {
+        switch (error.response?.data.errorCode) {
+          case AuthErrorCodes.ValidationError:
+          case AuthErrorCodes.InvalidEmail:
+            setFormError(form, error.response.data.errors);
+            toast({
+              title: "Send Forgot Password Failed",
+              description: "Please check the form for errors.",
+            });
+            break;
+          default:
+            toast({
+              title: "Send Forgot Password Failed",
+              description:
+                error.response?.data.message || "An unknown error occurred.",
+            });
+        }
+      } else {
         toast({
-          title: "Password Reset Requested",
-          description:
-            "If an account with that email exists, a reset link has been sent.",
+          title: "Send Forgot Password Failed",
+          description: "An unknown error occurred.",
         });
+      }
+    },
+  });
 
-        navigate({
-          pathname: "/reset-password",
-          search: new URLSearchParams({
-            // TODO: Replace with actual token
-            token: faker.string.uuid(),
-          }).toString(),
-        });
-      },
-      onError() {
-        toast({
-          title: "Request Failed",
-          description:
-            "There was an issue with your request. Please try again.",
-        });
-      },
+  const forgotPasswordMutation = useMutation({
+    mutationFn: authService.forgotPassword,
+    onSuccess(data) {
+      const { message, token } = data.data;
+      toast({
+        title: "Forgot Password Successful",
+        description: message,
+      });
+      navigate({
+        pathname: "/reset-password",
+        search: new URLSearchParams({
+          token,
+        }).toString(),
+      });
     },
-  );
+    onError(error) {
+      if (axios.isAxiosError<ForgotPasswordErrorResponse>(error)) {
+        switch (error.response?.data.errorCode) {
+          case AuthErrorCodes.ValidationError:
+          case AuthErrorCodes.CodeInvalid:
+          case AuthErrorCodes.InvalidEmail:
+            setFormError(form, error.response.data.errors);
+            toast({
+              title: "Forgot Password Failed",
+              description: "Please check the form for errors.",
+            });
+            break;
+          default:
+            toast({
+              title: "Forgot Password Failed",
+              description:
+                error.response?.data.message || "An unknown error occurred.",
+            });
+        }
+      } else {
+        toast({
+          title: "Forgot Password Failed",
+          description: "An unknown error occurred.",
+        });
+      }
+    },
+  });
 
   const onSubmit = form.handleSubmit((values) => {
     forgotPasswordMutation.mutate(values);
@@ -94,12 +149,7 @@ export function ForgotPasswordPage() {
     const isEmailValid = await form.trigger("email");
     if (!isEmailValid) return;
 
-    // await authService.requestPasswordReset(form.getValues("email"));
-    setSendEmailCooldown(60);
-    toast({
-      title: "Reset Email Sent",
-      description: "Please check your email for the verification code.",
-    });
+    sendEmailForgotPasswordMutation.mutate({ email: form.getValues("email") });
   };
 
   return (
