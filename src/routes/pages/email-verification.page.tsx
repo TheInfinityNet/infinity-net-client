@@ -28,7 +28,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const verificationCodeSchema = z.object({
@@ -39,6 +39,7 @@ const verificationCodeSchema = z.object({
 export function EmailVerificationPage() {
   const [resendCooldown, setResendCooldown] = useState<number>(0);
   const navigation = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -52,7 +53,7 @@ export function EmailVerificationPage() {
   const form = useForm<z.infer<typeof verificationCodeSchema>>({
     resolver: zodResolver(verificationCodeSchema),
     defaultValues: {
-      email: "",
+      email: location.state?.email || "",
       code: "",
     },
   });

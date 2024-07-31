@@ -28,7 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn, setFormError } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import {
@@ -38,6 +38,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useMutation } from "react-query";
+import authService, {
+  AuthErrorCodes,
+  SignUpErrorResponse,
+} from "@/lib/api/services/auth.service";
+import { toast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 enum Genders {
   Male = "male",
@@ -46,18 +54,21 @@ enum Genders {
 }
 
 const signUpSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  middleName: z.string(),
-  username: z.string(),
+  firstName: z.string().min(1).max(50),
+  lastName: z.string().min(1).max(50),
+  middleName: z.string().max(50).optional(),
+  username: z.string().min(1).max(50),
   email: z.string().email(),
-  password: z.string().min(8),
-  birthday: z.date(),
+  password: z.string().min(8).max(50),
+  passwordConfirmation: z.string().min(8).max(50),
+  mobileNumber: z.string().min(10).max(15),
+  birthdate: z.string().date(),
   gender: z.nativeEnum(Genders),
-  terms: z.boolean(),
+  acceptTerms: z.boolean().refine((value) => value === true),
 });
 
 export function SignUpPage() {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -67,16 +78,68 @@ export function SignUpPage() {
       username: "",
       email: "",
       password: "",
-      birthday: new Date(),
+      birthdate: format(new Date(), "yyyy-MM-dd"),
+      acceptTerms: false,
+      gender: Genders.Other,
+      mobileNumber: "",
+      passwordConfirmation: "",
+    },
+  });
+  console.log(form.formState.errors);
+
+  const signUpMutation = useMutation({
+    mutationFn: authService.signUp,
+    onSuccess(data) {
+      const { message } = data.data;
+
+      toast({
+        title: "Sign Up successful",
+        description: message,
+      });
+
+      navigate(
+        {
+          pathname: "/email-verification",
+        },
+        { state: { email: form.getValues("email") } },
+      );
+    },
+    onError(error) {
+      if (axios.isAxiosError<SignUpErrorResponse>(error)) {
+        switch (error.response?.data.errorCode) {
+          case AuthErrorCodes.ValidationError:
+          case AuthErrorCodes.InvalidEmail:
+          case AuthErrorCodes.EmailAlreadyInUse:
+          case AuthErrorCodes.WeakPassword:
+          case AuthErrorCodes.PasswordMismatch:
+          case AuthErrorCodes.TermsNotAccepted:
+            setFormError(form, error.response.data.errors);
+            toast({
+              title: "Sign Up Failed",
+              description: "Please check the errors and try again.",
+            });
+            break;
+          default:
+            toast({
+              title: "Sign Up Failed",
+              description:
+                error.response?.data.message ||
+                "Something went wrong. Please try again.",
+            });
+        }
+      } else {
+        toast({
+          title: "Sign Up Failed",
+          description: "An unknown error occurred.",
+        });
+      }
     },
   });
 
-  const onSubmit = form.handleSubmit(async (values) => {
-    console.log(values);
-  });
+  const onSubmit = form.handleSubmit((values) => signUpMutation.mutate(values));
 
   return (
-    <div className="flex h-screen items-center justify-center bg-background">
+    <div className="flex min-h-screen items-center justify-center bg-background">
       <Card className="mx-auto w-full max-w-md space-y-6">
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
@@ -194,7 +257,47 @@ export function SignUpPage() {
               />
               <FormField
                 control={form.control}
-                name="birthday"
+                name="passwordConfirmation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Confirm Password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Your password must match the one above.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="mobileNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="tel"
+                        placeholder="Mobile Number"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Your mobile number is used for account recovery.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="birthdate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Date of Birth</FormLabel>
@@ -218,8 +321,10 @@ export function SignUpPage() {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
+                          selected={new Date(field.value)}
+                          onSelect={(value) =>
+                            field.onChange(value && format(value, "yyyy-MM-dd"))
+                          }
                           disabled={(date) =>
                             date > new Date() || date < new Date("1900-01-01")
                           }
@@ -261,7 +366,7 @@ export function SignUpPage() {
 
               <FormField
                 control={form.control}
-                name="terms"
+                name="acceptTerms"
                 render={({ field }) => (
                   <FormItem className="flex gap-1.5 ">
                     <FormControl className="mt-3">

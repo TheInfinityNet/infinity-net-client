@@ -163,14 +163,13 @@ export const authHandlers = [
     const {
       firstName,
       lastName,
-      middleName,
       email,
       password,
       passwordConfirmation,
       mobileNumber,
       birthdate,
       gender,
-      termsAccepted,
+      acceptTerms,
     } = await request.json();
 
     if (
@@ -182,7 +181,7 @@ export const authHandlers = [
       !mobileNumber ||
       !birthdate ||
       !gender ||
-      termsAccepted === undefined
+      acceptTerms === undefined
     ) {
       return HttpResponse.json(
         {
@@ -203,7 +202,7 @@ export const authHandlers = [
               : { mobileNumber: ["Mobile number is required"] }),
             ...(birthdate ? {} : { birthdate: ["Birthdate is required"] }),
             ...(gender ? {} : { gender: ["Gender is required"] }),
-            ...(termsAccepted === undefined
+            ...(acceptTerms == undefined
               ? { termsAccepted: ["Terms acceptance is required"] }
               : {}),
           },
@@ -274,13 +273,13 @@ export const authHandlers = [
       );
     }
 
-    if (!termsAccepted) {
+    if (!acceptTerms) {
       return HttpResponse.json(
         {
           errorCode: AuthErrorCodes.TermsNotAccepted,
           message: "You must accept the terms and conditions",
           errors: {
-            termsAccepted: ["You must accept the terms and conditions"],
+            acceptTerms: ["You must accept the terms and conditions"],
           },
         },
         {
@@ -291,23 +290,7 @@ export const authHandlers = [
 
     return HttpResponse.json(
       {
-        tokens: {
-          accessToken: "access-token",
-          refreshToken: "refresh-token",
-        },
-        user: {
-          id: "user-id",
-          firstName,
-          lastName,
-          email,
-          name: `${firstName} ${lastName + (middleName ? ` ${middleName}` : "")}`,
-          mobileNumber,
-          birthdate,
-          middleName,
-          gender,
-          password,
-          termsAccepted,
-        },
+        message: "User registered successfully, please verify your email",
       },
       {
         status: HttpStatusCode.Created,

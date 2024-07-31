@@ -83,21 +83,18 @@ export type SignInErrorResponse =
 export type SignUpRequest = {
   firstName: string;
   lastName: string;
-  middleName: string;
+  middleName?: string;
+  username: string;
   email: string;
   password: string;
   passwordConfirmation: string;
   mobileNumber: string;
   birthdate: string;
   gender: string;
-  termsAccepted: boolean;
+  acceptTerms: boolean;
 };
 export type SignUpResponse = {
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
-  user: User;
+  message: string;
 };
 export type SignUpErrorResponse =
   | {
