@@ -29,6 +29,10 @@ const router = createBrowserRouter([
         path: "users/:id",
         element: <ProfilePage />,
       },
+      {
+        path: "landing",
+        element: <LandingPage />,
+      },
     ],
   },
   {
@@ -42,6 +46,11 @@ const router = createBrowserRouter([
       {
         path: "notifications",
         element: <NotificationPage />,
+      },
+
+      {
+        path: "messages",
+        element: <MessagesPage />,
       },
     ],
   },
@@ -78,14 +87,6 @@ const router = createBrowserRouter([
         element: <WelcomePage />,
       },
     ],
-  },
-  {
-    path: "landing",
-    element: <LandingPage />,
-  },
-  {
-    path: "messages",
-    element: <MessagesPage />,
   },
 ]);
 

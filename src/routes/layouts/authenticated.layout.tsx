@@ -8,9 +8,10 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useUserStore } from "@/stores/user.store";
 
 export function AuthenticatedLayout() {
-  const { isLoading, isError } = useCurrentUser();
+  const { isLoading } = useCurrentUser();
   const user = useUserStore((state) => state.user);
-  if (!user && !isLoading && !isError) {
+
+  if (!user && !isLoading) {
     return <Navigate to="/sign-in" />;
   }
 
