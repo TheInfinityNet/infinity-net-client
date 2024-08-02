@@ -8,8 +8,8 @@ import { FollowList } from "@/components/widgets/follow";
 
 export function HomePage() {
   return (
-    <main className="container grid flex-1 gap-8 px-4 py-8 sm:px-6 md:grid-cols-[240px_1fr_240px]">
-      <div className="hidden md:block">
+    <main className="grid flex-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[240px_1fr_240px]">
+      <div className="hidden lg:block">
         <div className="sticky top-16 space-y-4">
           <div className="grid gap-2">
             <h3 className="text-sm font-medium">Who to follow</h3>
@@ -21,7 +21,8 @@ export function HomePage() {
           </div>
         </div>
       </div>
-      <div className="space-y-4">
+
+      <div className="space-y-4 max-w-screen-md justify-self-center">
         <div className="grid gap-2">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-medium">News Feed</h2>
@@ -33,7 +34,8 @@ export function HomePage() {
           <NewsFeed />
         </div>
       </div>
-      <div className="hidden md:block">
+
+      <div className="hidden lg:block">
         <div className="sticky top-16 space-y-4">
           <div className="grid gap-2">
             <h3 className="text-sm font-medium">Trending</h3>
