@@ -1,13 +1,7 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Link } from "@/components/link";
-import { HeartIcon, MessageCircleIcon, ShareIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -79,6 +73,7 @@ export function ProfilePage() {
           <TabsTrigger value="posts">Posts</TabsTrigger>
           <TabsTrigger value="friends">Friends</TabsTrigger>
           <TabsTrigger value="photos">Photos</TabsTrigger>
+          <TabsTrigger value="videos">Videos</TabsTrigger>
           <TabsTrigger value="abouts">Abouts</TabsTrigger>
         </TabsList>
         <TabsContent value="posts">
@@ -164,9 +159,83 @@ export function ProfilePage() {
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="friends"></TabsContent>
-        <TabsContent value="photos"></TabsContent>
-        <TabsContent value="abouts"></TabsContent>
+        <TabsContent value="friends">
+          <Tabs defaultValue="all-friends" className="">
+            <TabsList>
+              <TabsTrigger value="all-friends">All friends</TabsTrigger>
+              <TabsTrigger value="recently-added">Recently Added</TabsTrigger>
+              <TabsTrigger value="birthdays">Birthdays</TabsTrigger>
+              <TabsTrigger value="current-city">Current City</TabsTrigger>
+              <TabsTrigger value="hometown">Hometown</TabsTrigger>
+              <TabsTrigger value="following">Following</TabsTrigger>
+            </TabsList>
+            <TabsContent value="all-friends">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Card
+                  key={index}
+                  className="flex items-center gap-4 p-4 rounded-md transition-colors hover:bg-muted"
+                >
+                  <Avatar className="h-12 w-12 overflow-hidden rounded-full">
+                    <AvatarImage src="/placeholder-user.jpg" />
+                    <AvatarFallback>IN</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="font-medium">Jane Doe</p>
+                    <p className="text-sm text-muted-foreground">@janedoe</p>
+                  </div>
+                  <Button variant="outline">Add Friend</Button>
+                </Card>
+              ))}
+            </TabsContent>
+            <TabsContent value="recently-added"></TabsContent>
+            <TabsContent value="birthdays"></TabsContent>
+            <TabsContent value="current-city"></TabsContent>
+            <TabsContent value="hometown"></TabsContent>
+            <TabsContent value="following"></TabsContent>
+          </Tabs>
+        </TabsContent>
+        <TabsContent value="photos">
+          <div className="grid grid-cols-3 gap-2">
+            {Array.from({ length: 40 }).map((_, index) => (
+              <img
+                key={index}
+                src="/placeholder.svg"
+                alt={`Photo ${index}`}
+                width={150}
+                height={150}
+                className="rounded-lg"
+              />
+            ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="videos">
+          {Array.from({ length: 40 }).map((_, index) => (
+            <img
+              key={index}
+              src="/placeholder.svg"
+              alt={`Video ${index}`}
+              width={150}
+              height={150}
+              className="rounded-lg"
+            />
+          ))}
+        </TabsContent>
+        <TabsContent value="abouts">
+          <Tabs defaultValue="overview" className="">
+            <TabsList className="space-x-4">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="work">Work</TabsTrigger>
+              <TabsTrigger value="education">Education</TabsTrigger>
+              <TabsTrigger value="places">Places</TabsTrigger>
+              <TabsTrigger value="contact">Contact</TabsTrigger>
+            </TabsList>
+            <TabsContent value="overview"></TabsContent>
+            <TabsContent value="work"></TabsContent>
+            <TabsContent value="education"></TabsContent>
+            <TabsContent value="places"></TabsContent>
+            <TabsContent value="contact"></TabsContent>
+          </Tabs>
+        </TabsContent>
       </Tabs>
     </div>
   );
