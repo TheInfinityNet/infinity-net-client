@@ -37,7 +37,12 @@ export function ProfilePage() {
 
   return (
     <div className="container w-full mx-auto">
-      <div className="h-48 md:h-64 bg-[url('/placeholder.svg')] bg-cover bg-center " />
+      <div
+        className="h-48 md:h-64 bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${user?.cover ?? "/placeholder.svg"})`,
+        }}
+      />
       <div className="relative -mt-16 md:-mt-20 bg-background">
         <div className="flex items-end p-4 md:p-6">
           <div className="relative -mt-12 md:-mt-16 w-24 h-24 md:w-32 md:h-32 bg-background rounded-full border-4 border-background">
@@ -57,6 +62,7 @@ export function ProfilePage() {
             </h2>
             <p className="text-muted-foreground">@{user.username}</p>
           </div>
+
           {currentUser?.id === user.id && (
             <div className="hidden md:block">
               <Button variant="outline">Edit Profile</Button>

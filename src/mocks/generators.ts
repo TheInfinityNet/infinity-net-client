@@ -4,6 +4,7 @@ import { faker } from "@faker-js/faker";
 export const generateUser = (user: Partial<User>): User => ({
   id: faker.string.uuid(),
   avatar: faker.image.avatar(),
+  cover: faker.image.url(),
   email: faker.internet.email(),
   bio: faker.lorem.paragraph(),
   username: faker.internet.userName(),
