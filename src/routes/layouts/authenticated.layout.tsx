@@ -1,13 +1,18 @@
+import { Navigate, Outlet } from "react-router-dom";
 import { Link } from "@/components/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { MenuIcon, PlusIcon } from "lucide-react";
-import { Outlet } from "react-router-dom";
 import Logo from "@/assets/logo.svg";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useUserStore } from "@/stores/user.store";
 
-export function DefaultLayout() {
-  const { user } = useUserStore.getState();
+export function AuthenticatedLayout() {
+  const { isLoading, isError } = useCurrentUser();
+  const user = useUserStore((state) => state.user);
+  if (!user && !isLoading && !isError) {
+    return <Navigate to="/sign-in" />;
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

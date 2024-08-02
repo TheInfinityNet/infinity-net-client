@@ -31,6 +31,7 @@ import { useAuthStore } from "@/stores/auth.store";
 import axios from "axios";
 import { Link } from "@/components/link";
 import { setFormError } from "@/lib/utils";
+import { useUserStore } from "@/stores/user.store";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -49,6 +50,7 @@ export function SignInPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { setAccessToken, setRefreshToken } = useAuthStore.getState();
+  const { setUser } = useUserStore.getState();
 
   const signIn = useMutation({
     mutationFn: authService.signIn,
@@ -58,7 +60,7 @@ export function SignInPage() {
       setAccessToken(tokens.accessToken);
       setRefreshToken(tokens.refreshToken);
 
-      console.log(user);
+      setUser(user);
 
       toast({
         title: "Sign In Successful",

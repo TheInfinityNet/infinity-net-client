@@ -29,6 +29,7 @@ export enum AuthErrorCodes {
   TwoFactorRequired = "auth/two-factor-required",
 
   // Token Errors
+  TokenMissing = "auth/token-missing",
   TokenInvalid = "auth/token-invalid",
   TokenExpired = "auth/token-expired",
   InvalidToken = "auth/invalid-token",
@@ -132,7 +133,17 @@ export type RefreshTokenErrorResponse = {
   message: string;
 };
 
-export type SignOutResponse = void;
+export type SignOutRequest = {
+  refreshToken: string;
+  accessToken?: string;
+};
+export type SignOutResponse = {
+  message: string;
+};
+export type SignOutErrorResponse = {
+  errorCode: AuthErrorCodes.TokenInvalid | AuthErrorCodes.TokenRevoked;
+  message: string;
+};
 
 export type SendEmailVerificationRequest = {
   email: string;
@@ -272,7 +283,10 @@ const signUp = (data: SignUpRequest) =>
     headers: { "No-Auth": true },
   });
 
-const signOut = () => apiClient.delete<SignOutResponse>(AuthEndpoints.SignOut);
+const signOut = (data: SignOutRequest) =>
+  apiClient.post<SignOutResponse>(AuthEndpoints.SignOut, data, {
+    headers: { "No-Auth": true },
+  });
 
 const refreshToken = (data: RefreshTokenRequest) =>
   apiClient.post<RefreshTokenResponse>(AuthEndpoints.RefreshToken, data, {

@@ -9,12 +9,23 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Link } from "@/components/link";
 import { HeartIcon, MessageCircleIcon, ShareIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import profileService from "@/lib/api/services/profile.service";
 
 export function ProfilePage() {
+  const { id } = useParams();
+
+  const { data } = useQuery(["user", id], {
+    queryFn: profileService.getProfile,
+  });
+
+  console.log(data);
+
   return (
     <div className="container w-full mx-auto">
-      <div className="h-48 md:h-64 bg-[url('/placeholder.svg')] bg-cover bg-center rounded-t-lg" />
-      <div className="relative -mt-16 md:-mt-20 bg-background rounded-lg shadow-lg">
+      <div className="h-48 md:h-64 bg-[url('/placeholder.svg')] bg-cover bg-center " />
+      <div className="relative -mt-16 md:-mt-20 bg-background">
         <div className="flex items-end p-4 md:p-6">
           <div className="relative -mt-12 md:-mt-16 w-24 h-24 md:w-32 md:h-32 bg-background rounded-full border-4 border-background">
             <img

@@ -1,14 +1,34 @@
 import { User } from "../types/user.type";
 import apiClient from "../api-client";
 import { ValidationErrors } from "../types/api.type";
+import { AuthErrorCodes } from "./auth.service";
 
 export enum ProfileEndpoints {
   GetProfile = "/profile",
   UpdateProfile = "/profile/update",
 }
+export enum ProfileErrorCodes {
+  ValidationError = "profile/validation-error",
+  EmailAlreadyInUse = "profile/email-already-in-use",
+  InvalidEmail = "profile/invalid-email",
+  RateLimitExceeded = "profile/rate-limit-exceeded",
+}
 
 export type GetProfileResponse = {
   user: User;
+};
+export type GetProfileErrorResponse = {
+  errorCode:
+    | AuthErrorCodes.TokenInvalid
+    | AuthErrorCodes.TokenExpired
+    | AuthErrorCodes.TokenBlacklisted
+    | AuthErrorCodes.TokenRevoked
+    | AuthErrorCodes.InvalidSignature
+    | AuthErrorCodes.TooManyRequests
+    | AuthErrorCodes.RateLimitExceeded
+    | AuthErrorCodes.UserNotFound
+    | AuthErrorCodes.UserDisabled;
+  message: string;
 };
 
 export type UpdateProfileRequest = {
@@ -24,14 +44,6 @@ export type UpdateProfileRequest = {
 export type UpdateProfileResponse = {
   user: User;
 };
-
-export enum ProfileErrorCodes {
-  ValidationError = "profile/validation-error",
-  EmailAlreadyInUse = "profile/email-already-in-use",
-  InvalidEmail = "profile/invalid-email",
-  RateLimitExceeded = "profile/rate-limit-exceeded",
-}
-
 export type ProfileErrorResponse =
   | {
       errorCode:
