@@ -36,7 +36,7 @@ export function AuthenticatedLayout() {
             <Link href="/messages" className="nav-link">
               Messages
             </Link>
-            <Link href="/profile" className="nav-link">
+            <Link href={`/users/${user?.id}`} className="nav-link">
               Profile
             </Link>
           </nav>
@@ -49,7 +49,7 @@ export function AuthenticatedLayout() {
               <PlusIcon className="h-4 w-4 mr-2" />
               Post
             </Button>
-            <Link href="/profile" className="hidden sm:inline-flex">
+            <Link href={`/users/${user?.id}`} className="hidden sm:inline-flex">
               <Avatar className="h-8 w-8 overflow-hidden rounded-full">
                 <AvatarImage src={user?.avatar} />
                 <AvatarFallback>IN</AvatarFallback>
