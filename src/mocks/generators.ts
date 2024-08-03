@@ -1,7 +1,7 @@
 import type { User } from "@/lib/api/types/user.type";
 import { faker } from "@faker-js/faker";
 
-export const generateUser = (): User => ({
+export const generateUser = (user: Partial<User>): User => ({
   id: faker.string.uuid(),
   avatar: faker.image.avatar(),
   email: faker.internet.email(),
@@ -14,4 +14,5 @@ export const generateUser = (): User => ({
   acceptTerms: true,
   gender: faker.person.sex(),
   password: faker.internet.password(),
+  ...user,
 });
