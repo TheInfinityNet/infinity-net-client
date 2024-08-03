@@ -1,4 +1,5 @@
 import apiClient from "../api-client";
+import { Metadata } from "../types/api.type";
 import { User } from "../types/user.type";
 
 export enum UserEndpoints {
@@ -10,13 +11,26 @@ export enum UserEndpoints {
   GetUserFriends = "/users/:userId/friends",
 }
 
-const getUser = async (params: { userId: string }) =>
+const getUser = async (pathParams: { userId: string }) =>
   apiClient.get<{
     user: User;
-  }>(UserEndpoints.GetUser, {
+  }>(UserEndpoints.GetUser.replace(":userId", pathParams.userId));
+
+const getUserPosts = (
+  id: string,
+  params: {
+    page: number;
+    limit: number;
+  },
+) =>
+  apiClient.get<{
+    posts: Post[];
+    metadata: Metadata;
+  }>(UserEndpoints.GetUserPosts.replace(":id", id), {
     params,
   });
 
 export default {
   getUser,
+  getUserPosts,
 };
