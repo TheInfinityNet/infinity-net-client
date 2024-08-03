@@ -1,3 +1,4 @@
+import { User } from "./user.type";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -19,25 +20,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Post } from "@/lib/api/types/post.type";
 
 interface PostCardProps {
-  name: string;
-  username: string;
-  content: string;
+  post: Post;
 }
 
-export function PostCard({ name, username, content }: PostCardProps) {
+export function PostCard({ post }: PostCardProps) {
+  const { user, content, createdAt } = post;
+  if (!user) return null;
+
   return (
     <Card>
       <CardHeader className="flex items-center flex-row gap-2">
         <Avatar className="size-12 overflow-hidden rounded-full">
-          <AvatarImage src="/placeholder-user.jpg" />
-          <AvatarFallback>IN</AvatarFallback>
+          <AvatarImage src={user?.avatar || "/placeholder-user.jpg"} />
+          <AvatarFallback>{user.lastName}</AvatarFallback>
         </Avatar>
 
         <div className="flex-1">
-          <p className="font-medium">{name}</p>
-          <p className="text-sm text-muted-foreground">{username}</p>
+          <p className="font-medium">{user?.firstName}</p>
+          <p className="text-sm text-muted-foreground">@{user?.username}</p>
+          <p className="text-xs text-muted-foreground">{createdAt}</p>
         </div>
 
         <DropdownMenu>
