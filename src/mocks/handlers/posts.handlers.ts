@@ -23,4 +23,21 @@ export const postsHandlers = [
       },
     });
   }),
+
+  http.get("/news-feed", ({ request }) => {
+    const url = new URL(request.url);
+    const offset = Number(url.searchParams.get("offset"));
+    const limit = Number(url.searchParams.get("limit"));
+
+    return HttpResponse.json({
+      posts: _.times(10, () => generatePost()),
+      metadata: {
+        pagination: {
+          offset,
+          limit,
+          nextOffset: offset + limit,
+        },
+      },
+    });
+  }),
 ];
