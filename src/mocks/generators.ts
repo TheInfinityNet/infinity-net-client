@@ -1,7 +1,8 @@
 import type { User } from "@/lib/api/types/user.type";
+import type { Post } from "@/lib/api/types/post.type";
 import { faker } from "@faker-js/faker";
 
-export const generateUser = (user: Partial<User>): User => ({
+export const generateUser = (user?: Partial<User>): User => ({
   id: faker.string.uuid(),
   avatar: faker.image.avatar(),
   cover: faker.image.url(),
@@ -17,4 +18,13 @@ export const generateUser = (user: Partial<User>): User => ({
   gender: faker.person.sex(),
   password: faker.internet.password(),
   ...user,
+});
+
+export const generatePost = (post?: Partial<Post>): Post => ({
+  id: faker.string.uuid(),
+  user: generateUser(),
+  content: faker.lorem.paragraph(),
+  createdAt: faker.date.past().toISOString(),
+  updatedAt: faker.date.recent().toISOString(),
+  ...post,
 });
