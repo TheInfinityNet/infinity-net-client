@@ -5,9 +5,55 @@ import { Link } from "@/components/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useParams } from "react-router-dom";
 import { useUserStore } from "@/stores/user.store";
-import { NewsFeed } from "@/components/widgets/feed";
 import { format } from "date-fns";
 import { useGetUser } from "@/hooks/useGetUser";
+import { useGetPostByUserId } from "@/hooks/useGetPostsByUserId";
+import { PostCard } from "@/components/post-card";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+
+function InfinitePost({ userId }: { userId: string }) {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useGetPostByUserId(userId);
+
+  const posts = useMemo(
+    () => data?.pages.flatMap((page) => page.data.posts) ?? [],
+    [data],
+  );
+
+  const handleLoadMore = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
+
+  const fetchElementRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        handleLoadMore();
+      }
+    });
+
+    const currentRef = fetchElementRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [fetchElementRef, hasNextPage, isFetchingNextPage, handleLoadMore]);
+
+  return (
+    <>
+      {posts.map((post, index) => (
+        <PostCard key={index} post={post} />
+      ))}
+      <div ref={fetchElementRef}>Loading more...</div>
+    </>
+  );
+}
 
 export function ProfilePage() {
   const { id } = useParams<{ id: string }>();
@@ -54,8 +100,7 @@ export function ProfilePage() {
             </h2>
             <p className="text-muted-foreground">@{user.username}</p>
           </div>
-
-          {currentUser?.id === user.id && (
+          {currentUser?.id == user.id && (
             <div className="hidden md:block">
               <Button variant="outline">Edit Profile</Button>
             </div>
@@ -77,8 +122,9 @@ export function ProfilePage() {
         <TabsContent value="posts">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="col-span-1 md:col-span-2 space-y-6">
-              <NewsFeed />
+              <InfinitePost userId={id} />
             </div>
+
             <div className="col-span-1 space-y-6">
               <Card>
                 <CardHeader>
