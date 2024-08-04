@@ -15,6 +15,7 @@ import {
 } from "msw";
 import { generateUser } from "../generators";
 import { User } from "@/lib/api/types/user.type";
+import { users } from "../data";
 
 async function isAuthenticated<T extends DefaultBodyType>(
   request: StrictRequest<T>,
@@ -58,7 +59,10 @@ async function isAuthenticated<T extends DefaultBodyType>(
     );
   }
 
-  return { ...generateUser(), id: decoded.userId };
+  let user = users[decoded.userId] || generateUser({ id: decoded.userId });
+  users[decoded.userId] = user;
+
+  return user;
 }
 
 export const profileHandlers = [

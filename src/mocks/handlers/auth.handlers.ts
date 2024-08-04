@@ -34,6 +34,7 @@ import {
 import { generateUser } from "../generators";
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
 import { faker } from "@faker-js/faker";
+import { users } from "../data";
 
 export const authHandlers = [
   http.post<
@@ -117,6 +118,9 @@ export const authHandlers = [
 
     if (email === "ok@infinity.net" && password === "password") {
       const user = generateUser();
+
+      users[user.id] = user;
+
       const sessionId = faker.string.uuid();
       const accessToken = generateAccessToken(user, sessionId);
       const refreshToken = generateRefreshToken(user, sessionId);
