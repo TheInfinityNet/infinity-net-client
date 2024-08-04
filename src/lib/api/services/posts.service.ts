@@ -20,6 +20,15 @@ const getPostsByUserId = (
     params,
   });
 
+const getNewsFeed = (params: { offset: number; limit: number }) =>
+  apiClient.get<{
+    posts: Post[];
+    metadata: Metadata;
+  }>("/news-feed", {
+    params,
+  });
+
 export default {
   getPostsByUserId,
+  getNewsFeed,
 };
