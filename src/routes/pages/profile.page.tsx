@@ -4,22 +4,20 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Link } from "@/components/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
-import profileService from "@/lib/api/services/profile.service";
 import { useUserStore } from "@/stores/user.store";
 import { NewsFeed } from "@/components/widgets/feed";
 import { format } from "date-fns";
+import { useGetUser } from "@/hooks/useGetUser";
 
 export function ProfilePage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const currentUser = useUserStore((state) => state.user);
 
-  const { data: user, isLoading } = useQuery(["user", id], {
-    queryFn: profileService.getProfile,
-    enabled: !!id,
-    select: (data) => data.data.user,
-    staleTime: 1000 * 60 * 5,
-  });
+  if (!id) {
+    return <div>User not found</div>;
+  }
+
+  const { data: user, isLoading } = useGetUser({ userId: id });
 
   if (isLoading) {
     return <div>Loading...</div>;
