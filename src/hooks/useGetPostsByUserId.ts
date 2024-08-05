@@ -7,5 +7,6 @@ export function useGetPostByUserId(userId: string) {
       postsService.getPostsByUserId(userId, { offset: pageParam, limit: 10 }),
     getNextPageParam: (lastPage) =>
       lastPage.data.metadata.pagination.nextOffset,
+    staleTime: 1000 * 60 * 5,
   });
 }
