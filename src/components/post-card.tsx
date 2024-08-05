@@ -1,4 +1,3 @@
-import { User } from "./user.type";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -21,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Post } from "@/lib/api/types/post.type";
+import { Link } from "./link";
 
 interface PostCardProps {
   post: Post;
@@ -39,8 +39,10 @@ export function PostCard({ post }: PostCardProps) {
         </Avatar>
 
         <div className="flex-1">
-          <p className="font-medium">{user?.firstName}</p>
-          <p className="text-sm text-muted-foreground">@{user?.username}</p>
+          <Link href={`/users/${user.id}`}>
+            <p className="font-medium">{user?.firstName}</p>
+            <p className="text-sm text-muted-foreground">@{user?.username}</p>
+          </Link>
           <p className="text-xs text-muted-foreground">{createdAt}</p>
         </div>
 
