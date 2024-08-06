@@ -1,5 +1,6 @@
 import type { User } from "@/lib/api/types/user.type";
 import type { Post } from "@/lib/api/types/post.type";
+import type { Comment } from "@/lib/api/types/comment.type";
 import { faker } from "@faker-js/faker";
 
 export const generateUser = (user?: Partial<User>): User => ({
@@ -27,4 +28,17 @@ export const generatePost = (post?: Partial<Post>): Post => ({
   createdAt: faker.date.past().toISOString(),
   updatedAt: faker.date.recent().toISOString(),
   ...post,
+});
+
+export const generateComment = (comment?: Partial<Comment>): Comment => ({
+  id: faker.string.uuid(),
+  userId: faker.string.uuid(),
+  user: generateUser(),
+  postId: faker.string.uuid(),
+  parentId: faker.string.uuid(),
+  content: faker.lorem.paragraph(),
+  childrenCount: faker.number.int({ min: 0, max: 10 }),
+  createdAt: faker.date.past().toISOString(),
+  updatedAt: faker.date.recent().toISOString(),
+  ...comment,
 });
