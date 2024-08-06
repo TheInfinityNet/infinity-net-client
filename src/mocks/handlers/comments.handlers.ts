@@ -25,4 +25,25 @@ export const commentsHandlers = [
     });
   }),
 
+  http.get("/comments/:parentId/replies", ({ request, params }) => {
+    const { parentId } = params as { parentId: string };
+    const url = new URL(request.url);
+    const offset = Number(url.searchParams.get("offset"));
+    const limit = Number(url.searchParams.get("limit"));
+
+    const comments = _.times(10, () =>
+      generateComment({ postId: undefined, parentId }),
+    );
+
+    return HttpResponse.json({
+      comments,
+      metadata: {
+        pagination: {
+          offset,
+          limit,
+          nextOffset: offset + limit,
+        },
+      },
+    });
+  }),
 ];
