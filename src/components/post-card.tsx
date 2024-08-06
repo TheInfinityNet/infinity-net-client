@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Post } from "@/lib/api/types/post.type";
 import { Link } from "./link";
-
+import { PostComments } from "./post-comments";
 interface PostCardProps {
   post: Post;
 }
@@ -66,31 +66,35 @@ export function PostCard({ post }: PostCardProps) {
         <p>{content}</p>
       </CardContent>
 
-      <CardFooter className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <HeartIcon className="size-4" />
-            <span className="sr-only">Like</span>
-          </Button>
-          <Button variant="ghost" size="icon">
-            <MessageCircleIcon className="size-4" />
-            <span className="sr-only">Comment</span>
-          </Button>
-          <Button variant="ghost" size="icon">
-            <ShareIcon className="size-4" />
-            <span className="sr-only">Share</span>
-          </Button>
-        </div>
-        <div className="flex items-center gap-5">
-          <div className="flex items-center gap-1">
-            <HeartIcon className="size-4 text-red-500" />
-            <span className="text-sm">125</span>
+      <CardFooter className="grid">
+        <div className="flex w-full justify-between items-center gap-2">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon">
+              <HeartIcon className="size-4" />
+              <span className="sr-only">Like</span>
+            </Button>
+            <Button variant="ghost" size="icon">
+              <MessageCircleIcon className="size-4" />
+              <span className="sr-only">Comment</span>
+            </Button>
+            <Button variant="ghost" size="icon">
+              <ShareIcon className="size-4" />
+              <span className="sr-only">Share</span>
+            </Button>
           </div>
-          <div className="flex items-center gap-1">
-            <MessageCircleIcon className="size-4 text-blue-500" />
-            <span className="text-sm">25</span>
+          <div className="flex items-center gap-5">
+            <div className="flex items-center gap-1">
+              <HeartIcon className="size-4 text-red-500" />
+              <span className="text-sm">125</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MessageCircleIcon className="size-4 text-blue-500" />
+              <span className="text-sm">25</span>
+            </div>
           </div>
         </div>
+
+        <PostComments postId={post.id} />
       </CardFooter>
     </Card>
   );
