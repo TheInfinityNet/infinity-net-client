@@ -4,12 +4,14 @@ import { HeartIcon, MessageCircleIcon, ShareIcon } from "lucide-react";
 import { useState } from "react";
 import { Comment } from "@/lib/api/types/comment.type";
 import { useGetRepliesByCommentId } from "@/hooks/useGetRepliesByCommentId";
+import { ReplyComment } from "./reply-comment";
 
 interface PostCommentProps {
   comment: Comment;
 }
 export function PostComment({ comment }: PostCommentProps) {
   const [showComments, setShowComments] = useState(false);
+  const [showReplyForm, setShowReplyForm] = useState(false);
   const { data, fetchNextPage, hasNextPage, isLoading, isError } =
     useGetRepliesByCommentId(comment.id, showComments);
 
@@ -41,7 +43,12 @@ export function PostComment({ comment }: PostCommentProps) {
               <HeartIcon className="w-4 h-4" />
               <span>Like</span>
             </div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <div
+              className="flex items-center gap-1 text-sm text-muted-foreground"
+              onClick={() => {
+                setShowReplyForm((prev) => !prev);
+              }}
+            >
               <MessageCircleIcon className="w-4 h-4" />
               <span>Reply</span>
             </div>
@@ -67,6 +74,8 @@ export function PostComment({ comment }: PostCommentProps) {
           )}
         </div>
       )}
+
+      {showReplyForm && <ReplyComment commentId={comment.id} />}
     </div>
   );
 }

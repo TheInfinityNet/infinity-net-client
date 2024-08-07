@@ -22,6 +22,7 @@ import {
 import { Post } from "@/lib/api/types/post.type";
 import { Link } from "./link";
 import { PostComments } from "./post-comments";
+import { ReplyComment } from "./reply-comment";
 interface PostCardProps {
   post: Post;
 }
@@ -95,6 +96,8 @@ export function PostCard({ post }: PostCardProps) {
         </div>
 
         <PostComments postId={post.id} />
+
+        <ReplyComment postId={post.id} />
       </CardFooter>
     </Card>
   );
