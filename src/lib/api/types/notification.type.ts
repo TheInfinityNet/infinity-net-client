@@ -40,3 +40,8 @@ type ReplyNotification = BaseNotification & {
   replyId: string;
 };
 
+type FollowNotification = BaseNotification & {
+  type: NotificationType.Follow;
+  followerId: string;
+};
+
