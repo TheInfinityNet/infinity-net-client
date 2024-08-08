@@ -45,3 +45,9 @@ type FollowNotification = BaseNotification & {
   followerId: string;
 };
 
+type MessageNotification = BaseNotification & {
+  type: NotificationType.Message;
+  messageId: string;
+  contentPreview: string;
+};
+
