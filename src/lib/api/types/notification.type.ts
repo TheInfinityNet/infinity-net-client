@@ -90,3 +90,8 @@ type ReactionNotification = BaseNotification & {
   reactionType: string;
 };
 
+type AchievementNotification = BaseNotification & {
+  type: NotificationType.Achievement;
+  achievementId: string;
+};
+
