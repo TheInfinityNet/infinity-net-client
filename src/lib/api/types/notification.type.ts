@@ -84,3 +84,9 @@ type ShareNotification = BaseNotification & {
   sharedById: string;
 };
 
+type ReactionNotification = BaseNotification & {
+  type: NotificationType.Reaction;
+  postId: string;
+  reactionType: string;
+};
+
