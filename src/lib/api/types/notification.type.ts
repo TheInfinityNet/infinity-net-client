@@ -22,3 +22,8 @@ type BaseNotification = {
   createdAt: Date;
 };
 
+type LikeNotification = BaseNotification & {
+  type: NotificationType.Like;
+  postId: string;
+};
+
