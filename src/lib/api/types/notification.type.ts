@@ -51,3 +51,9 @@ type MessageNotification = BaseNotification & {
   contentPreview: string;
 };
 
+type TagNotification = BaseNotification & {
+  type: NotificationType.Tag;
+  postId: string;
+  tagId: string;
+};
+
