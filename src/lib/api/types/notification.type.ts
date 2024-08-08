@@ -63,3 +63,8 @@ type MentionNotification = BaseNotification & {
   mentionId: string;
 };
 
+type FriendRequestNotification = BaseNotification & {
+  type: NotificationType.FriendRequest;
+  requestId: string;
+};
+
