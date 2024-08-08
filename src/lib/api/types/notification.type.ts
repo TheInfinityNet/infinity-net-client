@@ -33,3 +33,10 @@ type CommentNotification = BaseNotification & {
   commentId: string;
 };
 
+type ReplyNotification = BaseNotification & {
+  type: NotificationType.Reply;
+  postId: string;
+  commentId: string;
+  replyId: string;
+};
+
