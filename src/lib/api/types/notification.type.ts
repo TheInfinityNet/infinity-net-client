@@ -78,3 +78,9 @@ type GroupInvitationNotification = BaseNotification & {
   groupId: string;
 };
 
+type ShareNotification = BaseNotification & {
+  type: NotificationType.Share;
+  postId: string;
+  sharedById: string;
+};
+
