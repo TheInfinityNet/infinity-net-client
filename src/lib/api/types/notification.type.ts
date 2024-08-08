@@ -15,3 +15,10 @@ export enum NotificationType {
   Story = "STORY",
 }
 
+type BaseNotification = {
+  id: string;
+  userId: string;
+  isRead: boolean;
+  createdAt: Date;
+};
+
