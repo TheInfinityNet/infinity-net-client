@@ -68,3 +68,13 @@ type FriendRequestNotification = BaseNotification & {
   requestId: string;
 };
 
+type EventInvitationNotification = BaseNotification & {
+  type: NotificationType.EventInvitation;
+  eventId: string;
+};
+
+type GroupInvitationNotification = BaseNotification & {
+  type: NotificationType.GroupInvitation;
+  groupId: string;
+};
+
