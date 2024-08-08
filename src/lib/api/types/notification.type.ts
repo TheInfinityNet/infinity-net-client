@@ -27,3 +27,9 @@ type LikeNotification = BaseNotification & {
   postId: string;
 };
 
+type CommentNotification = BaseNotification & {
+  type: NotificationType.Comment;
+  postId: string;
+  commentId: string;
+};
+
