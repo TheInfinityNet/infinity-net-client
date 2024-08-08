@@ -57,3 +57,9 @@ type TagNotification = BaseNotification & {
   tagId: string;
 };
 
+type MentionNotification = BaseNotification & {
+  type: NotificationType.Mention;
+  postId: string;
+  mentionId: string;
+};
+
