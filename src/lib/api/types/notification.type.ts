@@ -95,3 +95,23 @@ type AchievementNotification = BaseNotification & {
   achievementId: string;
 };
 
+type StoryNotification = BaseNotification & {
+  type: NotificationType.Story;
+  storyId: string;
+};
+
+export type Notification =
+  | LikeNotification
+  | CommentNotification
+  | ReplyNotification
+  | FollowNotification
+  | MessageNotification
+  | TagNotification
+  | MentionNotification
+  | FriendRequestNotification
+  | EventInvitationNotification
+  | GroupInvitationNotification
+  | ShareNotification
+  | ReactionNotification
+  | AchievementNotification
+  | StoryNotification;
