@@ -2,6 +2,11 @@ import type { User } from "@/lib/api/types/user.type";
 import type { Post } from "@/lib/api/types/post.type";
 import type { Comment } from "@/lib/api/types/comment.type";
 import { faker } from "@faker-js/faker";
+import { NotificationType } from "@/lib/api/types/notification.type";
+import type {
+  BaseNotification,
+  Notification,
+} from "@/lib/api/types/notification.type";
 
 export const generateUser = (user?: Partial<User>): User => ({
   id: faker.string.uuid(),
@@ -49,4 +54,125 @@ export const generateComment = (comment?: Partial<Comment>): Comment => {
     updatedAt: faker.date.recent().toISOString(),
     ...comment,
   };
+};
+
+export const getRandomNotificationType = (): NotificationType => {
+  const types = Object.values(NotificationType);
+  return types[faker.number.int({ min: 0, max: types.length - 1 })];
+};
+
+const generateBaseNotification = (
+  baseNotification?: Partial<BaseNotification>,
+): BaseNotification => {
+  const userId = faker.string.uuid();
+  return {
+    id: faker.string.uuid(),
+    userId,
+    user: generateUser({ id: userId }),
+    isRead: faker.datatype.boolean(),
+    createdAt: faker.date.past().toISOString(),
+    ...baseNotification,
+  };
+};
+
+export const generateNotification = (
+  notification?: Partial<Notification>,
+): Notification => {
+  const type = notification?.type ?? getRandomNotificationType();
+  switch (type) {
+    case NotificationType.Like:
+      return {
+        ...generateBaseNotification(),
+        type,
+        postId: faker.string.uuid(),
+      };
+    case NotificationType.Comment:
+      return {
+        ...generateBaseNotification(),
+        type,
+        postId: faker.string.uuid(),
+        commentId: faker.string.uuid(),
+      };
+    case NotificationType.Reply:
+      return {
+        ...generateBaseNotification(),
+        type,
+        postId: faker.string.uuid(),
+        commentId: faker.string.uuid(),
+        replyId: faker.string.uuid(),
+      };
+    case NotificationType.Follow:
+      return {
+        ...generateBaseNotification(),
+        type,
+        followerId: faker.string.uuid(),
+      };
+    case NotificationType.Message:
+      return {
+        ...generateBaseNotification(),
+        type,
+        messageId: faker.string.uuid(),
+        contentPreview: faker.lorem.sentence(),
+      };
+    case NotificationType.Tag:
+      return {
+        ...generateBaseNotification(),
+        type,
+        postId: faker.string.uuid(),
+        tagId: faker.string.uuid(),
+      };
+    case NotificationType.Mention:
+      return {
+        ...generateBaseNotification(),
+        type,
+        postId: faker.string.uuid(),
+        mentionId: faker.string.uuid(),
+      };
+    case NotificationType.FriendRequest:
+      return {
+        ...generateBaseNotification(),
+        type,
+        requestId: faker.string.uuid(),
+      };
+    case NotificationType.EventInvitation:
+      return {
+        ...generateBaseNotification(),
+        type,
+        eventId: faker.string.uuid(),
+      };
+    case NotificationType.GroupInvitation:
+      return {
+        ...generateBaseNotification(),
+        type,
+        groupId: faker.string.uuid(),
+      };
+    case NotificationType.Share:
+      return {
+        ...generateBaseNotification(),
+        type,
+        postId: faker.string.uuid(),
+        sharedById: faker.string.uuid(),
+      };
+    case NotificationType.Reaction:
+      return {
+        ...generateBaseNotification(),
+        type,
+        postId: faker.string.uuid(),
+        reactionType: faker.lorem.word(),
+      };
+    case NotificationType.Achievement:
+      return {
+        ...generateBaseNotification(),
+        type,
+        achievementId: faker.string.uuid(),
+      };
+    case NotificationType.Story:
+      return {
+        ...generateBaseNotification(),
+        type,
+        storyId: faker.string.uuid(),
+      };
+    default:
+      throw new Error("Unknown notification type");
+  }
 };
