@@ -3,19 +3,23 @@ import { users } from "../data";
 import _ from "lodash";
 import { generatePost } from "../generators";
 import { paginate } from "../utils/pagination";
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_OFFSET,
+  TOTAL_POSTS_IN_FEED_COUNT,
+  TOTAL_POSTS_IN_PROFILE_COUNT,
+} from "../constants";
 
 export const postsHandlers = [
   http.get("/users/:userId/posts", ({ request, params }) => {
     const { userId } = params as { userId: string };
     const url = new URL(request.url);
-    const offset = Number(url.searchParams.get("offset"));
-    const limit = Number(url.searchParams.get("limit"));
-    const totalCount = 64;
+    const offset = Number(url.searchParams.get("offset") || DEFAULT_OFFSET);
+    const limit = Number(url.searchParams.get("limit") || DEFAULT_LIMIT);
 
     const user = users[userId];
-
     const { items: posts, pagination } = paginate(
-      totalCount,
+      TOTAL_POSTS_IN_PROFILE_COUNT,
       offset,
       limit,
       () => generatePost({ user }),
@@ -31,12 +35,11 @@ export const postsHandlers = [
 
   http.get("/news-feed", ({ request }) => {
     const url = new URL(request.url);
-    const offset = Number(url.searchParams.get("offset"));
-    const limit = Number(url.searchParams.get("limit"));
-    const totalCount = 64;
+    const offset = Number(url.searchParams.get("offset") || DEFAULT_OFFSET);
+    const limit = Number(url.searchParams.get("limit") || DEFAULT_LIMIT);
 
     const { items: posts, pagination } = paginate(
-      totalCount,
+      TOTAL_POSTS_IN_FEED_COUNT,
       offset,
       limit,
       () => generatePost(),
