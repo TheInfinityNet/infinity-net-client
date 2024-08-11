@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { HeartIcon, MessageCircleIcon, ShareIcon } from "lucide-react";
@@ -9,16 +10,23 @@ import { ReplyComment } from "./reply-comment";
 interface PostCommentProps {
   comment: Comment;
 }
-export function PostComment({ comment }: PostCommentProps) {
+
+export const PostComment = memo(({ comment }: PostCommentProps) => {
   const [showComments, setShowComments] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const { data, fetchNextPage, hasNextPage, isLoading, isError } =
     useGetRepliesByCommentId(comment.id, showComments);
 
-  const children = data?.pages.flatMap((page) => page.data.comments) ?? [];
+  const toggleComments = useCallback(
+    () => setShowComments((prev) => !prev),
+    [],
+  );
+  const toggleReplyForm = useCallback(
+    () => setShowReplyForm((prev) => !prev),
+    [],
+  );
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading comments</div>;
+  const children = data?.pages.flatMap((page) => page.data.comments) ?? [];
 
   return (
     <div className="space-y-4">
@@ -45,9 +53,7 @@ export function PostComment({ comment }: PostCommentProps) {
             </div>
             <div
               className="flex items-center gap-1 text-sm text-muted-foreground"
-              onClick={() => {
-                setShowReplyForm((prev) => !prev);
-              }}
+              onClick={toggleReplyForm}
             >
               <MessageCircleIcon className="w-4 h-4" />
               <span>Reply</span>
@@ -60,9 +66,12 @@ export function PostComment({ comment }: PostCommentProps) {
         </div>
       </div>
 
-      <Button variant="link" onClick={() => setShowComments((prev) => !prev)}>
+      <Button variant="link" onClick={toggleComments}>
         {showComments ? "Hide" : "Show"} comments
       </Button>
+
+      {isLoading && <div>Loading...</div>}
+      {isError && <div>Error loading comments</div>}
 
       {showComments && children.length > 0 && (
         <div className="pl-8 border-l border-dashed border-primary">
@@ -70,7 +79,11 @@ export function PostComment({ comment }: PostCommentProps) {
             <PostComment key={child.id} comment={child} />
           ))}
           {hasNextPage && (
-            <Button onClick={() => fetchNextPage()}>Load More</Button>
+            <Button onClick={() => fetchNextPage()}>
+              View more comments{" "}
+              {data?.pages.at(-1)?.data.metadata.pagination.offset} of{" "}
+              {data?.pages.at(-1)?.data.metadata.pagination.totalCount}
+            </Button>
           )}
         </div>
       )}
@@ -78,4 +91,4 @@ export function PostComment({ comment }: PostCommentProps) {
       {showReplyForm && <ReplyComment commentId={comment.id} />}
     </div>
   );
-}
+});
