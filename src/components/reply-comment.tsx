@@ -5,10 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "react-query";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
+import { useState } from "react";
+import { SendHorizonalIcon, SendIcon, Smile, SmileIcon } from "lucide-react";
 
 type ReplyCommentProps = {
   commentId?: string;
   postId?: string;
+  active?: boolean;
 };
 
 const replySchema = z.object({
@@ -17,7 +20,8 @@ const replySchema = z.object({
   postId: z.string(),
 });
 
-export function ReplyComment({ commentId, postId }: ReplyCommentProps) {
+export function ReplyComment({ commentId, postId, active }: ReplyCommentProps) {
+  const [isActive, setIsActive] = useState(active ?? false);
   const form = useForm<z.infer<typeof replySchema>>({
     resolver: zodResolver(replySchema),
     defaultValues: {
@@ -39,7 +43,12 @@ export function ReplyComment({ commentId, postId }: ReplyCommentProps) {
   );
 
   return (
-    <div className="flex">
+    <div
+      className="flex"
+      onFocus={() => {
+        setIsActive(true);
+      }}
+    >
       <Avatar className="w-8 h-8">
         <AvatarImage src="/placeholder-user.jpg" />
         <AvatarFallback>IN</AvatarFallback>
@@ -59,12 +68,20 @@ export function ReplyComment({ commentId, postId }: ReplyCommentProps) {
             )}
           />
 
-          <div className="flex justify-between">
-            <button>Icon</button>
-            <Button variant={"ghost"} type="submit">
-              Reply
-            </Button>
-          </div>
+          {isActive && (
+            <div className="flex justify-between">
+              <div>
+                <Button variant={"ghost"}>
+                  <SmileIcon className="size-5 text-muted-foreground" />
+                </Button>
+              </div>
+              <div>
+                <Button variant={"ghost"} type="submit">
+                  <SendHorizonalIcon className="size-5 text-muted-foreground" />
+                </Button>
+              </div>
+            </div>
+          )}
         </form>
       </Form>
     </div>

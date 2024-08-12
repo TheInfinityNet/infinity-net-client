@@ -29,8 +29,21 @@ export function PostComments({ postId }: PostCommentsProps) {
             .map((comment) => (
               <PostComment key={comment.id} comment={comment} />
             ))}
+
           {hasNextPage && (
-            <Button onClick={() => fetchNextPage()}>Load More</Button>
+            <div className="flex justify-between items-center">
+              <Button
+                onClick={() => fetchNextPage()}
+                variant="link"
+                className="text-muted-foreground"
+              >
+                View more comments
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                {data?.pages.at(-1)?.data.metadata.pagination.nextOffset} of{" "}
+                {data?.pages.at(-1)?.data.metadata.pagination.totalCount}
+              </span>
+            </div>
           )}
         </div>
       )}
