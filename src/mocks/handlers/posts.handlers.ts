@@ -1,7 +1,12 @@
 import { http, HttpResponse } from "msw";
 import { users } from "../data";
 import _ from "lodash";
-import { generatePost } from "../generators";
+import {
+  generatePost,
+  generateReaction,
+  generateReactionCounts,
+  generateUser,
+} from "../generators";
 import { paginate } from "../utils/pagination";
 import {
   DEFAULT_LIMIT,
@@ -22,7 +27,12 @@ export const postsHandlers = [
       TOTAL_POSTS_IN_PROFILE_COUNT,
       offset,
       limit,
-      () => generatePost({ user }),
+      () =>
+        generatePost({
+          user,
+          reactionCounts: generateReactionCounts(),
+          currentUserReaction: generateReaction(),
+        }),
     );
 
     return HttpResponse.json({
@@ -42,7 +52,12 @@ export const postsHandlers = [
       TOTAL_POSTS_IN_FEED_COUNT,
       offset,
       limit,
-      () => generatePost(),
+      () =>
+        generatePost({
+          user: generateUser(),
+          reactionCounts: generateReactionCounts(),
+          currentUserReaction: generateReaction(),
+        }),
     );
 
     return HttpResponse.json({

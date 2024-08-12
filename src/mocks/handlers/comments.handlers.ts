@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { generateComment } from "../generators";
+import { generateComment, generateUser } from "../generators";
 import _ from "lodash";
 import { paginate } from "../utils/pagination";
 import {
@@ -20,7 +20,8 @@ export const commentsHandlers = [
       TOTAL_COMMENTS_COUNT,
       offset,
       limit,
-      () => generateComment({ postId, parentId: undefined }),
+      () =>
+        generateComment({ postId, parentId: undefined, user: generateUser() }),
     );
 
     return HttpResponse.json({
@@ -41,7 +42,8 @@ export const commentsHandlers = [
       TOTAL_REPLIES_COUNT,
       offset,
       limit,
-      () => generateComment({ postId: undefined, parentId }),
+      () =>
+        generateComment({ postId: undefined, parentId, user: generateUser() }),
     );
 
     return HttpResponse.json({

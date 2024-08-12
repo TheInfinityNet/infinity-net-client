@@ -7,6 +7,7 @@ import type {
   BaseNotification,
   Notification,
 } from "@/lib/api/types/notification.type";
+import { Reaction, ReactionType } from "@/lib/api/types/reactions.type";
 
 export const generateUser = (user?: Partial<User>): User => ({
   id: faker.string.uuid(),
@@ -26,12 +27,41 @@ export const generateUser = (user?: Partial<User>): User => ({
   ...user,
 });
 
-export const generatePost = (post?: Partial<Post>): Post => {
+export const generateReactionType = (): ReactionType => {
+  const types = Object.values(ReactionType);
+  return types[faker.number.int({ min: 0, max: types.length - 1 })];
+};
+
+export const generateReaction = (reaction?: Partial<Reaction>): Reaction => {
   const userId = faker.string.uuid();
   return {
     id: faker.string.uuid(),
     userId,
-    user: generateUser({ id: userId }),
+    postId: faker.string.uuid(),
+    type: generateReactionType(),
+    createdAt: faker.date.past().toISOString(),
+    updatedAt: faker.date.recent().toISOString(),
+    ...reaction,
+  };
+};
+
+export const generateReactionCounts = (): Record<ReactionType, number> => {
+  return {
+    [ReactionType.Like]: faker.number.int({ min: 0, max: 100 }),
+    [ReactionType.Love]: faker.number.int({ min: 0, max: 100 }),
+    [ReactionType.Haha]: faker.number.int({ min: 0, max: 100 }),
+    [ReactionType.Wow]: faker.number.int({ min: 0, max: 100 }),
+    [ReactionType.Sad]: faker.number.int({ min: 0, max: 100 }),
+    [ReactionType.Angry]: faker.number.int({ min: 0, max: 100 }),
+  };
+};
+
+export const generatePost = (post?: Partial<Post>): Post => {
+  const userId = faker.string.uuid();
+  const postId = faker.string.uuid();
+  return {
+    id: postId,
+    userId,
     content: faker.lorem.paragraph(),
     createdAt: faker.date.past().toISOString(),
     updatedAt: faker.date.recent().toISOString(),
@@ -45,7 +75,6 @@ export const generateComment = (comment?: Partial<Comment>): Comment => {
   return {
     id: faker.string.uuid(),
     userId,
-    user: generateUser({ id: userId }),
     postId,
     parentId: comment?.parentId ?? faker.string.uuid(),
     content: faker.lorem.paragraph(),
@@ -68,7 +97,6 @@ const generateBaseNotification = (
   return {
     id: faker.string.uuid(),
     userId,
-    user: generateUser({ id: userId }),
     isRead: faker.datatype.boolean(),
     createdAt: faker.date.past().toISOString(),
     ...baseNotification,
