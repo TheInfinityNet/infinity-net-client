@@ -7,7 +7,7 @@ import type {
   BaseNotification,
   Notification,
 } from "@/lib/api/types/notification.type";
-import { Reaction, ReactionType } from "@/lib/api/types/reactions.type";
+import { Reaction, ReactionType } from "@/lib/api/types/reaction.type";
 
 export const generateUser = (user?: Partial<User>): User => ({
   id: faker.string.uuid(),

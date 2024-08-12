@@ -31,8 +31,7 @@ import { ReplyComment } from "./reply-comment";
 import { HoverCard } from "./ui/hover-card";
 import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
 import _ from "lodash";
-import { Fragment } from "react/jsx-runtime";
-import { ReactionType } from "@/lib/api/types/reactions.type";
+import { ReactionType } from "@/lib/api/types/reaction.type";
 import { cn } from "@/lib/utils";
 
 interface PostCardProps {
