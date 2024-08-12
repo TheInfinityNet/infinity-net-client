@@ -1,4 +1,5 @@
 import { Comment } from "./comment.type";
+import { Reaction, ReactionType } from "./reactions.type";
 import { User } from "./user.type";
 
 export type Post = {
@@ -7,6 +8,11 @@ export type Post = {
   user?: User;
   comments?: Comment[];
   content: string;
+  currentUserReaction?: Reaction;
+  reactions?: Reaction[];
+  reactionCounts?: {
+    [key in ReactionType]: number;
+  };
   createdAt: string;
   updatedAt: string;
 };
