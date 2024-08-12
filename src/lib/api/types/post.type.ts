@@ -1,5 +1,5 @@
 import { Comment } from "./comment.type";
-import { Reaction, ReactionType } from "./reactions.type";
+import { Reaction, ReactionType } from "./reaction.type";
 import { User } from "./user.type";
 
 export type Post = {

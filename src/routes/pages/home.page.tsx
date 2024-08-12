@@ -5,6 +5,7 @@ import { FilterIcon, SettingsIcon } from "lucide-react";
 import { TrendingList } from "@/components/widgets/trending";
 import { NewsFeed } from "@/components/widgets/feed";
 import { FollowList } from "@/components/widgets/follow";
+import { PostComposer } from "@/components/post-composer";
 
 export function HomePage() {
   return (
@@ -31,6 +32,7 @@ export function HomePage() {
               <span className="sr-only">Filter</span>
             </Button>
           </div>
+          <PostComposer />
           <NewsFeed />
         </div>
       </div>
