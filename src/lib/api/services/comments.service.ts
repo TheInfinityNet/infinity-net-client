@@ -3,8 +3,10 @@ import { Metadata } from "../types/api.type";
 import { Comment } from "../types/comment.type";
 
 export enum CommentEndpoints {
+  CreateCommentByPostId = "/posts/:postId/comments",
   GetCommentsByPostId = "/posts/:postId/comments",
   GetRepliesByCommentId = "/comments/:commentId/replies",
+  UpdateComment = "/comments/:commentId",
 }
 
 const getCommentsByPostId = (

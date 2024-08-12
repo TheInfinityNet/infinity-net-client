@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "react-query";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { useState } from "react";
-import { SendHorizonalIcon, SendIcon, Smile, SmileIcon } from "lucide-react";
+import { SendHorizonalIcon, SmileIcon } from "lucide-react";
 
 type ReplyCommentProps = {
   commentId?: string;
@@ -55,7 +55,7 @@ export function ReplyComment({ commentId, postId, active }: ReplyCommentProps) {
       </Avatar>
 
       <Form {...form}>
-        <form className="grid border flex-1 rounded-lg">
+        <form className="grid border flex-1 rounded-lg" onSubmit={onSubmit}>
           <FormField
             control={form.control}
             name="content"

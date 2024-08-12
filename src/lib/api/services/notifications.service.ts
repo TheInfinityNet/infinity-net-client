@@ -4,6 +4,8 @@ import { Notification } from "../types/notification.type";
 
 export enum NotificationEndpoints {
   GetNotifications = "/notifications",
+  MarkAsRead = "/notifications/:notificationId/mark-as-read",
+  DeleteNotification = "/notifications/:notificationId",
 }
 
 const getNotifications = (params: { offset: number; limit: number }) =>

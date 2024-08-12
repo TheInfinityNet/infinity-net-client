@@ -4,6 +4,11 @@ import { Post } from "../types/post.type";
 
 export enum PostEndpoints {
   GetPostsByUserId = "/users/:userId/posts",
+  CreatePost = "/posts",
+  UpdatePost = "/posts/:postId",
+  DeletePost = "/posts/:postId",
+  GetNewsFeed = "/news-feed",
+  GetPostById = "/posts/:postId",
 }
 
 const getPostsByUserId = (

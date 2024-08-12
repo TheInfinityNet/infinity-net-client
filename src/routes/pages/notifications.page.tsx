@@ -100,6 +100,7 @@ export function NotificationPage() {
                 notification={notification}
               />
             ))}
+            {isError && <p>Error loading notifications</p>}
           </div>
         </CardContent>
         <CardFooter>

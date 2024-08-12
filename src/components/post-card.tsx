@@ -9,7 +9,6 @@ import {
 import {
   AngryIcon,
   Ellipsis,
-  Frown,
   FrownIcon,
   HeartIcon,
   LaughIcon,
