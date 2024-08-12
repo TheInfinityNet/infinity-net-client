@@ -30,6 +30,10 @@ import { PostComments } from "./post-comments";
 import { ReplyComment } from "./reply-comment";
 import { HoverCard } from "./ui/hover-card";
 import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
+import _ from "lodash";
+import { Fragment } from "react/jsx-runtime";
+import { ReactionType } from "@/lib/api/types/reactions.type";
+import { cn } from "@/lib/utils";
 
 interface PostCardProps {
   post: Post;
@@ -80,19 +84,45 @@ export function PostCard({ post }: PostCardProps) {
           <div className="flex items-center gap-2">
             <HoverCard>
               <HoverCardTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <HeartIcon className="size-4" />
-                  <span className="sr-only">Like</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn({
+                    "bg-primary text-white": post.currentUserReaction,
+                  })}
+                >
+                  {(() => {
+                    if (post.currentUserReaction) {
+                      if (post.currentUserReaction.type === ReactionType.Like) {
+                        return <ThumbsUp className="size-4" />;
+                      }
+                      if (post.currentUserReaction.type === ReactionType.Love) {
+                        return <HeartIcon className="size-4" />;
+                      }
+                      if (post.currentUserReaction.type === ReactionType.Haha) {
+                        return <LaughIcon className="size-4" />;
+                      }
+                      if (post.currentUserReaction.type === ReactionType.Sad) {
+                        return <FrownIcon className="size-4" />;
+                      }
+                      if (
+                        post.currentUserReaction.type === ReactionType.Angry
+                      ) {
+                        return <AngryIcon className="size-4" />;
+                      }
+                    }
+                    return <ThumbsUp className="size-4" />;
+                  })()}
                 </Button>
               </HoverCardTrigger>
               <HoverCardContent className="z-20">
                 <Card>
                   <CardContent className="flex items-center p-4 gap-2">
-                    <ThumbsUp className="w-6 h-6" />
-                    <HeartIcon className="w-6 h-6" />
-                    <LaughIcon className="w-6 h-6" />
-                    <FrownIcon className="w-6 h-6" />
-                    <AngryIcon className="w-6 h-6" />
+                    <ThumbsUp className="size-4" />
+                    <HeartIcon className="size-4" />
+                    <LaughIcon className="size-4" />
+                    <FrownIcon className="size-4" />
+                    <AngryIcon className="size-4" />
                   </CardContent>
                 </Card>
               </HoverCardContent>
@@ -108,12 +138,40 @@ export function PostCard({ post }: PostCardProps) {
           </div>
           <div className="flex items-center gap-5">
             <div className="flex items-center gap-1">
-              <HeartIcon className="size-4 text-red-500" />
-              <span className="text-sm">125</span>
+              {_.chain(post.reactionCounts)
+                .toPairs()
+                .sortBy(([, count]) => -count)
+                .take(3)
+                .map(([reaction]) => (
+                  <div
+                    key={reaction}
+                    className="flex items-center gap-1 text-sm text-muted-foreground"
+                  >
+                    {reaction === ReactionType.Like && (
+                      <ThumbsUp className="size-4" />
+                    )}
+                    {reaction === ReactionType.Love && (
+                      <HeartIcon className="size-4" />
+                    )}
+                    {reaction === ReactionType.Haha && (
+                      <LaughIcon className="size-4" />
+                    )}
+                    {reaction === ReactionType.Sad && (
+                      <FrownIcon className="size-4" />
+                    )}
+                    {reaction === ReactionType.Angry && (
+                      <AngryIcon className="size-4" />
+                    )}
+                  </div>
+                ))
+                .value()}
+              <span className="text-sm">
+                {_.chain(post.reactionCounts).values().sum().value()}
+              </span>
             </div>
             <div className="flex items-center gap-1">
               <MessageCircleIcon className="size-4 text-blue-500" />
-              <span className="text-sm">25</span>
+              <span className="text-sm">{post.commentCounts}</span>
             </div>
           </div>
         </div>

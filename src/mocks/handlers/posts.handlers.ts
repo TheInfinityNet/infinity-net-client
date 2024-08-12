@@ -14,6 +14,7 @@ import {
   TOTAL_POSTS_IN_FEED_COUNT,
   TOTAL_POSTS_IN_PROFILE_COUNT,
 } from "../constants";
+import { faker } from "@faker-js/faker";
 
 export const postsHandlers = [
   http.get("/users/:userId/posts", ({ request, params }) => {
@@ -31,7 +32,9 @@ export const postsHandlers = [
         generatePost({
           user,
           reactionCounts: generateReactionCounts(),
-          currentUserReaction: generateReaction(),
+          currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
+            ? generateReaction()
+            : undefined,
         }),
     );
 
@@ -56,7 +59,9 @@ export const postsHandlers = [
         generatePost({
           user: generateUser(),
           reactionCounts: generateReactionCounts(),
-          currentUserReaction: generateReaction(),
+          currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
+            ? generateReaction()
+            : undefined,
         }),
     );
 

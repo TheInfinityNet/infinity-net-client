@@ -50,7 +50,6 @@ export const generateReactionCounts = (): Record<ReactionType, number> => {
     [ReactionType.Like]: faker.number.int({ min: 0, max: 100 }),
     [ReactionType.Love]: faker.number.int({ min: 0, max: 100 }),
     [ReactionType.Haha]: faker.number.int({ min: 0, max: 100 }),
-    [ReactionType.Wow]: faker.number.int({ min: 0, max: 100 }),
     [ReactionType.Sad]: faker.number.int({ min: 0, max: 100 }),
     [ReactionType.Angry]: faker.number.int({ min: 0, max: 100 }),
   };
@@ -63,6 +62,7 @@ export const generatePost = (post?: Partial<Post>): Post => {
     id: postId,
     userId,
     content: faker.lorem.paragraph(),
+    commentCounts: faker.number.int({ min: 0, max: 100 }),
     createdAt: faker.date.past().toISOString(),
     updatedAt: faker.date.recent().toISOString(),
     ...post,

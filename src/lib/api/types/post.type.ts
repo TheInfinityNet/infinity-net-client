@@ -7,6 +7,7 @@ export type Post = {
   userId: string;
   user?: User;
   comments?: Comment[];
+  commentCounts?: number;
   content: string;
   currentUserReaction?: Reaction;
   reactions?: Reaction[];
