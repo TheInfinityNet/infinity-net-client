@@ -7,10 +7,15 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import {
+  AngryIcon,
   Ellipsis,
+  Frown,
+  FrownIcon,
   HeartIcon,
+  LaughIcon,
   MessageCircleIcon,
   ShareIcon,
+  ThumbsUp,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -23,6 +28,9 @@ import { Post } from "@/lib/api/types/post.type";
 import { Link } from "./link";
 import { PostComments } from "./post-comments";
 import { ReplyComment } from "./reply-comment";
+import { HoverCard } from "./ui/hover-card";
+import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
+
 interface PostCardProps {
   post: Post;
 }
@@ -70,10 +78,25 @@ export function PostCard({ post }: PostCardProps) {
       <CardFooter className="grid">
         <div className="flex w-full justify-between items-center gap-2">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon">
-              <HeartIcon className="size-4" />
-              <span className="sr-only">Like</span>
-            </Button>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <HeartIcon className="size-4" />
+                  <span className="sr-only">Like</span>
+                </Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="z-20">
+                <Card>
+                  <CardContent className="flex items-center p-4 gap-2">
+                    <ThumbsUp className="w-6 h-6" />
+                    <HeartIcon className="w-6 h-6" />
+                    <LaughIcon className="w-6 h-6" />
+                    <FrownIcon className="w-6 h-6" />
+                    <AngryIcon className="w-6 h-6" />
+                  </CardContent>
+                </Card>
+              </HoverCardContent>
+            </HoverCard>
             <Button variant="ghost" size="icon">
               <MessageCircleIcon className="size-4" />
               <span className="sr-only">Comment</span>
