@@ -1,5 +1,8 @@
 import { authHandlers } from "./auth.handlers";
 import { commentsHandlers } from "./comments.handlers";
+import { followsHandlers } from "./follows.handlers";
+import { friendsHandlers } from "./friends.handlers";
+import { mediaHandlers } from "./media.handlers";
 import { notificationHandlers } from "./notifications.handlers";
 import { postsHandlers } from "./posts.handlers";
 import { profileHandlers } from "./profile.handlers";
@@ -12,4 +15,7 @@ export const handlers = [
   ...postsHandlers,
   ...commentsHandlers,
   ...notificationHandlers,
+  ...mediaHandlers,
+  ...friendsHandlers,
+  ...followsHandlers,
 ];

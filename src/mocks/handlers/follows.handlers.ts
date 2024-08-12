@@ -1,40 +1,37 @@
 import { http, HttpResponse } from "msw";
-import { DEFAULT_LIMIT, DEFAULT_OFFSET } from "../constants";
-import { paginate } from "../utils/pagination";
 import { generateUser } from "../generators";
+import { paginate } from "../utils/pagination";
+import { DEFAULT_LIMIT, DEFAULT_OFFSET } from "../constants";
 
-export const friendsHandlers = [
-  http.get("/users/:userId/friends", ({ request }) => {
+export const followsHandlers = [
+  http.get("/users/:userId/follows/followers", ({ request }) => {
     const url = new URL(request.url);
     const offset = Number(url.searchParams.get("offset") || DEFAULT_OFFSET);
     const limit = Number(url.searchParams.get("limit") || DEFAULT_LIMIT);
 
-    const { items: friends, pagination } = paginate(100, offset, limit, () =>
+    const { items: followers, pagination } = paginate(100, offset, limit, () =>
       generateUser(),
     );
 
     return HttpResponse.json({
-      friends,
+      followers,
       metadata: {
         pagination,
       },
     });
   }),
 
-  http.get("/users/:userId/friends/pending-requests", ({ request }) => {
+  http.get("/users/:userId/follows/followees", ({ request }) => {
     const url = new URL(request.url);
     const offset = Number(url.searchParams.get("offset") || DEFAULT_OFFSET);
     const limit = Number(url.searchParams.get("limit") || DEFAULT_LIMIT);
 
-    const { items: pendingRequests, pagination } = paginate(
-      100,
-      offset,
-      limit,
-      () => generateUser(),
+    const { items: followees, pagination } = paginate(100, offset, limit, () =>
+      generateUser(),
     );
 
     return HttpResponse.json({
-      pendingRequests,
+      followees,
       metadata: {
         pagination,
       },
