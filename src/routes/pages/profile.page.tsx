@@ -9,7 +9,75 @@ import { format } from "date-fns";
 import { useGetUser } from "@/hooks/useGetUser";
 import { useGetPostByUserId } from "@/hooks/useGetPostsByUserId";
 import { PostCard } from "@/components/post-card";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { User } from "@/lib/api/types/user.type";
+import { useGetFriendsByUserId } from "@/hooks/useGetFriendsByUserId";
+
+function FriendsList({ friends }: { friends: User[] }) {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      {friends.map((friend, index) => (
+        <Link
+          href={`/users/${friend.id}`}
+          className="group flex items-center justify-center flex-col"
+          key={index}
+        >
+          <Avatar className="w-12 h-12 group-hover:ring-2 group-hover:ring-primary">
+            <AvatarImage src={friend.avatar} />
+            <AvatarFallback>{friend.firstName[0]}</AvatarFallback>
+          </Avatar>
+          <p className="mt-2 text-sm font-medium group-hover:underline">
+            {friend.firstName} {friend.lastName}
+          </p>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+type ProfileFriendsSectionProps = {
+  userId: string;
+};
+
+function ProfileFriendsSection({ userId }: ProfileFriendsSectionProps) {
+  const [activeTab, setActiveTab] = useState("all-friends");
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useGetFriendsByUserId(userId);
+
+  const friends = data?.pages.flatMap((page) => page.data.friends) || [];
+
+  return (
+    <Tabs
+      defaultValue="all-friends"
+      value={activeTab}
+      onValueChange={setActiveTab}
+      className=""
+    >
+      <TabsList>
+        <TabsTrigger value="all-friends">All friends</TabsTrigger>
+        <TabsTrigger value="recently-added">Recently Added</TabsTrigger>
+        <TabsTrigger value="birthdays">Birthdays</TabsTrigger>
+        <TabsTrigger value="current-city">Current City</TabsTrigger>
+        <TabsTrigger value="hometown">Hometown</TabsTrigger>
+        <TabsTrigger value="following">Following</TabsTrigger>
+      </TabsList>
+      <TabsContent value="all-friends">
+        <FriendsList friends={friends} />
+        {hasNextPage && !isFetchingNextPage && (
+          <button onClick={() => fetchNextPage()} className="mt-4">
+            Load More
+          </button>
+        )}
+        {isFetchingNextPage && <p>Loading more...</p>}{" "}
+      </TabsContent>
+      <TabsContent value="recently-added"></TabsContent>
+      <TabsContent value="birthdays"></TabsContent>
+      <TabsContent value="current-city"></TabsContent>
+      <TabsContent value="hometown"></TabsContent>
+      <TabsContent value="following"></TabsContent>
+    </Tabs>
+  );
+}
 
 function InfinitePost({ userId }: { userId: string }) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -204,39 +272,7 @@ export function ProfilePage() {
           </div>
         </TabsContent>
         <TabsContent value="friends">
-          <Tabs defaultValue="all-friends" className="">
-            <TabsList>
-              <TabsTrigger value="all-friends">All friends</TabsTrigger>
-              <TabsTrigger value="recently-added">Recently Added</TabsTrigger>
-              <TabsTrigger value="birthdays">Birthdays</TabsTrigger>
-              <TabsTrigger value="current-city">Current City</TabsTrigger>
-              <TabsTrigger value="hometown">Hometown</TabsTrigger>
-              <TabsTrigger value="following">Following</TabsTrigger>
-            </TabsList>
-            <TabsContent value="all-friends">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <Card
-                  key={index}
-                  className="flex items-center gap-4 p-4 rounded-md transition-colors hover:bg-muted"
-                >
-                  <Avatar className="h-12 w-12 overflow-hidden rounded-full">
-                    <AvatarImage src="/placeholder-user.jpg" />
-                    <AvatarFallback>IN</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <p className="font-medium">Jane Doe</p>
-                    <p className="text-sm text-muted-foreground">@janedoe</p>
-                  </div>
-                  <Button variant="outline">Add Friend</Button>
-                </Card>
-              ))}
-            </TabsContent>
-            <TabsContent value="recently-added"></TabsContent>
-            <TabsContent value="birthdays"></TabsContent>
-            <TabsContent value="current-city"></TabsContent>
-            <TabsContent value="hometown"></TabsContent>
-            <TabsContent value="following"></TabsContent>
-          </Tabs>
+          <ProfileFriendsSection userId={id} />
         </TabsContent>
         <TabsContent value="photos">
           <div className="grid grid-cols-3 gap-2">

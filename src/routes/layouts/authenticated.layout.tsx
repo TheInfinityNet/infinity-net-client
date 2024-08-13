@@ -59,18 +59,6 @@ export function AuthenticatedLayout() {
         </div>
       </header>
       <Outlet />
-      <footer className="border-t bg-background">
-        <div className="container flex flex-col items-center justify-between gap-4 px-4 py-6 sm:flex-row sm:py-8">
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <Link href="/terms">Terms</Link>
-            <Link href="/privacy">Privacy</Link>
-            <Link href="/cookie-policy">Cookie Policy</Link>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            &copy; 2024 Infinity Net. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

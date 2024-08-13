@@ -8,9 +8,14 @@ export const friendsHandlers = [
     const url = new URL(request.url);
     const offset = Number(url.searchParams.get("offset") || DEFAULT_OFFSET);
     const limit = Number(url.searchParams.get("limit") || DEFAULT_LIMIT);
+    const query = url.searchParams.get("query") || "";
 
     const { items: friends, pagination } = paginate(100, offset, limit, () =>
-      generateUser(),
+      generateUser({
+        ...(query && {
+          firstName: query,
+        }),
+      }),
     );
 
     return HttpResponse.json({
