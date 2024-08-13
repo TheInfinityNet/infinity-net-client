@@ -14,3 +14,11 @@ export type User = {
   gender: string;
   acceptTerms: boolean;
 };
+
+export type UserDetail = {
+  userId: string;
+  relationshipStatus?: string;
+  hobbies?: string[];
+  interests?: string[];
+  languages?: string[];
+};
