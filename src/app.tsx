@@ -1,90 +1,130 @@
 import { RouterProvider } from "react-router-dom";
-
 import { createBrowserRouter } from "react-router-dom";
-import { HomePage } from "./routes/pages/home.page";
 import { ThemeProvider } from "./components/theme-provider";
-import { SignInPage } from "./routes/pages/sign-in.page";
-import { SignUpPage } from "./routes/pages/sign-up.page";
-import { MessagesPage } from "./routes/pages/messages.page";
-import { LandingPage } from "./routes/pages/landing.page";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "./components/ui/toaster";
-import { ProfilePage } from "./routes/pages/profile.page";
-import { WelcomePage } from "./routes/pages/welcome.page";
-import { AuthLayout } from "./routes/layouts/auth.layout";
-import { EmailVerificationPage } from "./routes/pages/email-verification.page";
-import { ForgotPasswordPage } from "./routes/pages/forgot-password.page";
-import { ResetPasswordPage } from "./routes/pages/reset-password.page";
-import { NotificationPage } from "./routes/pages/notifications.page";
-import { EmailVerificationTokenPage } from "./routes/pages/email-verification-token.page";
-import { GenericLayout } from "./routes/layouts/generic.layout";
-import { AuthenticatedLayout } from "./routes/layouts/authenticated.layout";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <GenericLayout />,
+    async lazy() {
+      const { GenericLayout } = await import("./routes/layouts/generic.layout");
+      return { Component: GenericLayout };
+    },
     children: [
       {
         path: "users/:id",
-        element: <ProfilePage />,
+        async lazy() {
+          const { ProfilePage } = await import("./routes/pages/profile.page");
+          return { Component: ProfilePage };
+        },
       },
       {
         path: "landing",
-        element: <LandingPage />,
+        async lazy() {
+          const { LandingPage } = await import("./routes/pages/landing.page");
+          return { Component: LandingPage };
+        },
       },
     ],
   },
   {
     path: "/",
-    element: <AuthenticatedLayout />,
+    async lazy() {
+      const { AuthenticatedLayout } = await import(
+        "./routes/layouts/authenticated.layout"
+      );
+      return { Component: AuthenticatedLayout };
+    },
     children: [
       {
         index: true,
-        element: <HomePage />,
+        async lazy() {
+          const { HomePage } = await import("./routes/pages/home.page");
+          return { Component: HomePage };
+        },
       },
       {
         path: "notifications",
-        element: <NotificationPage />,
+        async lazy() {
+          const { NotificationPage } = await import(
+            "./routes/pages/notifications.page"
+          );
+          return { Component: NotificationPage };
+        },
       },
-
       {
         path: "messages",
-        element: <MessagesPage />,
+        async lazy() {
+          const { MessagesPage } = await import("./routes/pages/messages.page");
+          return { Component: MessagesPage };
+        },
       },
     ],
   },
   {
     path: "",
-    element: <AuthLayout />,
+    async lazy() {
+      const { AuthLayout } = await import("./routes/layouts/auth.layout");
+      return { Component: AuthLayout };
+    },
     children: [
       {
         path: "sign-in",
-        element: <SignInPage />,
+        async lazy() {
+          const { SignInPage } = await import("./routes/pages/sign-in.page");
+          return { Component: SignInPage };
+        },
       },
       {
         path: "sign-up",
-        element: <SignUpPage />,
+        async lazy() {
+          const { SignUpPage } = await import("./routes/pages/sign-up.page");
+          return { Component: SignUpPage };
+        },
       },
       {
         path: "reset-password",
-        element: <ResetPasswordPage />,
+        async lazy() {
+          const { ResetPasswordPage } = await import(
+            "./routes/pages/reset-password.page"
+          );
+          return { Component: ResetPasswordPage };
+        },
       },
       {
         path: "forgot-password",
-        element: <ForgotPasswordPage />,
+        async lazy() {
+          const { ForgotPasswordPage } = await import(
+            "./routes/pages/forgot-password.page"
+          );
+          return { Component: ForgotPasswordPage };
+        },
       },
       {
         path: "email-verification",
-        element: <EmailVerificationPage />,
+        async lazy() {
+          const { EmailVerificationPage } = await import(
+            "./routes/pages/email-verification.page"
+          );
+          return { Component: EmailVerificationPage };
+        },
       },
       {
         path: "email-verification-token",
-        element: <EmailVerificationTokenPage />,
+        async lazy() {
+          const { EmailVerificationTokenPage } = await import(
+            "./routes/pages/email-verification-token.page"
+          );
+          return { Component: EmailVerificationTokenPage };
+        },
       },
       {
         path: "welcome",
-        element: <WelcomePage />,
+        async lazy() {
+          const { WelcomePage } = await import("./routes/pages/welcome.page");
+          return { Component: WelcomePage };
+        },
       },
     ],
   },

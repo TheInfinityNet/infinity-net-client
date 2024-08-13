@@ -9,9 +9,7 @@ async function initializeMocks() {
 }
 
 async function main() {
-  if (process.env.NODE_ENV !== "production") {
-    await initializeMocks();
-  }
+  await initializeMocks();
 
   const rootElement = document.getElementById("root");
 
