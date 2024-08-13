@@ -31,4 +31,28 @@ export const reactionsHandlers = [
       },
     });
   }),
+
+  http.post("/posts/:postId/reactions", async ({ params, request }) => {
+    const { postId } = params as { postId: string };
+    const { type } = (await request.json()) as { type: ReactionType };
+
+    return HttpResponse.json({
+      reaction: generateReaction({
+        postId,
+        user: generateUser(),
+        type,
+      }),
+    });
+  }),
+
+  http.delete("/posts/:postId/reactions", async ({ params }) => {
+    const { postId } = params as { postId: string };
+
+    return HttpResponse.json({
+      reaction: generateReaction({
+        postId,
+        user: generateUser(),
+      }),
+    });
+  }),
 ];

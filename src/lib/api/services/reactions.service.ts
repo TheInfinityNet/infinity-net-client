@@ -5,7 +5,7 @@ import { Reaction, ReactionType } from "../types/reaction.type";
 export enum ReactionEndpoints {
   GetReactionsByPostId = "/posts/:postId/reactions",
   CreatePostReaction = "/posts/:postId/reactions",
-  DeletePostReaction = "/posts/:postId/reactions/:reactionId",
+  DeletePostReaction = "/posts/:postId/reactions",
 
   GetReactionsByCommentId = "/comments/:commentId/reactions",
   CreateCommentReaction = "/comments/:commentId/reactions",
@@ -31,6 +31,23 @@ const getReactionsByPostId = (
     params,
   });
 
+const createReactionByPostId = (
+  postId: string,
+  data: {
+    type: ReactionType;
+  },
+) =>
+  apiClient.post<{
+    reaction: Reaction;
+  }>(ReactionEndpoints.CreatePostReaction.replace(":postId", postId), data);
+
+const deleteReactionByPostId = (postId: string) =>
+  apiClient.delete<{
+    reaction: Reaction;
+  }>(ReactionEndpoints.DeletePostReaction.replace(":postId", postId));
+
 export default {
   getReactionsByPostId,
+  createReactionByPostId,
+  deleteReactionByPostId,
 };
