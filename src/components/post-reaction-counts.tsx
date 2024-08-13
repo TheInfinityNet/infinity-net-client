@@ -15,8 +15,13 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { useGetReactionsByPostId } from "@/hooks/useGetReactionsByPostId";
+import { useState } from "react";
+import { ScrollArea } from "./ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Link } from "./link";
 
 type PostReactionCountPreviewProps = {
   post: Post;
@@ -96,8 +101,25 @@ export function PostReactionCountsDetails({
   post,
 }: PostReactionCountDetailsProps) {
   const postId = post.id;
+
+  const [selectedReaction, setSelectedReaction] = useState<
+    ReactionType | "all"
+  >("all");
+
+  const { data, fetchNextPage, hasNextPage, isLoading, isError } =
+    useGetReactionsByPostId(postId, true, {
+      type: selectedReaction === "all" ? undefined : selectedReaction,
+    });
+
+  const reactions = data?.pages.flatMap((page) => page.data.reactions) ?? [];
+
   return (
-    <Tabs defaultValue="all" className="w-full ">
+    <Tabs
+      defaultValue="all"
+      className="w-full pt-4"
+      value={selectedReaction}
+      onValueChange={(value) => setSelectedReaction(value as ReactionType)}
+    >
       <TabsList className="w-full flex justify-start">
         <TabsTrigger value="all">All</TabsTrigger>
         {Object.keys(post.reactionCounts as Object).map((reaction) => (
@@ -109,12 +131,47 @@ export function PostReactionCountsDetails({
           </TabsTrigger>
         ))}
       </TabsList>
-      <TabsContent value="all">All</TabsContent>
-      {Object.entries(ReactionType).map(([_, reaction]) => (
-        <TabsContent key={reaction} value={reaction}>
-          Mock
-        </TabsContent>
-      ))}
+      <ScrollArea className="h-[60vh] w-full rounded-md border mt-2">
+        <div className="p-4 grid gap-y-2">
+          {reactions.map((reaction) => (
+            <Link key={reaction.id} href={`/users/${reaction.userId}`}>
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Avatar>
+                    <AvatarImage
+                      src={reaction?.user?.avatar || "/placeholder.jpg"}
+                    />
+                    <AvatarFallback>{reaction?.user?.username}</AvatarFallback>
+                  </Avatar>
+                  <span className="absolute bottom-0 right-0">
+                    <Emoji
+                      unified={ReactionTypeToUnifiedMap[reaction.type]}
+                      size={16}
+                    />
+                  </span>
+                </div>
+                <span className="text-sm">{reaction?.user?.username}</span>
+              </div>
+            </Link>
+          ))}
+          {hasNextPage && (
+            <div className="flex justify-between items-center">
+              <button
+                onClick={() => fetchNextPage()}
+                disabled={!hasNextPage || isLoading}
+                className="text-sm text-muted-foreground"
+              >
+                {isLoading ? "Loading..." : "Load more"}
+              </button>
+              <span className="text-sm text-muted-foreground">
+                {data?.pages.at(-1)?.data.metadata.pagination.nextOffset} of{" "}
+                {data?.pages.at(-1)?.data.metadata.pagination.totalCount}
+              </span>
+            </div>
+          )}
+          {isError && <div>Error loading reactions</div>}
+        </div>
+      </ScrollArea>
     </Tabs>
   );
 }

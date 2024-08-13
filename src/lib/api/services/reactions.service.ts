@@ -1,6 +1,6 @@
 import apiClient from "../api-client";
 import { Metadata } from "../types/api.type";
-import { Reaction } from "../types/reaction.type";
+import { Reaction, ReactionType } from "../types/reaction.type";
 
 export enum ReactionEndpoints {
   GetReactionsByPostId = "/posts/:postId/reactions",
@@ -21,6 +21,7 @@ const getReactionsByPostId = (
   params: {
     offset: number;
     limit: number;
+    type?: ReactionType;
   },
 ) =>
   apiClient.get<{

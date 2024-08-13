@@ -6,6 +6,7 @@ import { mediaHandlers } from "./media.handlers";
 import { notificationHandlers } from "./notifications.handlers";
 import { postsHandlers } from "./posts.handlers";
 import { profileHandlers } from "./profile.handlers";
+import { reactionsHandlers } from "./reactions.handlers";
 import { usersHandlers } from "./users.handlers";
 
 export const handlers = [
@@ -18,4 +19,5 @@ export const handlers = [
   ...mediaHandlers,
   ...friendsHandlers,
   ...followsHandlers,
+  ...reactionsHandlers,
 ];
