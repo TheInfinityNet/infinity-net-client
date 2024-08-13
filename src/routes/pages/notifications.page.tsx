@@ -1,3 +1,4 @@
+import { Link } from "@/components/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +20,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import { useGetNotifications } from "@/hooks/useGetNotifications";
-import { Notification } from "@/lib/api/types/notification.type";
+import {
+  Notification,
+  NotificationType,
+} from "@/lib/api/types/notification.type";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { BellRing, Check, Ellipsis, User } from "lucide-react";
@@ -29,16 +33,73 @@ export function NotificationCard({
 }: {
   notification: Notification;
 }) {
+  let link: string = "";
+  let image: string | undefined = "";
+
+  switch (notification.type) {
+    case NotificationType.Reaction:
+      link = `/posts/${notification.postId}`;
+      image = notification.user?.avatar;
+      break;
+    case NotificationType.Tag:
+      link = `/posts/${notification.postId}`;
+      image = notification.user?.avatar;
+      break;
+    case NotificationType.Reply:
+      link = `/posts/${notification.postId}`;
+      image = notification.user?.avatar;
+      break;
+    case NotificationType.Share:
+      link = `/posts/${notification.postId}`;
+      image = notification.user?.avatar;
+      break;
+    case NotificationType.Story:
+      link = `/stories/${notification.storyId}`;
+      image = notification.user?.avatar;
+      break;
+    case NotificationType.Follow:
+      link = `/users/${notification.userId}`;
+      image = notification.user?.avatar;
+      break;
+    case NotificationType.Comment:
+      link = `/posts/${notification.postId}`;
+      image = notification.user?.avatar;
+      break;
+    case NotificationType.Mention:
+      link = `/posts/${notification.postId}`;
+      image = notification.user?.avatar;
+      break;
+    case NotificationType.Message:
+      link = `/messages/${notification.messageId}`;
+      image = notification.user?.avatar;
+      break;
+    case NotificationType.FriendRequest:
+      link = `/users/${notification.userId}`;
+      image = notification.user?.avatar;
+      break;
+    case NotificationType.GroupInvitation:
+      link = `/groups/${notification.groupId}`;
+      image = notification.user?.avatar;
+      break;
+  }
+
   return (
     <div className="flex items-center space-x-4 rounded-md border p-4 mb-4">
       <Avatar className="size-10 overflow-hidden rounded-full">
-        <AvatarImage src="/placeholder-user.jpg" />
+        <AvatarImage src={image ?? "/placeholder-user.jpg"} />
         <AvatarFallback>IN</AvatarFallback>
       </Avatar>
       <div className="flex-1">
-        <p className="text-sm font-medium leading-none">{notification.type}</p>
+        <Link href={link}>
+          <p className="text-sm font-medium leading-none">
+            {notification.type}
+          </p>
+        </Link>
         <p className="text-xs text-muted-foreground">
           {new Date(notification.createdAt).toLocaleString()}
+          {notification.isRead && (
+            <span className="ml-2 size-2 bg-primary rounded-full inline-block" />
+          )}
         </p>
       </div>
       <DropdownMenu>
@@ -58,7 +119,7 @@ export function NotificationCard({
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
-      </DropdownMenu>{" "}
+      </DropdownMenu>
     </div>
   );
 }

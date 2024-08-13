@@ -1,7 +1,6 @@
 import { User } from "./user.type";
 
 export enum NotificationType {
-  Like = "LIKE",
   Comment = "COMMENT",
   Reply = "REPLY",
   Follow = "FOLLOW",
@@ -9,11 +8,9 @@ export enum NotificationType {
   Tag = "TAG",
   Mention = "MENTION",
   FriendRequest = "FRIEND_REQUEST",
-  EventInvitation = "EVENT_INVITATION",
   GroupInvitation = "GROUP_INVITATION",
   Share = "SHARE",
   Reaction = "REACTION",
-  Achievement = "ACHIEVEMENT",
   Story = "STORY",
 }
 
@@ -23,11 +20,6 @@ export type BaseNotification = {
   user?: User;
   isRead: boolean;
   createdAt: string;
-};
-
-export type LikeNotificationDetails = {
-  type: NotificationType.Like;
-  postId: string;
 };
 
 export type CommentNotificationDetails = {
@@ -71,11 +63,6 @@ export type FriendRequestNotificationDetails = {
   requestId: string;
 };
 
-export type EventInvitationNotificationDetails = {
-  type: NotificationType.EventInvitation;
-  eventId: string;
-};
-
 export type GroupInvitationNotificationDetails = {
   type: NotificationType.GroupInvitation;
   groupId: string;
@@ -93,17 +80,11 @@ export type ReactionNotificationDetails = {
   reactionType: string;
 };
 
-export type AchievementNotificationDetails = {
-  type: NotificationType.Achievement;
-  achievementId: string;
-};
-
 export type StoryNotificationDetails = {
   type: NotificationType.Story;
   storyId: string;
 };
 
-export type LikeNotification = BaseNotification & LikeNotificationDetails;
 export type CommentNotification = BaseNotification & CommentNotificationDetails;
 export type ReplyNotification = BaseNotification & ReplyNotificationDetails;
 export type FollowNotification = BaseNotification & FollowNotificationDetails;
@@ -112,19 +93,14 @@ export type TagNotification = BaseNotification & TagNotificationDetails;
 export type MentionNotification = BaseNotification & MentionNotificationDetails;
 export type FriendRequestNotification = BaseNotification &
   FriendRequestNotificationDetails;
-export type EventInvitationNotification = BaseNotification &
-  EventInvitationNotificationDetails;
 export type GroupInvitationNotification = BaseNotification &
   GroupInvitationNotificationDetails;
 export type ShareNotification = BaseNotification & ShareNotificationDetails;
 export type ReactionNotification = BaseNotification &
   ReactionNotificationDetails;
-export type AchievementNotification = BaseNotification &
-  AchievementNotificationDetails;
 export type StoryNotification = BaseNotification & StoryNotificationDetails;
 
 export type Notification =
-  | LikeNotification
   | CommentNotification
   | ReplyNotification
   | FollowNotification
@@ -132,9 +108,7 @@ export type Notification =
   | TagNotification
   | MentionNotification
   | FriendRequestNotification
-  | EventInvitationNotification
   | GroupInvitationNotification
   | ShareNotification
   | ReactionNotification
-  | AchievementNotification
   | StoryNotification;

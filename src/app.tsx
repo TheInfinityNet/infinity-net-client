@@ -19,6 +19,7 @@ import { ForgotPasswordPage } from "./routes/pages/forgot-password.page";
 import { EmailVerificationPage } from "./routes/pages/email-verification.page";
 import { EmailVerificationTokenPage } from "./routes/pages/email-verification-token.page";
 import { WelcomePage } from "./routes/pages/welcome.page";
+import { PostPage } from "./routes/pages/post.page";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,14 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <HomePage />,
+          },
+          {
+            path: "explore",
+            element: <div>Explore</div>,
+          },
+          {
+            path: "posts/:id",
+            element: <PostPage />,
           },
         ],
       },

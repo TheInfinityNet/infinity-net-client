@@ -72,4 +72,20 @@ export const postsHandlers = [
       },
     });
   }),
+
+  http.get("/posts/:postId", ({ params }) => {
+    const { postId } = params as { postId: string };
+    const post = generatePost({
+      id: postId,
+      user: generateUser(),
+      reactionCounts: generateReactionCounts(),
+      currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
+        ? generateReaction()
+        : undefined,
+    });
+
+    return HttpResponse.json({
+      post,
+    });
+  }),
 ];

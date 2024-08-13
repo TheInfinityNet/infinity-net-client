@@ -33,7 +33,13 @@ const getNewsFeed = (params: { offset: number; limit: number }) =>
     params,
   });
 
+const getPostById = (postId: string) =>
+  apiClient.get<{
+    post: Post;
+  }>(PostEndpoints.GetPostById.replace(":postId", postId));
+
 export default {
   getPostsByUserId,
   getNewsFeed,
+  getPostById,
 };
