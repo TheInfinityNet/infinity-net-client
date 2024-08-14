@@ -8,6 +8,9 @@ import type {
   Notification,
 } from "@/lib/api/types/notification.type";
 import { Reaction, ReactionType } from "@/lib/api/types/reaction.type";
+import { Message } from "@/lib/api/types/message.type";
+import { Participant } from "@/lib/api/types/participant.type";
+import { Conversation } from "@/lib/api/types/conversation.type";
 
 export const generateUser = (user?: Partial<User>): User => ({
   id: faker.string.uuid(),
@@ -187,4 +190,43 @@ export const generateNotification = (
     default:
       throw new Error("Unknown notification type");
   }
+};
+
+export const generateMessage = (message?: Partial<Message>): Message => {
+  const userId = faker.string.uuid();
+  return {
+    id: faker.string.uuid(),
+    userId,
+    conversationId: faker.string.uuid(),
+    content: faker.lorem.sentence(),
+    seenBy: [],
+    createdAt: faker.date.past().toISOString(),
+    updatedAt: faker.date.recent().toISOString(),
+    ...message,
+  };
+};
+
+export const generateParticipant = (
+  participant?: Partial<Participant>,
+): Participant => {
+  const userId = faker.string.uuid();
+  return {
+    id: faker.string.uuid(),
+    userId,
+    conversationId: faker.string.uuid(),
+    createdAt: faker.date.past().toISOString(),
+    updatedAt: faker.date.recent().toISOString(),
+    ...participant,
+  };
+};
+
+export const generateConversation = (
+  conversation?: Partial<Conversation>,
+): Conversation => {
+  return {
+    id: faker.string.uuid(),
+    participants: [],
+    unreadCount: faker.number.int({ min: 0, max: 100 }),
+    ...conversation,
+  };
 };
