@@ -62,11 +62,11 @@ const router = createBrowserRouter([
         path: "notifications",
         element: <NotificationPage />,
       },
-      {
-        path: "messages",
-        element: <MessagesPage />,
-      },
     ],
+  },
+  {
+    path: "messages",
+    element: <MessagesPage />,
   },
   {
     path: "",
