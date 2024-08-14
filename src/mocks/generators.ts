@@ -51,6 +51,8 @@ export const generateReactionCounts = (): Record<ReactionType, number> => {
     [ReactionType.Love]: faker.number.int({ min: 0, max: 100 }),
     [ReactionType.Haha]: faker.number.int({ min: 0, max: 100 }),
     [ReactionType.Sad]: faker.number.int({ min: 0, max: 100 }),
+    [ReactionType.Dislike]: faker.number.int({ min: 0, max: 100 }),
+    [ReactionType.FoldedHands]: faker.number.int({ min: 0, max: 100 }),
     [ReactionType.Angry]: faker.number.int({ min: 0, max: 100 }),
   };
 };
@@ -108,12 +110,6 @@ export const generateNotification = (
 ): Notification => {
   const type = notification?.type ?? getRandomNotificationType();
   switch (type) {
-    case NotificationType.Like:
-      return {
-        ...generateBaseNotification(),
-        type,
-        postId: faker.string.uuid(),
-      };
     case NotificationType.Comment:
       return {
         ...generateBaseNotification(),
@@ -162,12 +158,6 @@ export const generateNotification = (
         type,
         requestId: faker.string.uuid(),
       };
-    case NotificationType.EventInvitation:
-      return {
-        ...generateBaseNotification(),
-        type,
-        eventId: faker.string.uuid(),
-      };
     case NotificationType.GroupInvitation:
       return {
         ...generateBaseNotification(),
@@ -187,12 +177,6 @@ export const generateNotification = (
         type,
         postId: faker.string.uuid(),
         reactionType: faker.lorem.word(),
-      };
-    case NotificationType.Achievement:
-      return {
-        ...generateBaseNotification(),
-        type,
-        achievementId: faker.string.uuid(),
       };
     case NotificationType.Story:
       return {
