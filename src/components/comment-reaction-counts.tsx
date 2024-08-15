@@ -1,4 +1,4 @@
-import { Post } from "@/lib/api/types/post.type";
+import { Comment } from "@/lib/api/types/comment.type";
 import { HoverCard } from "./ui/hover-card";
 import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
 import _ from "lodash";
@@ -16,22 +16,22 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
-import { useGetReactionsByPostId } from "@/hooks/useGetReactionsByPostId";
+import { useGetReactionsByCommentId } from "@/hooks/useGetReactionsByCommentId";
 import { useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link } from "./link";
 
-type PostReactionCountPreviewProps = {
-  post: Post;
+type CommentReactionCountPreviewProps = {
+  comment: Comment;
 };
 
-export function PostReactionCountsPreview({
-  post,
-}: PostReactionCountPreviewProps) {
+export function CommentReactionCountsPreview({
+  comment,
+}: CommentReactionCountPreviewProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const { data, isLoading, isError } = useGetReactionsByPostId(
-    post.id,
+  const { data, isLoading, isError } = useGetReactionsByCommentId(
+    comment.id,
     isHovered,
   );
   const reactions = data?.pages.flatMap((page) => page.data.reactions) ?? [];
@@ -51,7 +51,7 @@ export function PostReactionCountsPreview({
         >
           <HoverCardTrigger asChild>
             <div className="flex items-center gap-1">
-              {_.chain(post.reactionCounts)
+              {_.chain(comment.reactionCounts)
                 .toPairs()
                 .sortBy(([, count]) => -count)
                 .take(3)
@@ -71,7 +71,7 @@ export function PostReactionCountsPreview({
                 .value()}
 
               <span className="text-sm">
-                {_.chain(post.reactionCounts).values().sum().value()}
+                {_.chain(comment.reactionCounts).values().sum().value()}
               </span>
             </div>
           </HoverCardTrigger>
@@ -113,28 +113,28 @@ export function PostReactionCountsPreview({
           <DialogDescription>Number of reactions</DialogDescription>
         </DialogHeader>
         <DialogContent>
-          <PostReactionCountsDetails post={post} />
+          <CommentReactionCountsDetails comment={comment} />
         </DialogContent>
       </DialogContent>
     </Dialog>
   );
 }
 
-type PostReactionCountDetailsProps = {
-  post: Post;
+type CommentReactionCountDetailsProps = {
+  comment: Comment;
 };
 
-export function PostReactionCountsDetails({
-  post,
-}: PostReactionCountDetailsProps) {
-  const postId = post.id;
+export function CommentReactionCountsDetails({
+  comment,
+}: CommentReactionCountDetailsProps) {
+  const commentId = comment.id;
 
   const [selectedReaction, setSelectedReaction] = useState<
     ReactionType | "all"
   >("all");
 
   const { data, fetchNextPage, hasNextPage, isLoading, isError } =
-    useGetReactionsByPostId(postId, true, {
+    useGetReactionsByCommentId(commentId, true, {
       type: selectedReaction === "all" ? undefined : selectedReaction,
     });
 
@@ -149,7 +149,7 @@ export function PostReactionCountsDetails({
     >
       <TabsList className="w-full flex justify-start">
         <TabsTrigger value="all">All</TabsTrigger>
-        {Object.keys(post.reactionCounts as Object).map((reaction) => (
+        {Object.keys(comment.reactionCounts as Object).map((reaction) => (
           <TabsTrigger key={reaction} value={reaction}>
             <Emoji
               unified={ReactionTypeToUnifiedMap[reaction as ReactionType]}

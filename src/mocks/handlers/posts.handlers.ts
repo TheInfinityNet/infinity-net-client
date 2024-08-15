@@ -3,7 +3,7 @@ import { users } from "../data";
 import _ from "lodash";
 import {
   generatePost,
-  generateReaction,
+  generatePostReaction,
   generateReactionCounts,
   generateUser,
 } from "../generators";
@@ -33,7 +33,7 @@ export const postsHandlers = [
           user,
           reactionCounts: generateReactionCounts(),
           currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
-            ? generateReaction()
+            ? generatePostReaction()
             : undefined,
         }),
     );
@@ -60,7 +60,7 @@ export const postsHandlers = [
           user: generateUser(),
           reactionCounts: generateReactionCounts(),
           currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
-            ? generateReaction()
+            ? generatePostReaction()
             : undefined,
         }),
     );
@@ -80,7 +80,7 @@ export const postsHandlers = [
       user: generateUser(),
       reactionCounts: generateReactionCounts(),
       currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
-        ? generateReaction()
+        ? generatePostReaction()
         : undefined,
     });
 

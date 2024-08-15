@@ -31,16 +31,6 @@ export const UnifiedToReactionTypeMap: { [key: string]: ReactionType } =
     {} as { [key: string]: ReactionType },
   );
 
-export type Reaction = {
-  id: string;
-  userId: string;
-  user?: User;
-  postId: string;
-  type: ReactionType;
-  createdAt: string;
-  updatedAt: string;
-};
-
 export type PostReaction = {
   id: string;
   userId: string;

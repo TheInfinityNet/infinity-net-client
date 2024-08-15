@@ -1,5 +1,10 @@
 import { http, HttpResponse } from "msw";
-import { generateComment, generateUser } from "../generators";
+import {
+  generateComment,
+  generateCommentReaction,
+  generateReactionCounts,
+  generateUser,
+} from "../generators";
 import _ from "lodash";
 import { paginate } from "../utils/pagination";
 import {
@@ -8,6 +13,7 @@ import {
   TOTAL_COMMENTS_COUNT,
   TOTAL_REPLIES_COUNT,
 } from "../constants";
+import { faker } from "@faker-js/faker";
 
 export const commentsHandlers = [
   http.get("/posts/:postId/comments", ({ request, params }) => {
@@ -21,7 +27,15 @@ export const commentsHandlers = [
       offset,
       limit,
       () =>
-        generateComment({ postId, parentId: undefined, user: generateUser() }),
+        generateComment({
+          postId,
+          parentId: undefined,
+          user: generateUser(),
+          reactionCounts: generateReactionCounts(),
+          currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
+            ? generateCommentReaction()
+            : undefined,
+        }),
     );
 
     return HttpResponse.json({
@@ -43,7 +57,14 @@ export const commentsHandlers = [
       offset,
       limit,
       () =>
-        generateComment({ postId: undefined, parentId, user: generateUser() }),
+        generateComment({
+          parentId,
+          user: generateUser(),
+          reactionCounts: generateReactionCounts(),
+          currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
+            ? generateCommentReaction()
+            : undefined,
+        }),
     );
 
     return HttpResponse.json({

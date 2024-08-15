@@ -3,7 +3,7 @@ import { Post } from "@/lib/api/types/post.type";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import _ from "lodash";
 import {
-  Reaction,
+  PostReaction,
   ReactionType,
   ReactionTypeToUnifiedMap,
   UnifiedToReactionTypeMap,
@@ -20,14 +20,14 @@ type PostActionsProps = {
 
 export function PostActions({ post }: PostActionsProps) {
   const [currentUserReaction, setCurrentUserReaction] =
-    useState<Reaction | null>(post.currentUserReaction || null);
+    useState<PostReaction | null>(post.currentUserReaction || null);
 
   const createReactionByPostIdMutation = useCreateReactionByPostId(post.id);
   const deleteReactionByPostIdMutation = useDeleteReactionByPostId(post.id);
 
   const handleReactionClick = (reactionType: ReactionType | null) => {
     if (reactionType) {
-      const newReaction: Reaction = {
+      const newReaction: PostReaction = {
         type: reactionType,
         postId: post.id,
         userId: "",

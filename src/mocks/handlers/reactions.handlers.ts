@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { DEFAULT_LIMIT, DEFAULT_OFFSET } from "../constants";
 import { paginate } from "../utils/pagination";
-import { generateReaction, generateUser } from "../generators";
+import { generatePostReaction, generateUser } from "../generators";
 import { ReactionType } from "@/lib/api/types/reaction.type";
 
 export const reactionsHandlers = [
@@ -15,7 +15,7 @@ export const reactionsHandlers = [
     ) as ReactionType | undefined;
 
     const { items: reactions, pagination } = paginate(100, offset, limit, () =>
-      generateReaction({
+      generatePostReaction({
         postId,
         user: generateUser(),
         ...(type && {
@@ -37,7 +37,7 @@ export const reactionsHandlers = [
     const { type } = (await request.json()) as { type: ReactionType };
 
     return HttpResponse.json({
-      reaction: generateReaction({
+      reaction: generatePostReaction({
         postId,
         user: generateUser(),
         type,
@@ -49,7 +49,7 @@ export const reactionsHandlers = [
     const { postId } = params as { postId: string };
 
     return HttpResponse.json({
-      reaction: generateReaction({
+      reaction: generatePostReaction({
         postId,
         user: generateUser(),
       }),

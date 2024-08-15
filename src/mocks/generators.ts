@@ -7,7 +7,12 @@ import type {
   BaseNotification,
   Notification,
 } from "@/lib/api/types/notification.type";
-import { Reaction, ReactionType } from "@/lib/api/types/reaction.type";
+import {
+  CommentReaction,
+  MessageReaction,
+  PostReaction,
+  ReactionType,
+} from "@/lib/api/types/reaction.type";
 import { Message } from "@/lib/api/types/message.type";
 import { Participant } from "@/lib/api/types/participant.type";
 import { Conversation } from "@/lib/api/types/conversation.type";
@@ -35,12 +40,44 @@ export const generateReactionType = (): ReactionType => {
   return types[faker.number.int({ min: 0, max: types.length - 1 })];
 };
 
-export const generateReaction = (reaction?: Partial<Reaction>): Reaction => {
+export const generatePostReaction = (
+  reaction?: Partial<PostReaction>,
+): PostReaction => {
   const userId = faker.string.uuid();
   return {
     id: faker.string.uuid(),
     userId,
     postId: faker.string.uuid(),
+    type: generateReactionType(),
+    createdAt: faker.date.past().toISOString(),
+    updatedAt: faker.date.recent().toISOString(),
+    ...reaction,
+  };
+};
+
+export const generateCommentReaction = (
+  reaction?: Partial<CommentReaction>,
+): CommentReaction => {
+  const userId = faker.string.uuid();
+  return {
+    id: faker.string.uuid(),
+    userId,
+    commentId: faker.string.uuid(),
+    type: generateReactionType(),
+    createdAt: faker.date.past().toISOString(),
+    updatedAt: faker.date.recent().toISOString(),
+    ...reaction,
+  };
+};
+
+export const generateMessageReaction = (
+  reaction?: Partial<MessageReaction>,
+): MessageReaction => {
+  const userId = faker.string.uuid();
+  return {
+    id: faker.string.uuid(),
+    userId,
+    messageId: faker.string.uuid(),
     type: generateReactionType(),
     createdAt: faker.date.past().toISOString(),
     updatedAt: faker.date.recent().toISOString(),

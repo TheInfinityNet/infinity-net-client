@@ -30,8 +30,8 @@ export const mediaHandlers = [
     }
 
     let url = "";
-    let type = file.type;
-    let size = file.size;
+    const type = file.type;
+    const size = file.size;
     switch (file.type) {
       case "image/png":
       case "image/jpeg":

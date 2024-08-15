@@ -84,7 +84,7 @@ export async function isAuthenticated<T extends DefaultBodyType>(
     );
   }
 
-  let user = users[decoded.userId] || generateUser({ id: decoded.userId });
+  const user = users[decoded.userId] || generateUser({ id: decoded.userId });
   users[decoded.userId] = user;
 
   return user;
