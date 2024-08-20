@@ -23,7 +23,8 @@ export const postsHandlers = [
     const offset = Number(url.searchParams.get("offset") || DEFAULT_OFFSET);
     const limit = Number(url.searchParams.get("limit") || DEFAULT_LIMIT);
 
-    const user = users[userId];
+    const user = users[userId] || generateUser({ id: userId });
+    users[userId] = user;
     const { items: posts, pagination } = paginate(
       TOTAL_POSTS_IN_PROFILE_COUNT,
       offset,

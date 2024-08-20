@@ -6,6 +6,7 @@ export type User = {
   firstName: string;
   lastName: string;
   middleName?: string;
+  name?: string;
   username: string;
   email: string;
   password: string;

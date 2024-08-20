@@ -12,23 +12,33 @@ import { PostCard } from "@/components/post-card";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { User } from "@/lib/api/types/user.type";
 import { useGetFriendsByUserId } from "@/hooks/useGetFriendsByUserId";
+import { useGetUserProfileByUserId } from "@/hooks/useGetUserProfileByUserId";
+import { FriendshipStatus } from "@/lib/api/types/friend.type";
 
 function FriendsList({ friends }: { friends: User[] }) {
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="">
       {friends.map((friend, index) => (
         <Link
           href={`/users/${friend.id}`}
-          className="group flex items-center justify-center flex-col"
+          className="group flex items-center justify-center "
           key={index}
         >
-          <Avatar className="w-12 h-12 group-hover:ring-2 group-hover:ring-primary">
-            <AvatarImage src={friend.avatar} />
-            <AvatarFallback>{friend.firstName[0]}</AvatarFallback>
-          </Avatar>
-          <p className="mt-2 text-sm font-medium group-hover:underline">
-            {friend.firstName} {friend.lastName}
-          </p>
+          <div
+            key={friend.id}
+            className="flex items-center justify-between mb-4"
+          >
+            <div className="flex items-center">
+              <Avatar>
+                <AvatarImage src={friend.avatar} />
+                <AvatarFallback>{friend.username}</AvatarFallback>
+              </Avatar>
+              <span className="ml-3">{friend.name}</span>
+            </div>
+            <Button variant="secondary" size="sm">
+              View Profile
+            </Button>
+          </div>
         </Link>
       ))}
     </div>
@@ -125,13 +135,16 @@ function InfinitePost({ userId }: { userId: string }) {
 
 export function ProfilePage() {
   const { id } = useParams<{ id: string }>();
-  const currentUser = useUserStore((state) => state.user);
 
   if (!id) {
     return <div>User not found</div>;
   }
 
-  const { data: user, isLoading } = useGetUser({ userId: id });
+  const { data, isLoading } = useGetUserProfileByUserId({ userId: id });
+  const { user, friendshipStatus } = data ?? {
+    user: null,
+    friendshipStatus: null,
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -140,6 +153,43 @@ export function ProfilePage() {
   if (!user) {
     return <div>User not found</div>;
   }
+
+  const renderFriendshipButton = () => {
+    switch (friendshipStatus) {
+      case FriendshipStatus.Self:
+        return (
+          <Button variant="secondary" size="sm">
+            Edit Profile
+          </Button>
+        );
+      case FriendshipStatus.Accepted:
+        return (
+          <Button variant="secondary" size="sm">
+            Unfriend
+          </Button>
+        );
+      case FriendshipStatus.SentRequest:
+        return (
+          <Button variant="secondary" size="sm">
+            Cancel Request
+          </Button>
+        );
+      case FriendshipStatus.ReceivedRequest:
+        return (
+          <Button variant="secondary" size="sm">
+            Accept Friend
+          </Button>
+        );
+      case FriendshipStatus.NotFriends:
+        return (
+          <Button variant="secondary" size="sm">
+            Add Friend
+          </Button>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="container w-full mx-auto">
@@ -168,11 +218,7 @@ export function ProfilePage() {
             </h2>
             <p className="text-muted-foreground">@{user.username}</p>
           </div>
-          {currentUser?.id == user.id && (
-            <div className="hidden md:block">
-              <Button variant="outline">Edit Profile</Button>
-            </div>
-          )}
+          {renderFriendshipButton()}
         </div>
         <div className="px-4 md:px-6 py-2 md:py-3 border-t border-muted">
           <p className="text-muted-foreground">{user?.bio}</p>

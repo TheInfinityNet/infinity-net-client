@@ -17,3 +17,11 @@ export type Friend = {
   recipient?: User;
   createdAt: Date;
 };
+
+export enum FriendshipStatus {
+  Self = "SELF",
+  SentRequest = "SENT_REQUEST",
+  ReceivedRequest = "RECEIVED_REQUEST",
+  Accepted = "ACCEPTED",
+  NotFriends = "NOT_FRIENDS",
+}

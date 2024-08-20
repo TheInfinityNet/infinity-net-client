@@ -23,31 +23,10 @@ export function AuthenticatedLayout() {
             <img src={Logo} alt="Infinity Net" className="h-8 w-auto" />
             <span className="sr-only">Infinity Net</span>
           </Link>
-          <nav className="hidden space-x-4 md:flex">
-            <Link href="/" className="nav-link">
-              Home
-            </Link>
-            <Link href="/explore" className="nav-link">
-              Explore
-            </Link>
-            <Link href="/notifications" className="nav-link">
-              Notifications
-            </Link>
-            <Link href="/messages" className="nav-link">
-              Messages
-            </Link>
-            <Link href={`/users/${user?.id}`} className="nav-link">
-              Profile
-            </Link>
-          </nav>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="md:hidden">
               <MenuIcon className="h-6 w-6" />
               <span className="sr-only">Toggle menu</span>
-            </Button>
-            <Button variant="outline" className="hidden sm:inline-flex">
-              <PlusIcon className="h-4 w-4 mr-2" />
-              Post
             </Button>
             <Link href={`/users/${user?.id}`} className="hidden sm:inline-flex">
               <Avatar className="h-8 w-8 overflow-hidden rounded-full">

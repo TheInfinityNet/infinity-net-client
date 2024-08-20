@@ -16,6 +16,7 @@ import {
 import { Message } from "@/lib/api/types/message.type";
 import { Participant } from "@/lib/api/types/participant.type";
 import { Conversation } from "@/lib/api/types/conversation.type";
+import { FriendshipStatus } from "@/lib/api/types/friend.type";
 
 export const generateUser = (user?: Partial<User>): User => ({
   id: faker.string.uuid(),
@@ -27,6 +28,7 @@ export const generateUser = (user?: Partial<User>): User => ({
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
   middleName: faker.person.middleName(),
+  name: faker.person.fullName(),
   mobileNumber: faker.phone.number(),
   birthdate: faker.date.past().toISOString(),
   acceptTerms: true,
@@ -37,6 +39,11 @@ export const generateUser = (user?: Partial<User>): User => ({
 
 export const generateReactionType = (): ReactionType => {
   const types = Object.values(ReactionType);
+  return types[faker.number.int({ min: 0, max: types.length - 1 })];
+};
+
+export const generateFriendshipStatus = (): FriendshipStatus => {
+  const types = Object.values(FriendshipStatus);
   return types[faker.number.int({ min: 0, max: types.length - 1 })];
 };
 
