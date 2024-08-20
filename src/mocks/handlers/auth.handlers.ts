@@ -1,45 +1,43 @@
 import { HttpStatusCode } from "axios";
 import { http, HttpResponse, PathParams } from "msw";
-import {
-  AuthEndpoints,
-  RefreshTokenErrorResponse,
-  RefreshTokenRequest,
-  RefreshTokenResponse,
-  SignInErrorResponse,
-  SignInRequest,
-  SignInResponse,
-  AuthErrorCodes,
-  SignUpErrorResponse,
-  SignUpRequest,
-  SignUpResponse,
-  SendEmailVerificationRequest,
-  SendEmailVerificationResponse,
-  SendEmailVerificationErrorResponse,
-  VerifyEmailByCodeRequest,
-  VerifyEmailByCodeResponse,
-  VerifyEmailByCodeErrorResponse,
-  SendEmailForgotPasswordRequest,
-  SendEmailForgotPasswordResponse,
-  SendEmailForgotPasswordErrorResponse,
-  ForgotPasswordRequest,
-  ForgotPasswordResponse,
-  ForgotPasswordErrorResponse,
-  VerifyEmailByTokenRequest,
-  VerifyEmailByTokenResponse,
-  VerifyEmailByTokenErrorResponse,
-  ResetPasswordRequest,
-  ResetPasswordResponse,
-  ResetPasswordErrorResponse,
-} from "../../lib/api/services/auth.service";
+
 import { generateUser } from "../generators";
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
 import { faker } from "@faker-js/faker";
 import { users } from "../data";
+import {
+  AuthEndpoints,
+  AuthErrorCodes,
+  ForgotPasswordErrorResponse,
+  ForgotPasswordInput,
+  ForgotPasswordResponse,
+  RefreshTokenErrorResponse,
+  RefreshTokenInput,
+  RefreshTokenResponse,
+  ResetPasswordErrorResponse,
+  ResetPasswordInput,
+  ResetPasswordResponse,
+  SendEmailForgotPasswordErrorResponse,
+  SendEmailForgotPasswordInput,
+  SendEmailForgotPasswordResponse,
+  SendEmailVerificationErrorResponse,
+  SendEmailVerificationInput,
+  SendEmailVerificationResponse,
+  SignInErrorResponse,
+  SignInInput,
+  SignInResponse,
+  SignUpErrorResponse,
+  SignUpInput,
+  SignUpResponse,
+  VerifyEmailByCodeErrorResponse,
+  VerifyEmailByCodeInput,
+  VerifyEmailByCodeResponse,
+} from "@/types/auth.type";
 
 export const authHandlers = [
   http.post<
     PathParams,
-    SignInRequest,
+    SignInInput,
     SignInResponse | SignInErrorResponse,
     AuthEndpoints.SignIn
   >(AuthEndpoints.SignIn, async ({ request }) => {
@@ -178,7 +176,7 @@ export const authHandlers = [
 
   http.post<
     PathParams,
-    SignUpRequest,
+    SignUpInput,
     SignUpResponse | SignUpErrorResponse,
     AuthEndpoints.SignUp
   >(AuthEndpoints.SignUp, async ({ request }) => {
@@ -322,7 +320,7 @@ export const authHandlers = [
 
   http.post<
     PathParams,
-    RefreshTokenRequest,
+    RefreshTokenInput,
     RefreshTokenResponse | RefreshTokenErrorResponse,
     AuthEndpoints.RefreshToken
   >(AuthEndpoints.RefreshToken, async ({ request }) => {
@@ -425,7 +423,7 @@ export const authHandlers = [
 
   http.post<
     PathParams,
-    SendEmailVerificationRequest,
+    SendEmailVerificationInput,
     SendEmailVerificationResponse | SendEmailVerificationErrorResponse,
     AuthEndpoints.SendEmailVerification
   >(AuthEndpoints.SendEmailVerification, async ({ request }) => {
@@ -484,7 +482,7 @@ export const authHandlers = [
 
   http.post<
     PathParams,
-    VerifyEmailByCodeRequest,
+    VerifyEmailByCodeInput,
     VerifyEmailByCodeResponse | VerifyEmailByCodeErrorResponse,
     AuthEndpoints.VerifyEmailByCode
   >(AuthEndpoints.VerifyEmailByCode, async ({ request }) => {
@@ -635,7 +633,7 @@ export const authHandlers = [
 
   http.post<
     PathParams,
-    SendEmailForgotPasswordRequest,
+    SendEmailForgotPasswordInput,
     SendEmailForgotPasswordResponse | SendEmailForgotPasswordErrorResponse,
     AuthEndpoints.SendEmailForgotPassword
   >(AuthEndpoints.SendEmailForgotPassword, async ({ request }) => {
@@ -694,7 +692,7 @@ export const authHandlers = [
 
   http.post<
     PathParams,
-    ForgotPasswordRequest,
+    ForgotPasswordInput,
     ForgotPasswordResponse | ForgotPasswordErrorResponse,
     AuthEndpoints.ForgotPassword
   >(AuthEndpoints.ForgotPassword, async ({ request }) => {
@@ -783,7 +781,7 @@ export const authHandlers = [
 
   http.post<
     PathParams,
-    ResetPasswordRequest,
+    ResetPasswordInput,
     ResetPasswordResponse | ResetPasswordErrorResponse,
     AuthEndpoints.ResetPassword
   >(AuthEndpoints.ResetPassword, async ({ request }) => {

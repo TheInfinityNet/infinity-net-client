@@ -20,27 +20,23 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useMutation } from "react-query";
-import authService, {
-  AuthErrorCodes,
-  SignInErrorResponse,
-} from "@/lib/api/services/auth.service";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/stores/auth.store";
 import axios from "axios";
 import { Link } from "@/components/link";
 import { setFormError } from "@/lib/utils";
 import { useUserStore } from "@/stores/user.store";
-
-const signInSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
+import {
+  AuthErrorCodes,
+  SignInErrorResponse,
+  SignInInput,
+} from "@/types/auth.type";
+import { SignInSchema } from "@/contracts/auth.contract";
+import { useSignInMutation } from "@/hooks/useSignInMutation";
 
 export function SignInPage() {
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<SignInInput>({
+    resolver: zodResolver(SignInSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -49,66 +45,60 @@ export function SignInPage() {
 
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { setAccessToken, setRefreshToken } = useAuthStore.getState();
   const { setUser } = useUserStore.getState();
 
-  const signIn = useMutation({
-    mutationFn: authService.signIn,
-    mutationKey: "signIn",
-    onSuccess(data) {
-      const { tokens, user } = data.data;
-      setAccessToken(tokens.accessToken);
-      setRefreshToken(tokens.refreshToken);
+  const signInMutation = useSignInMutation();
 
-      setUser(user);
+  const onSubmit = form.handleSubmit((values) =>
+    signInMutation.mutate(values, {
+      onSuccess(data) {
+        const { user } = data.data;
+        setUser(user);
 
-      toast({
-        title: "Sign In Successful",
-        description: "You have successfully signed in.",
-      });
+        toast({
+          title: "Sign In Successful",
+          description: "You have successfully signed in.",
+        });
 
-      navigate("/");
-    },
-    onError(error) {
-      if (axios.isAxiosError<SignInErrorResponse>(error)) {
-        switch (error.response?.data.errorCode) {
-          case AuthErrorCodes.ValidationError:
-          case AuthErrorCodes.WrongPassword:
-          case AuthErrorCodes.InvalidEmail:
-          case AuthErrorCodes.ExpiredPassword:
-            setFormError(form, error.response.data.errors);
+        navigate("/");
+      },
+      onError(error) {
+        if (axios.isAxiosError<SignInErrorResponse>(error)) {
+          switch (error.response?.data.errorCode) {
+            case AuthErrorCodes.ValidationError:
+            case AuthErrorCodes.WrongPassword:
+            case AuthErrorCodes.InvalidEmail:
+            case AuthErrorCodes.ExpiredPassword:
+              setFormError(form, error.response.data.errors);
 
-            toast({
-              title: "Sign In Failed",
-              description: "Please check the errors and try again.",
-            });
+              toast({
+                title: "Sign In Failed",
+                description: "Please check the errors and try again.",
+              });
 
-            break;
-          default:
-            toast({
-              title: "Sign In Failed",
-              description:
-                error.response?.data.message ||
-                "Something went wrong. Please try again.",
-            });
+              break;
+            default:
+              toast({
+                title: "Sign In Failed",
+                description:
+                  error.response?.data.message ||
+                  "Something went wrong. Please try again.",
+              });
+          }
+        } else if (error instanceof Error) {
+          toast({
+            title: "Sign In Failed",
+            description: error.message,
+          });
+        } else {
+          toast({
+            title: "Sign In Failed",
+            description: "An unknown error occurred.",
+          });
         }
-      } else if (error instanceof Error) {
-        toast({
-          title: "Sign In Failed",
-          description: error.message,
-        });
-      } else {
-        toast({
-          title: "Sign In Failed",
-          description: "An unknown error occurred.",
-        });
-      }
-    },
-  });
-
-  const onSubmit = form.handleSubmit((values) => {
-    signIn.mutate(values);
-  });
+      },
+    }),
+  );
 
   return (
     <div className="flex h-screen items-center justify-center bg-background">

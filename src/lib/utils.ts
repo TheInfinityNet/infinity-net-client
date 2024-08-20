@@ -6,7 +6,7 @@ import {
   AccessTokenState,
   RefreshTokenPayload,
   RefreshTokenState,
-} from "./api/types/auth.type";
+} from "@/types/token.type";
 import { jwtDecode } from "jwt-decode";
 
 export function cn(...inputs: ClassValue[]) {

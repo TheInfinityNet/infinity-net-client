@@ -16,7 +16,7 @@ type TokenContextType = {
   setRefreshToken: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-const TokenContext = createContext<TokenContextType | undefined>(undefined);
+const TokenContext = createContext<TokenContextType | null>(null);
 
 export function TokenProvider({ children }: { children: ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(null);

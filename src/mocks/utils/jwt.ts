@@ -1,8 +1,3 @@
-import { AuthErrorCodes } from "@/lib/api/services/auth.service";
-import {
-  AccessTokenPayload,
-  RefreshTokenPayload,
-} from "@/lib/api/types/auth.type";
 import { User } from "@/lib/api/types/user.type";
 import { HttpStatusCode } from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -11,6 +6,8 @@ import sign from "jwt-encode";
 import { DefaultBodyType, HttpResponse, StrictRequest } from "msw";
 import { generateUser } from "../generators";
 import { users } from "../data";
+import { AccessTokenPayload, RefreshTokenPayload } from "@/types/token.type";
+import { AuthErrorCodes } from "@/types/auth.type";
 
 export const generateAccessToken = (user: User, sessionId: string) => {
   const payload: AccessTokenPayload = {

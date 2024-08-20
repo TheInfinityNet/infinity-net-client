@@ -5,7 +5,7 @@ interface AxiosContextValue {
   axios: AxiosInstance;
 }
 
-const AxiosContext = createContext<AxiosContextValue | undefined>(undefined);
+const AxiosContext = createContext<AxiosContextValue | null>(null);
 
 export const AxiosProvider = ({ children }: { children: ReactNode }) => {
   const axiosInstance = useMemo(() => {
