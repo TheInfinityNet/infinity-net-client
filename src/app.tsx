@@ -20,6 +20,9 @@ import { EmailVerificationPage } from "./routes/pages/email-verification.page";
 import { EmailVerificationTokenPage } from "./routes/pages/email-verification-token.page";
 import { WelcomePage } from "./routes/pages/welcome.page";
 import { PostPage } from "./routes/pages/post.page";
+import { createContext } from "react";
+import { AxiosProvider } from "./contexts/axios.context";
+import { TokenProvider } from "./contexts/token.context";
 
 const router = createBrowserRouter([
   {
@@ -108,11 +111,15 @@ const queryClient = new QueryClient();
 
 export function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="ui-theme">
-        <RouterProvider router={router} />
-        <Toaster />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <TokenProvider>
+      <AxiosProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider defaultTheme="light" storageKey="ui-theme">
+            <RouterProvider router={router} />
+            <Toaster />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </AxiosProvider>
+    </TokenProvider>
   );
 }
