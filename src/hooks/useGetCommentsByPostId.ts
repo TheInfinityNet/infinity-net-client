@@ -1,10 +1,12 @@
-import commentsService from "@/lib/api/services/comments.service";
+import { useApiClient } from "@/contexts/api-client.context";
 import { useInfiniteQuery } from "react-query";
 
 export function useGetCommentsByPostId(postId: string, enable: boolean = true) {
+  const { commentsService } = useApiClient();
+
   return useInfiniteQuery(["comments", postId], {
     queryFn: ({ pageParam = 0 }) =>
-      commentsService.getCommentsByPostId(postId, {
+      commentsService().getCommentsByPostId(postId, {
         offset: pageParam,
         limit: 10,
       }),

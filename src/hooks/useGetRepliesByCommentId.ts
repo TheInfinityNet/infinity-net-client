@@ -1,13 +1,14 @@
-import commentsService from "@/lib/api/services/comments.service";
+import { useApiClient } from "@/contexts/api-client.context";
 import { useInfiniteQuery } from "react-query";
 
 export function useGetRepliesByCommentId(
   commentId: string,
   enable: boolean = true,
 ) {
+  const { commentsService } = useApiClient();
   return useInfiniteQuery(["comments", commentId], {
     queryFn: ({ pageParam = 0 }) =>
-      commentsService.getRepliesByCommentId(commentId, {
+      commentsService().getRepliesByCommentId(commentId, {
         offset: pageParam,
         limit: 10,
       }),
