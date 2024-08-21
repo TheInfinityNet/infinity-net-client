@@ -1,9 +1,11 @@
 import { createContext, ReactNode, useContext, useMemo } from "react";
 import { useAxios } from "./axios.context";
 import { AuthService } from "@/services/auth.service";
+import { UsersService } from "@/services/users.service";
 
 type ApiClientContextType = {
   authService: () => AuthService;
+  usersService: () => UsersService;
 };
 
 const ApiClientContext = createContext<ApiClientContextType | null>(null);
@@ -14,6 +16,7 @@ export function ApiClientProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       authService: () => AuthService.getInstance(axios),
+      usersService: () => UsersService.getInstance(axios),
     }),
     [axios],
   );

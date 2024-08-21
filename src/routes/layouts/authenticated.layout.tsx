@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { MenuIcon, PlusIcon } from "lucide-react";
 import Logo from "@/assets/logo.svg";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useUserStore } from "@/stores/user.store";
+import { useGetCurrentUser } from "@/hooks/useGetCurrentUser";
 
 export function AuthenticatedLayout() {
-  const { isLoading } = useCurrentUser();
+  const { isLoading } = useGetCurrentUser();
   const user = useUserStore((state) => state.user);
 
   if (!user && !isLoading) {

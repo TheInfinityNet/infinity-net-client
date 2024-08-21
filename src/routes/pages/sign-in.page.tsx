@@ -8,7 +8,6 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -45,16 +44,12 @@ export function SignInPage() {
 
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { setUser } = useUserStore.getState();
 
   const signInMutation = useSignInMutation();
 
   const onSubmit = form.handleSubmit((values) =>
     signInMutation.mutate(values, {
-      onSuccess(data) {
-        const { user } = data.data;
-        setUser(user);
-
+      onSuccess() {
         toast({
           title: "Sign In Successful",
           description: "You have successfully signed in.",
@@ -62,6 +57,7 @@ export function SignInPage() {
 
         navigate("/");
       },
+
       onError(error) {
         if (axios.isAxiosError<SignInErrorResponse>(error)) {
           switch (error.response?.data.errorCode) {

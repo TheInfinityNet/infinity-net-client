@@ -1,5 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "./components/ui/toaster";
 
@@ -20,9 +20,14 @@ import { SignInPage } from "./routes/pages/sign-in.page";
 // import { EmailVerificationTokenPage } from "./routes/pages/email-verification-token.page";
 // import { WelcomePage } from "./routes/pages/welcome.page";
 // import { PostPage } from "./routes/pages/post.page";
-import { AxiosProvider } from "./contexts/axios.context";
-import { TokenProvider } from "./contexts/token.context";
-import { ApiClientProvider } from "./contexts/api-client.context";
+import { AxiosProvider, useAxios } from "./contexts/axios.context";
+import { TokenProvider, useToken } from "./contexts/token.context";
+import { ApiClientProvider, useApiClient } from "./contexts/api-client.context";
+import { AuthProvider, useAuth } from "./contexts/auth.context";
+import { useCallback, useEffect, useState } from "react";
+import { getAccessTokenState, getRefreshTokenState } from "./lib/utils";
+import { AccessTokenState, RefreshTokenState } from "./types/token.type";
+import { useGetCurrentUser } from "./hooks/useGetCurrentUser";
 
 const router = createBrowserRouter([
   // {
@@ -109,19 +114,79 @@ const router = createBrowserRouter([
 
 const queryClient = new QueryClient();
 
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AxiosProvider>
+        <ApiClientProvider>
+          <TokenProvider>
+            <AuthProvider>
+              <ThemeProvider defaultTheme="light" storageKey="ui-theme">
+                {children}
+              </ThemeProvider>
+            </AuthProvider>
+          </TokenProvider>
+        </ApiClientProvider>
+      </AxiosProvider>
+    </QueryClientProvider>
+  );
+}
+
+export function AppInitializer({ children }: { children: React.ReactNode }) {
+  const { isLoading } = useGetCurrentUser();
+  if (isLoading) return <div>Loading...</div>;
+
+  return children;
+}
+
+export function AxiosInterceptor({ children }: { children: React.ReactNode }) {
+  const { axios } = useAxios();
+  const { getAccessToken } = useToken();
+  const [isInterceptorReady, setInterceptorReady] = useState<boolean>(false);
+
+  useEffect(() => {
+    const interceptorId = axios.interceptors.request.use(
+      async (config) => {
+        let accessToken = null;
+        try {
+          accessToken = await getAccessToken();
+        } catch (error) {
+          console.error(error);
+        }
+        config.headers.Authorization = `Bearer ${accessToken}`;
+        return config;
+      },
+      null,
+      {
+        runWhen(config) {
+          return !config.headers["No-Auth"];
+        },
+      },
+    );
+
+    setInterceptorReady(true);
+
+    return () => {
+      axios.interceptors.request.eject(interceptorId);
+    };
+  }, [axios]);
+
+  if (!isInterceptorReady) {
+    return <div>Loading...</div>;
+  }
+
+  return children;
+}
+
 export function App() {
   return (
-    <AxiosProvider>
-      <ApiClientProvider>
-        <TokenProvider>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider defaultTheme="light" storageKey="ui-theme">
-              <RouterProvider router={router} />
-              <Toaster />
-            </ThemeProvider>
-          </QueryClientProvider>
-        </TokenProvider>
-      </ApiClientProvider>
-    </AxiosProvider>
+    <Providers>
+      <AxiosInterceptor>
+        <AppInitializer>
+          <RouterProvider router={router} />
+          <Toaster />
+        </AppInitializer>
+      </AxiosInterceptor>
+    </Providers>
   );
 }
