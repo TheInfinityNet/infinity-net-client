@@ -9,6 +9,7 @@ import type {
   User,
 } from "@/types/user.type";
 import { UserEndpoints } from "@/types/user.type";
+import { FriendshipStatus } from "@/types/friend.type";
 
 export class UsersService {
   private static instance: UsersService | null = null;
@@ -51,5 +52,18 @@ export class UsersService {
     return this.apiClient.delete<DeleteUserResponse>(
       UserEndpoints.DeleteUser.replace(":userId", data.userId),
     );
+  }
+
+  getUserDetailByUserId({ userId }: { userId: string }) {
+    return this.apiClient.get<{
+      user: User;
+    }>(UserEndpoints.GetUserDetailByUserId.replace(":userId", userId));
+  }
+
+  getUserProfileByUserId({ userId }: { userId: string }) {
+    return this.apiClient.get<{
+      user: User;
+      friendshipStatus: FriendshipStatus;
+    }>(UserEndpoints.GetUserProfileByUserId.replace(":userId", userId));
   }
 }

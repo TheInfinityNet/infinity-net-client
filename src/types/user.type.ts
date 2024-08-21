@@ -3,6 +3,8 @@ export const UserEndpoints = {
   GetUser: "/users/:userId",
   UpdateUser: "/users/:userId",
   DeleteUser: "/users/:userId",
+  GetUserDetailByUserId: "/users/:userId/details",
+  GetUserProfileByUserId: "/users/:userId/profile",
 } as const;
 
 export type User = {
