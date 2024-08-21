@@ -6,6 +6,7 @@ import { ProfileService } from "@/services/profile.service";
 import { PostsService } from "@/services/posts.service";
 import { FriendsService } from "@/services/friends.service";
 import { NotificationsService } from "@/services/notifications.service";
+import { ReactionsService } from "@/services/reactions.service";
 
 type ApiClientContextType = {
   authService: () => AuthService;
@@ -14,6 +15,7 @@ type ApiClientContextType = {
   postsService: () => PostsService;
   friendsService: () => FriendsService;
   notificationsService: () => NotificationsService;
+  reactionsService: () => ReactionsService;
 };
 
 const ApiClientContext = createContext<ApiClientContextType | null>(null);
@@ -29,6 +31,7 @@ export function ApiClientProvider({ children }: { children: ReactNode }) {
       postsService: () => PostsService.getInstance(axios),
       friendsService: () => FriendsService.getInstance(axios),
       notificationsService: () => NotificationsService.getInstance(axios),
+      reactionsService: () => ReactionsService.getInstance(axios),
     }),
     [axios],
   );

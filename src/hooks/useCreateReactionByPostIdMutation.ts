@@ -1,11 +1,13 @@
+import { useApiClient } from "@/contexts/api-client.context";
+import { ReactionType } from "@/types/reaction.type";
 import { useMutation } from "react-query";
-import reactionsService from "@/lib/api/services/reactions.service";
-import { ReactionType } from "@/lib/api/types/reaction.type";
 
 export function useCreateReactionByPostId(postId: string) {
+  const { reactionsService } = useApiClient();
+
   return useMutation({
     mutationFn: (reactionType: ReactionType) => {
-      return reactionsService.createReactionByPostId(postId, {
+      return reactionsService().createReactionByPostId(postId, {
         type: reactionType,
       });
     },

@@ -1,5 +1,19 @@
 import { User } from "./user.type";
 
+export const ReactionEndpoints = {
+  GetReactionsByPostId: "/posts/:postId/reactions",
+  CreatePostReaction: "/posts/:postId/reactions",
+  DeletePostReaction: "/posts/:postId/reactions",
+
+  GetReactionsByCommentId: "/comments/:commentId/reactions",
+  CreateCommentReaction: "/comments/:commentId/reactions",
+  DeleteCommentReaction: "/comments/:commentId/reactions",
+
+  GetReactionsByMessageId: "/messages/:messageId/reactions",
+  CreateMessageReaction: "/messages/:messageId/reactions",
+  DeleteMessageReaction: "/messages/:messageId/reactions/:reactionId",
+} as const;
+
 export enum ReactionType {
   Like = "like",
   Love = "love",

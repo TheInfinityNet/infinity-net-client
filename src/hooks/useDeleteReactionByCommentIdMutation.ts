@@ -1,8 +1,10 @@
+import { useApiClient } from "@/contexts/api-client.context";
 import { useMutation } from "react-query";
-import reactionsService from "@/lib/api/services/reactions.service";
 
 export function useDeleteReactionByCommentId(commentId: string) {
+  const { reactionsService } = useApiClient();
+
   return useMutation({
-    mutationFn: () => reactionsService.deleteReactionByCommentId(commentId),
+    mutationFn: () => reactionsService().deleteReactionByCommentId(commentId),
   });
 }

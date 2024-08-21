@@ -1,5 +1,5 @@
-import reactionsService from "@/lib/api/services/reactions.service";
-import { ReactionType } from "@/lib/api/types/reaction.type";
+import { useApiClient } from "@/contexts/api-client.context";
+import { ReactionType } from "@/types/reaction.type";
 import { useInfiniteQuery } from "react-query";
 
 export function useGetReactionsByCommentId(
@@ -9,9 +9,11 @@ export function useGetReactionsByCommentId(
     type?: ReactionType;
   },
 ) {
+  const { reactionsService } = useApiClient();
+
   return useInfiniteQuery(["reactions", commentId, params], {
     queryFn: ({ pageParam = 0 }) =>
-      reactionsService.getReactionsByCommentId(commentId, {
+      reactionsService().getReactionsByCommentId(commentId, {
         offset: pageParam,
         limit: 10,
         type: params?.type,
