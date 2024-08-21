@@ -1,10 +1,11 @@
-import notificationsService from "@/lib/api/services/notifications.service";
+import { useApiClient } from "@/contexts/api-client.context";
 import { useInfiniteQuery } from "react-query";
 
 export function useGetNotifications() {
+  const { notificationsService } = useApiClient();
   return useInfiniteQuery(["notifications"], {
     queryFn: ({ pageParam = 0 }) =>
-      notificationsService.getNotifications({
+      notificationsService().getNotifications({
         offset: pageParam,
         limit: 10,
       }),
