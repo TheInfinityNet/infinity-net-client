@@ -39,19 +39,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useMutation } from "react-query";
-import authService, {
-  AuthErrorCodes,
-  SignUpErrorResponse,
-} from "@/lib/api/services/auth.service";
+import { AuthErrorCodes, SignUpErrorResponse } from "@/types/auth.type";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Genders, signUpSchema } from "@/contracts/auth.contract";
+import { Genders, SignUpSchema } from "@/contracts/auth.contract";
+import { useApiClient } from "@/contexts/api-client.context";
 
 export function SignUpPage() {
+  const { authService } = useApiClient();
+
   const navigate = useNavigate();
-  const form = useForm<z.infer<typeof signUpSchema>>({
-    resolver: zodResolver(signUpSchema),
+  const form = useForm<z.infer<typeof SignUpSchema>>({
+    resolver: zodResolver(SignUpSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -69,7 +69,7 @@ export function SignUpPage() {
   console.log(form.formState.errors);
 
   const signUpMutation = useMutation({
-    mutationFn: authService.signUp,
+    mutationFn: authService().signUp,
     onSuccess(data) {
       const { message } = data.data;
 

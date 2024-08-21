@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { MessageCircleIcon, ShareIcon, ThumbsUp } from "lucide-react";
 import { useState } from "react";
-import { Comment } from "@/lib/api/types/comment.type";
+import { Comment } from "@/types/comment.type";
 import { useGetRepliesByCommentId } from "@/hooks/useGetRepliesByCommentId";
 import { ReplyComment } from "./reply-comment";
 import { cn } from "@/lib/utils";
@@ -13,7 +13,7 @@ import {
   ReactionType,
   ReactionTypeToUnifiedMap,
   UnifiedToReactionTypeMap,
-} from "@/lib/api/types/reaction.type";
+} from "@/types/reaction.type";
 import { useCreateReactionByCommentId } from "@/hooks/useCreateReactionByCommentIdMutation";
 import { useDeleteReactionByCommentId } from "@/hooks/useDeleteReactionByCommentIdMutation";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";

@@ -22,12 +22,10 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { z } from "zod";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import authService, {
-  AuthErrorCodes,
-  ResetPasswordErrorResponse,
-} from "@/lib/api/services/auth.service";
 import axios from "axios";
 import { setFormError } from "@/lib/utils";
+import { useApiClient } from "@/contexts/api-client.context";
+import { AuthErrorCodes, ResetPasswordErrorResponse } from "@/types/auth.type";
 
 const resetPasswordSchema = z.object({
   token: z.string().uuid(),
@@ -36,6 +34,7 @@ const resetPasswordSchema = z.object({
 });
 
 export function ResetPasswordPage() {
+  const { authService } = useApiClient();
   const [urlSearchParams] = useSearchParams();
   const token = urlSearchParams.get("token") || "";
   const navigate = useNavigate();
@@ -50,7 +49,7 @@ export function ResetPasswordPage() {
   });
 
   const resetPasswordMutation = useMutation({
-    mutationFn: authService.resetPassword,
+    mutationFn: authService().resetPassword,
     onSuccess(data) {
       const { message } = data.data;
       toast({

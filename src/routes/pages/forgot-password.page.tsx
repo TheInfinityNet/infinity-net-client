@@ -22,16 +22,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { z } from "zod";
-import authService, {
-  AuthErrorCodes,
-  ForgotPasswordErrorResponse,
-  SendEmailForgotPasswordErrorResponse,
-} from "@/lib/api/services/auth.service";
 import { Link } from "@/components/link";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { setFormError } from "@/lib/utils";
+import { useApiClient } from "@/contexts/api-client.context";
+import {
+  AuthErrorCodes,
+  SendEmailForgotPasswordErrorResponse,
+  SendEmailForgotPasswordInput,
+} from "@/types/auth.type";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email(),
@@ -39,6 +40,7 @@ const forgotPasswordSchema = z.object({
 });
 
 export function ForgotPasswordPage() {
+  const { authService } = useApiClient();
   const [sendEmailCooldown, setSendEmailCooldown] = useState<number>(0);
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -50,7 +52,8 @@ export function ForgotPasswordPage() {
   const navigate = useNavigate();
 
   const sendEmailForgotPasswordMutation = useMutation({
-    mutationFn: authService.sendEmailForgotPassword,
+    mutationFn: (values: SendEmailForgotPasswordInput) =>
+      authService().sendEmailForgotPassword(values),
     onSuccess(data) {
       const { retryAfter, message } = data.data;
       const cooldown = new Date(retryAfter).getTime() - Date.now();
@@ -88,7 +91,7 @@ export function ForgotPasswordPage() {
   });
 
   const forgotPasswordMutation = useMutation({
-    mutationFn: authService.forgotPassword,
+    mutationFn: authService().forgotPassword,
     onSuccess(data) {
       const { message, token } = data.data;
       toast({

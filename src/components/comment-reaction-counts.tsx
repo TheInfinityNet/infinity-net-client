@@ -1,11 +1,8 @@
-import { Comment } from "@/lib/api/types/comment.type";
+import { Comment } from "@/types/comment.type";
 import { HoverCard } from "./ui/hover-card";
-import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
+import { HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import _ from "lodash";
-import {
-  ReactionType,
-  ReactionTypeToUnifiedMap,
-} from "@/lib/api/types/reaction.type";
+import { ReactionType, ReactionTypeToUnifiedMap } from "@/types/reaction.type";
 import { Emoji } from "emoji-picker-react";
 import {
   Dialog,

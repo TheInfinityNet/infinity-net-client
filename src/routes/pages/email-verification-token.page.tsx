@@ -17,11 +17,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import authService, {
+import { useApiClient } from "@/contexts/api-client.context";
+import { setFormError } from "@/lib/utils";
+import {
   AuthErrorCodes,
   VerifyEmailByTokenErrorResponse,
-} from "@/lib/api/services/auth.service";
-import { setFormError } from "@/lib/utils";
+} from "@/types/auth.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -34,6 +35,7 @@ const verificationTokenSchema = z.object({
 });
 
 export function EmailVerificationTokenPage() {
+  const { authService } = useApiClient();
   const [urlSearchParams] = useSearchParams({});
   const token = urlSearchParams.get("token");
   const navigate = useNavigate();
@@ -46,7 +48,7 @@ export function EmailVerificationTokenPage() {
   });
 
   const verifyEmailByTokenMutation = useMutation({
-    mutationFn: authService.verifyEmailByToken,
+    mutationFn: authService().verifyEmailByToken,
     onSuccess(data) {
       const { message } = data.data;
       toast({

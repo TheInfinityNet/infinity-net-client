@@ -8,10 +8,10 @@ import { format } from "date-fns";
 import { useGetPostByUserId } from "@/hooks/useGetPostsByUserId";
 import { PostCard } from "@/components/post-card";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { User } from "@/lib/api/types/user.type";
+import { User } from "@/types/user.type";
 import { useGetFriendsByUserId } from "@/hooks/useGetFriendsByUserId";
 import { useGetUserProfileByUserId } from "@/hooks/useGetUserProfileByUserId";
-import { FriendshipStatus } from "@/lib/api/types/friend.type";
+import { FriendshipStatus } from "@/types/friend.type";
 
 function FriendsList({ friends }: { friends: User[] }) {
   return (

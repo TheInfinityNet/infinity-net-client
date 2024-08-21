@@ -1,5 +1,5 @@
 import { MessageCircleIcon, ShareIcon, ThumbsUp } from "lucide-react";
-import { Post } from "@/lib/api/types/post.type";
+import { Post } from "@/types/post.type";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import _ from "lodash";
 import {
@@ -7,7 +7,7 @@ import {
   ReactionType,
   ReactionTypeToUnifiedMap,
   UnifiedToReactionTypeMap,
-} from "@/lib/api/types/reaction.type";
+} from "@/types/reaction.type";
 import EmojiPicker, { Emoji } from "emoji-picker-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";

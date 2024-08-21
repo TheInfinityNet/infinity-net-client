@@ -17,12 +17,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import authService, {
-  AuthErrorCodes,
-  SendEmailVerificationErrorResponse,
-  VerifyEmailByCodeErrorResponse,
-} from "@/lib/api/services/auth.service";
+import { useApiClient } from "@/contexts/api-client.context";
 import { setFormError } from "@/lib/utils";
+import {
+  AuthErrorCodes,
+  VerifyEmailByCodeErrorResponse,
+} from "@/types/auth.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -37,6 +37,7 @@ const verificationCodeSchema = z.object({
 });
 
 export function EmailVerificationPage() {
+  const { authService } = useApiClient();
   const [resendCooldown, setResendCooldown] = useState<number>(0);
   const navigation = useNavigate();
   const location = useLocation();
@@ -59,7 +60,7 @@ export function EmailVerificationPage() {
   });
 
   const sendEmailVerificationMutation = useMutation({
-    mutationFn: authService.sendEmailVerification,
+    mutationFn: authService().sendEmailVerification,
     onSuccess(data) {
       const { retryAfter, message } = data.data;
       const cooldown = new Date(retryAfter).getTime() - Date.now();
@@ -102,7 +103,7 @@ export function EmailVerificationPage() {
   });
 
   const verifyEmailByCodeMutation = useMutation({
-    mutationFn: authService.verifyEmailByCode,
+    mutationFn: authService().verifyEmailByCode,
     onSuccess(data) {
       const { message } = data.data;
       toast({

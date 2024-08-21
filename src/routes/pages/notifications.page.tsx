@@ -20,10 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import { useGetNotifications } from "@/hooks/useGetNotifications";
-import {
-  Notification,
-  NotificationType,
-} from "@/lib/api/types/notification.type";
+import { Notification, NotificationType } from "@/types/notification.type";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { BellRing, Check, Ellipsis, User } from "lucide-react";
