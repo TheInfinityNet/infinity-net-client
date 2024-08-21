@@ -2,16 +2,14 @@ import { Navigate, Outlet } from "react-router-dom";
 import { Link } from "@/components/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { MenuIcon, PlusIcon } from "lucide-react";
+import { MenuIcon } from "lucide-react";
 import Logo from "@/assets/logo.svg";
-import { useUserStore } from "@/stores/user.store";
-import { useGetCurrentUser } from "@/hooks/useGetCurrentUser";
+import { useAuth } from "@/contexts/auth.context";
 
 export function AuthenticatedLayout() {
-  const { isLoading } = useGetCurrentUser();
-  const user = useUserStore((state) => state.user);
+  const { user } = useAuth();
 
-  if (!user && !isLoading) {
+  if (!user) {
     return <Navigate to="/sign-in" />;
   }
 

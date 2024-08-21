@@ -1,5 +1,13 @@
 import axios, { AxiosInstance } from "axios";
-import { createContext, ReactNode, useContext, useMemo } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useToken } from "./token.context";
 
 interface AxiosContextValue {
   axios: AxiosInstance;
@@ -22,6 +30,45 @@ export const AxiosProvider = ({ children }: { children: ReactNode }) => {
     </AxiosContext.Provider>
   );
 };
+
+export function AxiosInterceptor({ children }: { children: React.ReactNode }) {
+  const { axios } = useAxios();
+  const { getAccessToken } = useToken();
+  const [isInterceptorReady, setInterceptorReady] = useState<boolean>(false);
+
+  useEffect(() => {
+    const interceptorId = axios.interceptors.request.use(
+      async (config) => {
+        let accessToken = null;
+        try {
+          accessToken = await getAccessToken();
+        } catch (error) {
+          console.error(error);
+        }
+        config.headers.Authorization = `Bearer ${accessToken}`;
+        return config;
+      },
+      null,
+      {
+        runWhen(config) {
+          return !config.headers["No-Auth"];
+        },
+      },
+    );
+
+    setInterceptorReady(true);
+
+    return () => {
+      axios.interceptors.request.eject(interceptorId);
+    };
+  }, [axios]);
+
+  if (!isInterceptorReady) {
+    return <div>Loading...</div>;
+  }
+
+  return children;
+}
 
 export const useAxios = () => {
   const context = useContext(AxiosContext);

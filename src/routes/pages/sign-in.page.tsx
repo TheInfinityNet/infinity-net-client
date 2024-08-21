@@ -24,7 +24,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "@/components/link";
 import { setFormError } from "@/lib/utils";
-import { useUserStore } from "@/stores/user.store";
 import {
   AuthErrorCodes,
   SignInErrorResponse,

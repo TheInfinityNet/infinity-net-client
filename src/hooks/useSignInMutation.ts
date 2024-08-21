@@ -1,3 +1,4 @@
+import { queryClient } from "@/app";
 import { useApiClient } from "@/contexts/api-client.context";
 import { useAuth } from "@/contexts/auth.context";
 import { useToken } from "@/contexts/token.context";
@@ -17,6 +18,7 @@ export function useSignInMutation() {
       setAccessToken(tokens.accessToken);
       setRefreshToken(tokens.refreshToken);
       setUser(user);
+      queryClient.invalidateQueries("current-user");
     },
   });
 }

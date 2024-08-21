@@ -4,10 +4,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { MenuIcon, PlusIcon } from "lucide-react";
 import { Outlet } from "react-router-dom";
 import Logo from "@/assets/logo.svg";
-import { useUserStore } from "@/stores/user.store";
+import { useAuth } from "@/contexts/auth.context";
 
 export function DefaultLayout() {
-  const { user } = useUserStore.getState();
+  const { user } = useAuth();
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

@@ -4,14 +4,14 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useGetFriendsByUserId } from "@/hooks/useGetFriendsByUserId";
-import { useUserStore } from "@/stores/user.store";
 import { useDebounce } from "@uidotdev/usehooks";
+import { useAuth } from "@/contexts/auth.context";
 
 export function FriendStatusList() {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 300);
 
-  const user = useUserStore((state) => state.user);
+  const { user } = useAuth();
   if (!user) return null;
 
   const { data, fetchNextPage, hasNextPage, isLoading, isError } =
