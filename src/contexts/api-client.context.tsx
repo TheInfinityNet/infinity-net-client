@@ -3,11 +3,13 @@ import { useAxios } from "./axios.context";
 import { AuthService } from "@/services/auth.service";
 import { UsersService } from "@/services/users.service";
 import { ProfileService } from "@/services/profile.service";
+import { PostsService } from "@/services/posts.service";
 
 type ApiClientContextType = {
   authService: () => AuthService;
   usersService: () => UsersService;
   profileService: () => ProfileService;
+  postsService: () => PostsService;
 };
 
 const ApiClientContext = createContext<ApiClientContextType | null>(null);
@@ -20,6 +22,7 @@ export function ApiClientProvider({ children }: { children: ReactNode }) {
       authService: () => AuthService.getInstance(axios),
       usersService: () => UsersService.getInstance(axios),
       profileService: () => ProfileService.getInstance(axios),
+      postsService: () => PostsService.getInstance(axios),
     }),
     [axios],
   );
