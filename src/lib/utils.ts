@@ -27,7 +27,7 @@ export function setFormError<TFieldValues extends FieldValues = FieldValues>(
 
 export const getAccessTokenState = (token: string | null): AccessTokenState => {
   if (!token) {
-    return AccessTokenState.Expired;
+    return AccessTokenState.Unset;
   }
   try {
     const tokenPayload = jwtDecode<AccessTokenPayload>(token);
@@ -56,7 +56,7 @@ export const getRefreshTokenState = (
   token: string | null,
 ): RefreshTokenState => {
   if (!token) {
-    return RefreshTokenState.Expired;
+    return RefreshTokenState.Unset;
   }
   try {
     const tokenPayload = jwtDecode<RefreshTokenPayload>(token);

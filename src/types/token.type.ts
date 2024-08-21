@@ -1,6 +1,7 @@
 import { type JwtPayload } from "jwt-decode";
 
 export enum AccessTokenState {
+  Unset = "Unset",
   Expired = "Expired",
   NeedsRefreshParallel = "NeedsRefreshParallel",
   NeedsRefreshSerial = "NeedsRefreshSerial",
@@ -8,6 +9,7 @@ export enum AccessTokenState {
 }
 
 export enum RefreshTokenState {
+  Unset = "Unset",
   Expired = "Expired",
   Valid = "Valid",
 }
