@@ -1,4 +1,4 @@
-import { User } from "@/lib/api/types/user.type";
+import { User } from "@/types/user.type";
 import { HttpStatusCode } from "axios";
 import { jwtDecode } from "jwt-decode";
 const JWT_SECRET = "secret";

@@ -21,6 +21,7 @@ import { useApiClient } from "@/contexts/api-client.context";
 import { setFormError } from "@/lib/utils";
 import {
   AuthErrorCodes,
+  SendEmailVerificationErrorResponse,
   VerifyEmailByCodeErrorResponse,
 } from "@/types/auth.type";
 import { zodResolver } from "@hookform/resolvers/zod";

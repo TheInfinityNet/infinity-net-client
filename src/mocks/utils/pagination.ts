@@ -1,4 +1,4 @@
-import { Pagination } from "@/lib/api/types/api.type";
+import { Pagination } from "@/types/api.type";
 import _ from "lodash";
 
 export function paginate<T>(

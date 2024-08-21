@@ -30,6 +30,7 @@ import { setFormError } from "@/lib/utils";
 import { useApiClient } from "@/contexts/api-client.context";
 import {
   AuthErrorCodes,
+  ForgotPasswordErrorResponse,
   SendEmailForgotPasswordErrorResponse,
   SendEmailForgotPasswordInput,
 } from "@/types/auth.type";

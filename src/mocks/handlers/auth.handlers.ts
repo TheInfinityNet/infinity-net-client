@@ -32,6 +32,9 @@ import {
   VerifyEmailByCodeErrorResponse,
   VerifyEmailByCodeInput,
   VerifyEmailByCodeResponse,
+  VerifyEmailByTokenErrorResponse,
+  VerifyEmailByTokenInput,
+  VerifyEmailByTokenResponse,
 } from "@/types/auth.type";
 
 export const authHandlers = [
@@ -570,7 +573,7 @@ export const authHandlers = [
 
   http.post<
     PathParams,
-    VerifyEmailByTokenRequest,
+    VerifyEmailByTokenInput,
     VerifyEmailByTokenResponse | VerifyEmailByTokenErrorResponse,
     AuthEndpoints.VerifyEmailByToken
   >(AuthEndpoints.VerifyEmailByToken, async ({ request }) => {

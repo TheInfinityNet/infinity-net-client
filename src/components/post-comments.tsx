@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useGetCommentsByPostId } from "@/hooks/useGetCommentsByPostId";
-import { Comment } from "@/lib/api/types/comment.type";
+import { Comment } from "@/types/comment.type";
 import { PostComment } from "./post-comment";
 
 type PostCommentsProps = {

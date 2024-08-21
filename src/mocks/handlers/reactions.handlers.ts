@@ -2,7 +2,7 @@ import { http, HttpResponse } from "msw";
 import { DEFAULT_LIMIT, DEFAULT_OFFSET } from "../constants";
 import { paginate } from "../utils/pagination";
 import { generatePostReaction, generateUser } from "../generators";
-import { ReactionType } from "@/lib/api/types/reaction.type";
+import { ReactionType } from "@/types/reaction.type";
 
 export const reactionsHandlers = [
   http.get("/posts/:postId/reactions", ({ request, params }) => {

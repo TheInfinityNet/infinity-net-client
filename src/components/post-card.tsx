@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Post } from "@/lib/api/types/post.type";
+import { Post } from "@/types/post.type";
 import { Link } from "./link";
 import { PostComments } from "./post-comments";
 import { ReplyComment } from "./reply-comment";

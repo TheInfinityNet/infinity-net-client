@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { User } from "@/lib/api/types/user.type";
+import { User } from "@/types/user.type";
 import { generateUser } from "./generators";
 
 export const users: { [key: string]: User } = _.times(10, () =>

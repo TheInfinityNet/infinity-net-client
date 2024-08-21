@@ -1,4 +1,4 @@
-import { ValidationErrors } from "@/lib/api/types/api.type";
+import { ValidationErrors } from "@/types/api.type";
 import { User } from "./user.type";
 import { z } from "zod";
 import { SignInSchema, SignUpSchema } from "@/contracts/auth.contract";
