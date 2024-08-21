@@ -2,7 +2,7 @@ import { http, HttpResponse } from "msw";
 import { DEFAULT_LIMIT, DEFAULT_OFFSET } from "../constants";
 import { paginate } from "../utils/pagination";
 import { generateCommentReaction, generateUser } from "../generators";
-import { ReactionType } from "@/lib/api/types/reaction.type";
+import { ReactionType } from "@/types/reaction.type";
 
 export const commentReactionsHandlers = [
   http.get("/comments/:commentId/reactions", ({ request, params }) => {

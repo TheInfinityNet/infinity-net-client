@@ -1,12 +1,9 @@
-import {
-  GetProfileResponse,
-  ProfileEndpoints,
-} from "@/lib/api/services/profile.service";
 import { http, HttpResponse, PathParams } from "msw";
 import { isAuthenticated } from "../utils/jwt";
 import { generateFriendshipStatus, generateUser } from "../generators";
-import { FriendshipStatus } from "@/lib/api/types/friend.type";
+import { FriendshipStatus } from "@/types/friend.type";
 import { PermissionType } from "@/lib/permissions";
+import { GetProfileResponse, ProfileEndpoints } from "@/types/profile.type";
 
 export const profileHandlers = [
   http.get<PathParams, {}, GetProfileResponse, ProfileEndpoints.GetProfile>(

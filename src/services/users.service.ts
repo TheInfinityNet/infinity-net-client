@@ -1,11 +1,20 @@
-import { User } from "@/types/user.type";
 import { AxiosInstance } from "axios";
+import type {
+  GetUserInput,
+  GetUserResponse,
+  UpdateUserInput,
+  UpdateUserResponse,
+  DeleteUserInput,
+  DeleteUserResponse,
+  User,
+} from "@/types/user.type";
+import { UserEndpoints } from "@/types/user.type";
 
 export class UsersService {
-  private apiClient: AxiosInstance;
   private static instance: UsersService | null = null;
+  private readonly apiClient: AxiosInstance;
 
-  constructor(apiClient: AxiosInstance) {
+  private constructor(apiClient: AxiosInstance) {
     this.apiClient = apiClient;
   }
 
@@ -22,6 +31,25 @@ export class UsersService {
   getCurrentUser() {
     return this.apiClient.get<{
       user: User;
-    }>("/me");
+    }>(UserEndpoints.GetCurrentUser);
+  }
+
+  getUser(data: GetUserInput) {
+    return this.apiClient.get<GetUserResponse>(
+      UserEndpoints.GetUser.replace(":userId", data.userId),
+    );
+  }
+
+  updateUser(data: UpdateUserInput) {
+    return this.apiClient.put<UpdateUserResponse>(
+      UserEndpoints.UpdateUser.replace(":userId", data.userId),
+      data,
+    );
+  }
+
+  deleteUser(data: DeleteUserInput) {
+    return this.apiClient.delete<DeleteUserResponse>(
+      UserEndpoints.DeleteUser.replace(":userId", data.userId),
+    );
   }
 }

@@ -1,22 +1,19 @@
-import type { User } from "@/lib/api/types/user.type";
-import type { Post } from "@/lib/api/types/post.type";
-import type { Comment } from "@/lib/api/types/comment.type";
+import type { User } from "@/types/user.type";
+import type { Post } from "@/types/post.type";
+import type { Comment } from "@/types/comment.type";
 import { faker } from "@faker-js/faker";
-import { NotificationType } from "@/lib/api/types/notification.type";
-import type {
-  BaseNotification,
-  Notification,
-} from "@/lib/api/types/notification.type";
+import { NotificationType } from "@/types/notification.type";
+import type { BaseNotification, Notification } from "@/types/notification.type";
 import {
   CommentReaction,
   MessageReaction,
   PostReaction,
   ReactionType,
-} from "@/lib/api/types/reaction.type";
-import { Message } from "@/lib/api/types/message.type";
-import { Participant } from "@/lib/api/types/participant.type";
-import { Conversation } from "@/lib/api/types/conversation.type";
-import { FriendshipStatus } from "@/lib/api/types/friend.type";
+} from "@/types/reaction.type";
+import { Message } from "@/types/message.type";
+import { Participant } from "@/types/participant.type";
+import { Conversation } from "@/types/conversation.type";
+import { FriendshipStatus } from "@/types/friend.type";
 
 export const generateUser = (user?: Partial<User>): User => ({
   id: faker.string.uuid(),

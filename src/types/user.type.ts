@@ -1,3 +1,10 @@
+export const UserEndpoints = {
+  GetCurrentUser: "/users/current-user",
+  GetUser: "/users/:userId",
+  UpdateUser: "/users/:userId",
+  DeleteUser: "/users/:userId",
+} as const;
+
 export type User = {
   id: string;
   avatar?: string;
@@ -22,4 +29,26 @@ export type UserDetail = {
   hobbies?: string[];
   interests?: string[];
   languages?: string[];
+};
+
+export type GetUserInput = {
+  userId: string;
+};
+export type GetUserResponse = {
+  user: User;
+};
+
+export type UpdateUserInput = {
+  userId: string;
+  user: User;
+};
+export type UpdateUserResponse = {
+  user: User;
+};
+
+export type DeleteUserInput = {
+  userId: string;
+};
+export type DeleteUserResponse = {
+  message: string;
 };
