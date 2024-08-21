@@ -1,4 +1,4 @@
-import friendsService from "@/lib/api/services/friends.service";
+import { useApiClient } from "@/contexts/api-client.context";
 import { useInfiniteQuery } from "react-query";
 
 export function useGetFriendsByUserId(
@@ -7,9 +7,11 @@ export function useGetFriendsByUserId(
     query: string;
   },
 ) {
+  const { friendsService } = useApiClient();
+
   return useInfiniteQuery(["friends", userId, params?.query], {
     queryFn: ({ pageParam = 0 }) =>
-      friendsService.getFriendsByUserId(userId, {
+      friendsService().getFriendsByUserId(userId, {
         offset: pageParam,
         limit: 10,
         query: params?.query,
