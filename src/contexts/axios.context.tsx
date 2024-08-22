@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import {
   createContext,
   ReactNode,
@@ -37,17 +37,19 @@ export function AxiosInterceptor({ children }: { children: React.ReactNode }) {
   const [isInterceptorReady, setInterceptorReady] = useState<boolean>(false);
 
   useEffect(() => {
+    const tokenInterceptor = async (config: InternalAxiosRequestConfig) => {
+      let accessToken = null;
+      try {
+        accessToken = await getAccessToken();
+      } catch (error) {
+        console.error(error);
+      }
+      config.headers.Authorization = `Bearer ${accessToken}`;
+      return config;
+    }
+
     const interceptorId = axios.interceptors.request.use(
-      async (config) => {
-        let accessToken = null;
-        try {
-          accessToken = await getAccessToken();
-        } catch (error) {
-          console.error(error);
-        }
-        config.headers.Authorization = `Bearer ${accessToken}`;
-        return config;
-      },
+      tokenInterceptor,
       null,
       {
         runWhen(config) {
@@ -61,7 +63,7 @@ export function AxiosInterceptor({ children }: { children: React.ReactNode }) {
     return () => {
       axios.interceptors.request.eject(interceptorId);
     };
-  }, [axios]);
+  }, [axios, getAccessToken]);
 
   if (!isInterceptorReady) {
     return <div>Loading...</div>;

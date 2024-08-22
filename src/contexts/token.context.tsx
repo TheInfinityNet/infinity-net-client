@@ -1,77 +1,70 @@
+import { createContext, ReactNode, useContext, useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
+import { useApiClient } from "./api-client.context";
 import { getAccessTokenState } from "@/lib/utils";
 import { AccessTokenState } from "@/types/token.type";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useState,
-  useEffect,
-  useMemo,
-} from "react";
-import { useApiClient } from "./api-client.context";
 
 const REFRESH_TOKEN_KEY = "refreshToken";
 
 type TokenContextType = {
   accessToken: string | null;
   refreshToken: string | null;
-  setAccessToken: React.Dispatch<React.SetStateAction<string | null>>;
-  setRefreshToken: React.Dispatch<React.SetStateAction<string | null>>;
   getAccessToken: () => Promise<string | null>;
+  setAccessToken: (token: string | null) => void;
+  setRefreshToken: (token: string | null) => void;
 };
 
 const TokenContext = createContext<TokenContextType | null>(null);
 
 export function TokenProvider({ children }: { children: ReactNode }) {
   const { authService } = useApiClient();
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(
-    localStorage.getItem(REFRESH_TOKEN_KEY),
-  );
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (refreshToken) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-    } else {
-      localStorage.removeItem(REFRESH_TOKEN_KEY);
+  const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  const refreshTokenMutation = useMutation(
+    async () => {
+      if (!refreshToken) throw new Error("No refresh token");
+      const response = await authService().refreshToken({ refreshToken });
+      return response.data.accessToken;
+    },
+    {
+      onSuccess: (newAccessToken) => {
+        setAccessToken(newAccessToken);
+        queryClient.invalidateQueries("accessToken"); // Optional: Invalidate access token queries
+      },
     }
-  }, [refreshToken]);
+  );
 
   const getAccessToken = async () => {
     const accessTokenState = getAccessTokenState(accessToken);
 
     if (accessTokenState === AccessTokenState.Valid) return accessToken;
 
-    const refreshAccessToken = async () => {
-      if (!refreshToken) return null;
-      const response = await authService().refreshToken({ refreshToken });
-      return response.data.accessToken;
-    };
-
     if (
       accessTokenState === AccessTokenState.NeedsRefreshSerial ||
       accessTokenState === AccessTokenState.Unset ||
       accessTokenState === AccessTokenState.Expired
     ) {
-      const newAccessToken = await refreshAccessToken();
-      return newAccessToken || accessToken;
+      return await refreshTokenMutation.mutateAsync();
     } else if (accessTokenState === AccessTokenState.NeedsRefreshParallel) {
-      refreshAccessToken().then(setAccessToken);
+      refreshTokenMutation.mutate();
     }
 
     return accessToken;
   };
 
-  const value = useMemo(
-    () => ({
-      accessToken,
-      refreshToken,
-      getAccessToken,
-      setAccessToken,
-      setRefreshToken,
-    }),
-    [accessToken, refreshToken],
-  );
+  const value = {
+    accessToken,
+    refreshToken,
+    getAccessToken,
+    setAccessToken,
+    setRefreshToken: (token: string | null) => {
+      localStorage.setItem(REFRESH_TOKEN_KEY, token ?? "");
+      localStorage.setItem(REFRESH_TOKEN_KEY, token ?? "");
+    },
+  };
 
   return (
     <TokenContext.Provider value={value}>{children}</TokenContext.Provider>
@@ -83,3 +76,4 @@ export function useToken() {
   if (!context) throw new Error("useToken must be used within a TokenProvider");
   return context;
 }
+
