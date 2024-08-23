@@ -15,6 +15,7 @@ import {
   TOTAL_POSTS_IN_PROFILE_COUNT,
 } from "../constants";
 import { faker } from "@faker-js/faker";
+import { isAuthenticated } from "../utils/jwt";
 
 export const postsHandlers = [
   http.get("/users/:userId/posts", ({ request, params }) => {
@@ -83,6 +84,21 @@ export const postsHandlers = [
       currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
         ? generatePostReaction()
         : undefined,
+    });
+
+    return HttpResponse.json({
+      post,
+    });
+  }),
+
+  http.post("/posts", async ({ request }) => {
+    const user = await isAuthenticated(request)
+    const { content } = await request.json() as { content: string };
+    const post = generatePost({
+      content,
+      user,
+      reactionCounts: generateReactionCounts(),
+      currentUserReaction: generatePostReaction(),
     });
 
     return HttpResponse.json({
