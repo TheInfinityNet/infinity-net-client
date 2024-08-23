@@ -23,6 +23,8 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
+  let refreshTokenPromise: Promise<string | null> | null = null;
+
   const refreshTokenMutation = useMutation(
     async () => {
       if (!refreshToken) throw new Error("No refresh token");
@@ -32,7 +34,11 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     {
       onSuccess: (newAccessToken) => {
         setAccessToken(newAccessToken);
-        queryClient.invalidateQueries("accessToken"); // Optional: Invalidate access token queries
+        queryClient.invalidateQueries("accessToken");
+        refreshTokenPromise = null;
+      },
+      onError: () => {
+        refreshTokenPromise = null;
       },
     }
   );
@@ -47,9 +53,10 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       accessTokenState === AccessTokenState.Unset ||
       accessTokenState === AccessTokenState.Expired
     ) {
-      return await refreshTokenMutation.mutateAsync();
-    } else if (accessTokenState === AccessTokenState.NeedsRefreshParallel) {
-      refreshTokenMutation.mutate();
+      if (!refreshTokenPromise) {
+        refreshTokenPromise = refreshTokenMutation.mutateAsync();
+      }
+      return await refreshTokenPromise;
     }
 
     return accessToken;
@@ -61,7 +68,6 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     getAccessToken,
     setAccessToken,
     setRefreshToken: (token: string | null) => {
-      localStorage.setItem(REFRESH_TOKEN_KEY, token ?? "");
       localStorage.setItem(REFRESH_TOKEN_KEY, token ?? "");
     },
   };
