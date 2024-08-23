@@ -1,4 +1,4 @@
-import { PostEndpoints } from "@/types/post.type";
+import { CreatePostInput, PostEndpoints } from "@/types/post.type";
 import { Metadata } from "../types/api.type";
 import { Post } from "../types/post.type";
 import { AxiosInstance } from "axios";
@@ -43,5 +43,9 @@ export class PostsService {
     return this.apiClient.get<{
       post: Post;
     }>(PostEndpoints.GetPostById.replace(":postId", postId));
+  }
+
+  createPost(data: CreatePostInput) {
+    return this.apiClient.post<Post>(PostEndpoints.CreatePost, data);
   }
 }
