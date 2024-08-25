@@ -13,6 +13,13 @@ export const PostEndpoints = {
   GetPostById: "/posts/:postId",
 };
 
+export enum PostPrivacy {
+  Public = 'PUBLIC',
+  Private = 'PRIVATE',
+  Friends = 'FRIENDS',
+  Custom = 'CUSTOM',
+}
+
 export type Post = {
   id: string;
   userId: string;

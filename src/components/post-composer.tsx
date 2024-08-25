@@ -17,7 +17,8 @@ import {
 import { ImageIcon, VideoIcon, SmileIcon, SendIcon } from "lucide-react";
 import { useAuth } from "@/contexts/auth.context";
 import { useForm } from "react-hook-form";
-import { CreatePostSchema, PostPrivacy } from "@/contracts/post.contract";
+import { CreatePostSchema } from "@/contracts/post.contract";
+import { PostPrivacy } from "@/types/post.type";
 import { CreatePostInput } from "@/types/post.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
