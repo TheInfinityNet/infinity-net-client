@@ -29,3 +29,4 @@ export enum CommentActions {
   Report = 'COMMENT_REPORT',
 }
 
+export type Action<T extends string, P = undefined> = P extends undefined ? { type: T } : { type: T } & P;
