@@ -21,3 +21,11 @@ export enum UserActions {
   RemoveFriend = 'USER_REMOVE_FRIEND',
 }
 
+export enum CommentActions {
+  React = 'COMMENT_REACT',
+  Reply = 'COMMENT_REPLY',
+  Edit = 'COMMENT_EDIT',
+  Delete = 'COMMENT_DELETE',
+  Report = 'COMMENT_REPORT',
+}
+
