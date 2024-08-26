@@ -20,3 +20,10 @@ export type PostReactAction = {
   });
 }
 
+export type PostCommentAction = {
+  [PostActions.Comment]: {
+    isEnable: boolean;
+    totalComments: number;
+  };
+}
+
