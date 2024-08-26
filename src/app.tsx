@@ -131,7 +131,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 export function AppInitializer({ children }: { children: React.ReactNode }) {
   const { isLoading } = useGetCurrentUser();
-  if (isLoading) return <div>Loading...</div>;
+
+  if (isLoading) {
+    return null;
+  }
 
   return children;
 }

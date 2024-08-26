@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import {
   createContext,
   ReactNode,
@@ -66,7 +66,7 @@ export function AxiosInterceptor({ children }: { children: React.ReactNode }) {
   }, [axios, getAccessToken]);
 
   if (!isInterceptorReady) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   return children;
