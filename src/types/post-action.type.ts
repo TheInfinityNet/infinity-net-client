@@ -39,3 +39,9 @@ export type PostEditAction = {
   };
 }
 
+export type PostDeleteAction = {
+  [PostActions.Delete]: {
+    isEnable: boolean;
+  };
+}
+
