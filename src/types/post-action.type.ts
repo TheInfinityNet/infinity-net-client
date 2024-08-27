@@ -60,3 +60,5 @@ export type PostReportAction = {
   };
 }
 
+export type PostPrimaryActions = PostReactAction & PostCommentAction & PostShareAction;
+export type PostAdditionalActions = PostEditAction & PostDeleteAction & PostReportAction;
