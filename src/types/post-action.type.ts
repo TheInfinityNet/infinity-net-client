@@ -45,3 +45,11 @@ export type PostDeleteAction = {
   };
 }
 
+export enum PostReportOptions {
+  Spam = 'SPAM',
+  Inappropriate = 'INAPPROPRIATE',
+  HateSpeech = 'HATE_SPEECH',
+  Violence = 'VIOLENCE',
+  Other = 'OTHER',
+}
+
