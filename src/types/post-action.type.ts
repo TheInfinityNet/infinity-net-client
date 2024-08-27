@@ -53,3 +53,10 @@ export enum PostReportOptions {
   Other = 'OTHER',
 }
 
+export type PostReportAction = {
+  [PostActions.Report]: {
+    isEnable: boolean;
+    reportOptions: PostReportOptions[];
+  };
+}
+
