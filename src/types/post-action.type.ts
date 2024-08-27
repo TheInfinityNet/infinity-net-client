@@ -33,3 +33,9 @@ export type PostShareAction = {
   };
 }
 
+export type PostEditAction = {
+  [PostActions.Edit]: {
+    isEnable: boolean;
+  };
+}
+
