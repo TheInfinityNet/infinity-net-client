@@ -27,3 +27,9 @@ export type PostCommentAction = {
   };
 }
 
+export type PostShareAction = {
+  [PostActions.Share]: {
+    isEnable: boolean;
+  };
+}
+
