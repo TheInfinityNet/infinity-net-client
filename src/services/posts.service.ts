@@ -2,6 +2,7 @@ import { CreatePostInput, PostEndpoints } from "@/types/post.type";
 import { Metadata } from "../types/api.type";
 import { Post } from "../types/post.type";
 import { AxiosInstance } from "axios";
+import { PostAdditionalActions } from "@/types/post-action.type";
 
 export class PostsService {
   private static instance: PostsService | null = null;
@@ -47,5 +48,11 @@ export class PostsService {
 
   createPost(data: CreatePostInput) {
     return this.apiClient.post<Post>(PostEndpoints.CreatePost, data);
+  }
+
+  getPostAdditionalActions(postId: string) {
+    return this.apiClient.get<{
+      additionalActions: PostAdditionalActions;
+    }>(PostEndpoints.GetPostAdditionalActions.replace(":postId", postId));
   }
 }
