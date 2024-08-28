@@ -3,6 +3,7 @@ import { Comment } from "./comment.type";
 import { PostReaction, ReactionType } from "./reaction.type";
 import { User } from "./user.type";
 import { CreatePostSchema } from "@/contracts/post.contract";
+import { PostPrimaryActions } from "./post-action.type";
 
 export const PostEndpoints = {
   GetPostsByUserId: "/users/:userId/posts",
@@ -11,6 +12,7 @@ export const PostEndpoints = {
   DeletePost: "/posts/:postId",
   GetNewsFeed: "/news-feed",
   GetPostById: "/posts/:postId",
+  GetPostAdditionalActions: "/posts/:postId/actions/additional"
 };
 
 export enum PostPrivacy {
@@ -27,13 +29,14 @@ export type Post = {
   comments?: Comment[];
   commentCounts?: number;
   content: string;
-  currentUserReaction?: PostReaction;
   reactions?: PostReaction[];
   reactionCounts?: {
     [key in ReactionType]: number;
   };
   createdAt: string;
   updatedAt: string;
+
+  primaryActions: PostPrimaryActions;
 };
 
 export type CreatePostInput = z.infer<typeof CreatePostSchema>;
