@@ -14,6 +14,8 @@ import { Message } from "@/types/message.type";
 import { Participant } from "@/types/participant.type";
 import { Conversation } from "@/types/conversation.type";
 import { FriendshipStatus } from "@/types/friend.type";
+import { PostCurrentReactStatus, PostPrimaryActions } from "@/types/post-action.type";
+import { PostActions } from "@/types/action.type";
 
 export const generateUser = (user?: Partial<User>): User => ({
   id: faker.string.uuid(),
@@ -101,6 +103,33 @@ export const generateReactionCounts = (): Record<ReactionType, number> => {
   };
 };
 
+export const generatePostPrimaryActions = (
+  primaryActions?: Partial<PostPrimaryActions>,
+): PostPrimaryActions => {
+  return {
+    [PostActions.React]: {
+      isEnable: faker.datatype.boolean(),
+      ...(faker.datatype.boolean() ?
+        {
+          currentStatus: PostCurrentReactStatus.Reacted,
+          currentUserReaction: generateReactionType()
+        }
+        : {
+          currentStatus: PostCurrentReactStatus.NotReacted,
+        }),
+      reactionCounts: generateReactionCounts(),
+    },
+    [PostActions.Comment]: {
+      isEnable: faker.datatype.boolean(),
+      totalComments: faker.number.int({ min: 0, max: 100 }),
+    },
+    [PostActions.Share]: {
+      isEnable: faker.datatype.boolean(),
+    },
+    ...primaryActions,
+  };
+}
+
 export const generatePost = (post?: Partial<Post>): Post => {
   const userId = faker.string.uuid();
   const postId = faker.string.uuid();
@@ -111,6 +140,7 @@ export const generatePost = (post?: Partial<Post>): Post => {
     commentCounts: faker.number.int({ min: 0, max: 100 }),
     createdAt: faker.date.past().toISOString(),
     updatedAt: faker.date.recent().toISOString(),
+    primaryActions: generatePostPrimaryActions(),
     ...post,
   };
 };
