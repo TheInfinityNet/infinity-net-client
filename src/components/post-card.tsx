@@ -67,18 +67,7 @@ export function PostCard({ post }: PostCardProps) {
       </CardContent>
 
       <CardFooter className="grid">
-        <div className="flex w-full justify-between items-center gap-2">
-          <PostActions post={post} />
-
-          <div className="flex items-center gap-5">
-            <PostReactionCountsPreview post={post} />
-            <div className="flex items-center gap-1">
-              <MessageCircleIcon className="size-4 text-blue-500" />
-              <span className="text-sm">{post.commentCounts}</span>
-            </div>
-          </div>
-        </div>
-
+        <PostActions postId={post.id} action={post.primaryActions} />
         <PostComments postId={post.id} />
         <ReplyComment postId={post.id} />
       </CardFooter>
