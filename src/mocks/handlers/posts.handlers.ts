@@ -16,6 +16,8 @@ import {
 } from "../constants";
 import { faker } from "@faker-js/faker";
 import { isAuthenticated } from "../utils/jwt";
+import { PostAdditionalActions, PostReportOptions } from "@/types/post-action.type";
+import { PostActions } from "@/types/action.type";
 
 export const postsHandlers = [
   http.get("/users/:userId/posts", ({ request, params }) => {
@@ -98,11 +100,25 @@ export const postsHandlers = [
       content,
       user,
       reactionCounts: generateReactionCounts(),
-      currentUserReaction: generatePostReaction(),
     });
 
     return HttpResponse.json({
       post,
+    });
+  }),
+
+  http.get("/posts/:postId/actions/additional", async ({ request, params }) => {
+    return HttpResponse.json<PostAdditionalActions>({
+      [PostActions.Edit]: {
+        isEnable: true,
+      },
+      [PostActions.Delete]: {
+        isEnable: true,
+      },
+      [PostActions.Report]: {
+        isEnable: true,
+        reportOptions: Object.values(PostReportOptions),
+      }
     });
   }),
 ];
