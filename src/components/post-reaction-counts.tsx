@@ -18,17 +18,21 @@ import { useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link } from "./link";
+import { PostPrimaryActions } from "@/types/post-action.type";
+import { PostActions } from "@/types/action.type";
 
 type PostReactionCountPreviewProps = {
-  post: Post;
+  postId: string;
+  context: PostPrimaryActions[PostActions.React];
 };
 
 export function PostReactionCountsPreview({
-  post,
+  postId,
+  context,
 }: PostReactionCountPreviewProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { data, isLoading, isError } = useGetReactionsByPostId(
-    post.id,
+    postId,
     isHovered,
   );
   const reactions = data?.pages.flatMap((page) => page.data.reactions) ?? [];
@@ -48,7 +52,7 @@ export function PostReactionCountsPreview({
         >
           <HoverCardTrigger asChild>
             <div className="flex items-center gap-1">
-              {_.chain(post.reactionCounts)
+              {_.chain(context.reactionCounts)
                 .toPairs()
                 .sortBy(([, count]) => -count)
                 .take(3)
@@ -68,7 +72,7 @@ export function PostReactionCountsPreview({
                 .value()}
 
               <span className="text-sm">
-                {_.chain(post.reactionCounts).values().sum().value()}
+                {_.chain(context.reactionCounts).values().sum().value()}
               </span>
             </div>
           </HoverCardTrigger>
@@ -110,7 +114,7 @@ export function PostReactionCountsPreview({
           <DialogDescription>Number of reactions</DialogDescription>
         </DialogHeader>
         <DialogContent>
-          <PostReactionCountsDetails post={post} />
+          <PostReactionCountsDetails postId={postId} />
         </DialogContent>
       </DialogContent>
     </Dialog>
@@ -118,13 +122,12 @@ export function PostReactionCountsPreview({
 }
 
 type PostReactionCountDetailsProps = {
-  post: Post;
+  postId: string;
 };
 
 export function PostReactionCountsDetails({
-  post,
+  postId,
 }: PostReactionCountDetailsProps) {
-  const postId = post.id;
 
   const [selectedReaction, setSelectedReaction] = useState<
     ReactionType | "all"
@@ -146,14 +149,16 @@ export function PostReactionCountsDetails({
     >
       <TabsList className="w-full flex justify-start">
         <TabsTrigger value="all">All</TabsTrigger>
-        {Object.keys(post.reactionCounts as Object).map((reaction) => (
-          <TabsTrigger key={reaction} value={reaction}>
-            <Emoji
-              unified={ReactionTypeToUnifiedMap[reaction as ReactionType]}
-              size={16}
-            />
-          </TabsTrigger>
-        ))}
+        {
+          //   Object.keys(post.reactionCounts as Object).map((reaction) => (
+          //   <TabsTrigger key={reaction} value={reaction}>
+          //     <Emoji
+          //       unified={ReactionTypeToUnifiedMap[reaction as ReactionType]}
+          //       size={16}
+          //     />
+          //   </TabsTrigger>
+          // ))
+        }
       </TabsList>
       <ScrollArea className="h-[60vh] w-full rounded-md border mt-2">
         <div className="p-4 grid gap-y-2">

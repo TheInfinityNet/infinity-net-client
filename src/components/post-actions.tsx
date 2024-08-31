@@ -93,18 +93,18 @@ export function PostActions({ postId, action }: PostActionsProps) {
     <div className="flex w-full justify-between items-center gap-2">
       <div className="flex items-center gap-2">
         <PostReactActionButton postId={postId} context={action[PostActionsEnum.React]} />
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" disabled={!action[PostActionsEnum.Comment].isEnable}>
           <MessageCircleIcon className="size-4" />
           <span className="sr-only">Comment</span>
         </Button>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" disabled={!action[PostActionsEnum.Share].isEnable}>
           <ShareIcon className="size-4" />
           <span className="sr-only">Share</span>
         </Button>
       </div>
 
       <div className="flex items-center gap-5">
-        <PostReactionCountsPreview post={generatePost()} />
+        <PostReactionCountsPreview postId={postId} context={action[PostActionsEnum.React]} />
         <div className="flex items-center gap-1">
           <MessageCircleIcon className="size-4 text-blue-500" />
           <span className="text-sm">{generatePost().commentCounts}</span>
