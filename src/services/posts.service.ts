@@ -1,5 +1,4 @@
-import { CreatePostInput, PostEndpoints } from "@/types/post.type";
-import { Metadata } from "../types/api.type";
+import { CreatePostInput, CreatePostResponse, GetPostAdditionalActions, GetPostResponse, GetPostsPaginationResponse, PostEndpoints } from "@/types/post.type";
 import { Post } from "../types/post.type";
 import { AxiosInstance } from "axios";
 import { PostAdditionalActions } from "@/types/post-action.type";
@@ -23,36 +22,26 @@ export class PostsService {
   }
 
   getPostsByUserId(userId: string, params: { offset: number; limit: number }) {
-    return this.apiClient.get<{
-      posts: Post[];
-      metadata: Metadata;
-    }>(PostEndpoints.GetPostsByUserId.replace(":userId", userId.toString()), {
+    return this.apiClient.get<GetPostsPaginationResponse>(PostEndpoints.GetPostsByUserId.replace(":userId", userId.toString()), {
       params,
     });
   }
 
   getNewsFeed(params: { offset: number; limit: number }) {
-    return this.apiClient.get<{
-      posts: Post[];
-      metadata: Metadata;
-    }>(PostEndpoints.GetNewsFeed, {
+    return this.apiClient.get<GetPostsPaginationResponse>(PostEndpoints.GetNewsFeed, {
       params,
     });
   }
 
   getPostById(postId: string) {
-    return this.apiClient.get<{
-      post: Post;
-    }>(PostEndpoints.GetPostById.replace(":postId", postId));
+    return this.apiClient.get<GetPostResponse>(PostEndpoints.GetPostById.replace(":postId", postId));
   }
 
   createPost(data: CreatePostInput) {
-    return this.apiClient.post<Post>(PostEndpoints.CreatePost, data);
+    return this.apiClient.post<CreatePostResponse>(PostEndpoints.CreatePost, data);
   }
 
   getPostAdditionalActions(postId: string) {
-    return this.apiClient.get<{
-      additionalActions: PostAdditionalActions;
-    }>(PostEndpoints.GetPostAdditionalActions.replace(":postId", postId));
+    return this.apiClient.get<GetPostAdditionalActions>(PostEndpoints.GetPostAdditionalActions.replace(":postId", postId));
   }
 }
