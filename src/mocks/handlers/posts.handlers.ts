@@ -3,7 +3,6 @@ import { users } from "../data";
 import _ from "lodash";
 import {
   generatePost,
-  generatePostReaction,
   generateReactionCounts,
   generateUser,
 } from "../generators";
@@ -14,7 +13,6 @@ import {
   TOTAL_POSTS_IN_FEED_COUNT,
   TOTAL_POSTS_IN_PROFILE_COUNT,
 } from "../constants";
-import { faker } from "@faker-js/faker";
 import { isAuthenticated } from "../utils/jwt";
 import { PostAdditionalActions, PostReportOptions } from "@/types/post-action.type";
 import { PostActions } from "@/types/action.type";
@@ -36,9 +34,6 @@ export const postsHandlers = [
         generatePost({
           user,
           reactionCounts: generateReactionCounts(),
-          currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
-            ? generatePostReaction()
-            : undefined,
         }),
     );
 
@@ -63,9 +58,6 @@ export const postsHandlers = [
         generatePost({
           user: generateUser(),
           reactionCounts: generateReactionCounts(),
-          currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
-            ? generatePostReaction()
-            : undefined,
         }),
     );
 
@@ -83,9 +75,6 @@ export const postsHandlers = [
       id: postId,
       user: generateUser(),
       reactionCounts: generateReactionCounts(),
-      currentUserReaction: faker.datatype.boolean({ probability: 0.5 })
-        ? generatePostReaction()
-        : undefined,
     });
 
     return HttpResponse.json({
