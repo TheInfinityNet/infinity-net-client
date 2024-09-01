@@ -25,6 +25,7 @@ import { useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { useCreatePostMutation } from "@/hooks/useCreatePostMutation";
+import { toast } from "./ui/use-toast";
 
 type PostComposerProps = {
   groupId?: string;
@@ -52,6 +53,10 @@ export function PostComposer(
     createPostMutation.mutate(data, {
       onSuccess: () => {
         form.reset();
+        toast({
+          title: "Post created",
+          description: "Your post has been created successfully.",
+        })
       },
       onError: (error) => {
         console.log(error);
@@ -109,6 +114,7 @@ export function PostComposer(
           <CardContent>
             <MDXEditor
               markdown={form.watch("content")}
+              value={form.watch("content")}
               onChange={(value) => form.setValue("content", value)}
               plugins={[
                 headingsPlugin(),
