@@ -1,6 +1,8 @@
+import { CreateCommentSchema } from "@/contracts/comment.contract";
 import { Post } from "./post.type";
 import { CommentReaction, ReactionType } from "./reaction.type";
 import { User } from "./user.type";
+import { z } from "zod";
 
 export const CommentEndpoints = {
   CreateCommentByPostId: "/posts/:postId/comments",
@@ -26,3 +28,6 @@ export type Comment = {
   user?: User;
   post?: Post;
 };
+
+export type CreateCommentInput = z.infer<typeof CreateCommentSchema>;
+
