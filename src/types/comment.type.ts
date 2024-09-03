@@ -3,6 +3,7 @@ import { Post } from "./post.type";
 import { CommentReaction, ReactionType } from "./reaction.type";
 import { User } from "./user.type";
 import { z } from "zod";
+import { Metadata } from "./api.type";
 
 export const CommentEndpoints = {
   CreateCommentByPostId: "/posts/:postId/comments",
@@ -30,4 +31,7 @@ export type Comment = {
 };
 
 export type CreateCommentInput = z.infer<typeof CreateCommentSchema>;
-
+export type GetCommentsByPostIdResponse = {
+  comments: Comment[];
+  metadata: Metadata;
+}
