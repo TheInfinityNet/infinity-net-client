@@ -14,7 +14,7 @@ export const PostEndpoints = {
   GetNewsFeed: "/news-feed",
   GetPostById: "/posts/:postId",
   GetPostAdditionalActions: "/posts/:postId/actions/additional"
-};
+} as const;
 
 export enum PostPrivacy {
   Public = 'PUBLIC',

@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+import { http, HttpResponse, PathParams } from "msw";
 import { users } from "../data";
 import _ from "lodash";
 import {
@@ -16,9 +16,13 @@ import {
 import { isAuthenticated } from "../utils/jwt";
 import { PostAdditionalActions, PostReportOptions } from "@/types/post-action.type";
 import { PostActions } from "@/types/action.type";
+import { GetPostsPaginationResponse, PostEndpoints } from "@/types/post.type";
 
 export const postsHandlers = [
-  http.get("/users/:userId/posts", ({ request, params }) => {
+  http.get<PathParams,
+    {},
+    GetPostsPaginationResponse
+  >(PostEndpoints.GetNewsFeed, ({ request, params }) => {
     const { userId } = params as { userId: string };
     const url = new URL(request.url);
     const offset = Number(url.searchParams.get("offset") || DEFAULT_OFFSET);
