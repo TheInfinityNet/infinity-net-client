@@ -24,3 +24,11 @@ export const SignUpSchema = z.object({
   gender: z.nativeEnum(Genders),
   acceptTerms: z.boolean().refine((value) => value === true),
 });
+
+
+export const ForgotPasswordSchema = z.object({
+  email: z.string().email(),
+  code: z.string().length(6),
+});
+
+

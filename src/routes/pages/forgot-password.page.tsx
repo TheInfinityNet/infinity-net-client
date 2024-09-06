@@ -34,17 +34,13 @@ import {
   SendEmailForgotPasswordErrorResponse,
   SendEmailForgotPasswordInput,
 } from "@/types/auth.type";
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email(),
-  code: z.string().length(6),
-});
+import { ForgotPasswordSchema } from "@/contracts/auth.contract";
 
 export function ForgotPasswordPage() {
   const { authService } = useApiClient();
   const [sendEmailCooldown, setSendEmailCooldown] = useState<number>(0);
-  const form = useForm<z.infer<typeof forgotPasswordSchema>>({
-    resolver: zodResolver(forgotPasswordSchema),
+  const form = useForm<z.infer<typeof ForgotPasswordSchema>>({
+    resolver: zodResolver(ForgotPasswordSchema),
     defaultValues: {
       email: "",
       code: "",
